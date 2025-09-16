@@ -1,9 +1,10 @@
 #pragma once
 #include <iostream>
-#include <gl/glew.h>
-#include <gl/freeglut.h>
-#include <gl/glm/glm/glm.hpp>
-#include <gl/glm/glm/gtc/matrix_transform.hpp>
+#include <glew.h>
+#include <freeglut.h>
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+
 #include <unordered_map>
 
 #include "root.h"

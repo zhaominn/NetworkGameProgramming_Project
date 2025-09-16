@@ -1,8 +1,9 @@
 #pragma once
 
 #include <limits>  // std::numeric_limits ����� ���� ��� �߰�
-#include <gl/glm/glm/glm.hpp>
-#include <gl/glm/glm/gtx/matrix_decompose.hpp>
+
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtx/matrix_decompose.hpp>
 
 #include "CustomContactResultCallback.h"
 

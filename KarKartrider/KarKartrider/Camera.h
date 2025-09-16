@@ -1,5 +1,5 @@
 #pragma once
-#include <gl/glm/glm/glm.hpp>
+#include <glm/glm/glm.hpp>
 
 //Ä«¸Þ¶ó
 glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 5.0);

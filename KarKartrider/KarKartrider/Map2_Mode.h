@@ -8,8 +8,8 @@
 #include "KeyBoard.h"
 #include "Light.h"
 
-#include <gl/glm/glm/gtc/quaternion.hpp> // 쿼터니언 관련
-#include <gl/glm/glm/gtx/quaternion.hpp> // SLERP(Spherical Linear Interpolation)
+#include <glm/glm/gtc/quaternion.hpp>
+#include <glm/glm/gtx/quaternion.hpp>
 #include <functional>  // std::function을 사용하기 위해 필요
 
 class Map2_Mode : public Mode {

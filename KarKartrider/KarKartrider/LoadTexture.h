@@ -4,8 +4,8 @@
 
 #include <iostream>
 #include <string>
-#include <gl/glm/glm/glm.hpp>
-#include <gl/glew.h>
+#include <glm/glm/glm.hpp>
+#include <glew.h>
 
 #include "include/stb_image.h"
 

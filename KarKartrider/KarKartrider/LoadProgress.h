@@ -1,6 +1,6 @@
 #pragma once
 #include<iostream>
-#include <gl/glm/glm/glm.hpp>
+#include <glm/glm/glm.hpp>
 
 #include "DefaultModel.h"
 #include "Model.h"
