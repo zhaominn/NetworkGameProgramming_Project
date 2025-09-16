@@ -129,7 +129,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\opencv\build\include;C:\Users\somin\OneDrive\KartRider\KarKartrider\KarKartrider\include;C:\Users\neneee\KartRider\KarKartrider\KarKartrider\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\neneee\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -139,7 +139,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>irrKlang.lib;opencv_world4100.lib;glew32.lib;glew32s.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>glew32.lib freeglut.lib %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalLibraryDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -7,7 +7,6 @@
 #include "root.h"
 #include "Light.h"
 #include "SelectMapMode.h"
-
 #include <thread>
 #include <gl/glm/glm/gtc/quaternion.hpp> // 쿼터니언 관련
 #include <gl/glm/glm/gtx/quaternion.hpp> // SLERP(Spherical Linear Interpolation)

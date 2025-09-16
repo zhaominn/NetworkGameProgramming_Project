@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include <gl/glew.h>
+#include <glew.h>
 
 #include "filetobuf.h"
 
