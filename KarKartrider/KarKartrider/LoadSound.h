@@ -13,11 +13,11 @@ void play_sound2D(const std::string& name, const std::string& path, bool repeat,
         return;
     }
 
-    // °æ·Î µð¹ö±ë Ãâ·Â
+    // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     std::string fullPath = path + name;
     std::cout << "Attempting to play sound: " << fullPath << std::endl;
 
-    // »ç¿îµå Àç»ý
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     ISound* sound = engine->play2D(fullPath.c_str(), repeat, false, true);
     if (!sound) {
         std::cerr << "Error: Could not play sound file!" << std::endl;
@@ -25,19 +25,19 @@ void play_sound2D(const std::string& name, const std::string& path, bool repeat,
         return;
     }
 
-    // º¼·ý ¼³Á¤ (±âº» 1.0, ÇÊ¿äÇÏ¸é ¿ÜºÎ¿¡¼­ ¼öÁ¤)
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½âº» 1.0, ï¿½Ê¿ï¿½ï¿½Ï¸ï¿½ ï¿½ÜºÎ¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
     sound->setVolume(1.0f);
 
-    // ÇÃ·¡±×°¡ trueÀÎ µ¿¾È »ç¿îµå Àç»ý À¯Áö
+    // ï¿½Ã·ï¿½ï¿½×°ï¿½ trueï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     while (*isRunning) {
-        if (!repeat && sound->isFinished()) break; // ¹Ýº¹ÇÏÁö ¾ÊÀ¸¸é »ç¿îµå Á¾·á È®ÀÎ
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // 100ms¸¶´Ù »óÅÂ Ã¼Å©
+        if (!repeat && sound->isFinished()) break; // ï¿½Ýºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // 100msï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
     }
 
-    // Á¾·á: »ç¿îµå Á¤Áö ¹× ÀÚ¿ø ÇØÁ¦
+    // ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (!*isRunning) {
-        sound->stop(); // °­Á¦ Á¤Áö
+        sound->stop(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
-    sound->drop(); // »ç¿îµå °´Ã¼ ÇØÁ¦
-    engine->drop(); // ¿£Áø Á¾·á
+    sound->drop(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
+    engine->drop(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 }

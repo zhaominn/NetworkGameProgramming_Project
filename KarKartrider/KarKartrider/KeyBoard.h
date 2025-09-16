@@ -47,7 +47,7 @@ void keyDown(unsigned char key, int x, int y) {
 		bb_status = !bb_status;
 		break;
 	case 'q':
-		std::cout << " ÇÁ·Î±×·¥ Á¾·á " << std::endl;
+		std::cout << " ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ " << std::endl;
 		exit(0);
 		break;
 	default:

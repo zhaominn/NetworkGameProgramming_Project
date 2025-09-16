@@ -22,12 +22,12 @@ int main(int argc, char** argv) {
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	int screenWidth = glutGet(GLUT_SCREEN_WIDTH);  // ¸ð´ÏÅÍÀÇ °¡·Î ÇØ»óµµ
-	int screenHeight = glutGet(GLUT_SCREEN_HEIGHT); // ¸ð´ÏÅÍÀÇ ¼¼·Î ÇØ»óµµ
+	int screenWidth = glutGet(GLUT_SCREEN_WIDTH);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø»ï¿½
+	int screenHeight = glutGet(GLUT_SCREEN_HEIGHT); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø»ï¿½
 	glutInitWindowPosition(location_x, location_y);
-	glutInitWindowSize(window_width, window_height); // Ã¢ Å©±â¸¦ È­¸é Å©±â·Î ¼³Á¤
+	glutInitWindowSize(window_width, window_height); // Ã¢ Å©ï¿½â¸¦ È­ï¿½ï¿½ Å©ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	glutCreateWindow("KarKartrider");
-	//glutFullScreen(); // ÀüÃ¼ È­¸éÀ¸·Î ÀüÈ¯
+	//glutFullScreen(); // ï¿½ï¿½Ã¼ È­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
@@ -40,20 +40,20 @@ int main(int argc, char** argv) {
 	make_shaderProgram();
 	make_shaderProgram_ui();
 
-	initPhysics(); // Bullet ÃÊ±âÈ­ ÇÔ¼ö È£Ãâ
+	initPhysics(); // Bullet ï¿½Ê±ï¿½È­ ï¿½Ô¼ï¿½ È£ï¿½ï¿½
 
 	LogoMode* logoMode = new LogoMode();
-	MM.SetMode(logoMode); //ÃÊ±â ¸ðµå ¼¼ÆÃ
+	MM.SetMode(logoMode); //ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-	// µð¹ö±ë Ãâ·Â
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	/*debug_model(models.back());
 	debug_materials(models.back()->materials);*/
 
 
 	InitBuffer();
 
-	// ÃÊ±â ÇÁ·¹ÀÓ °­Á¦ ·»´õ¸µ
-	drawScene();  // µð½ºÇÃ·¹ÀÌ ÄÝ¹é ÇÔ¼ö Á÷Á¢ È£Ãâ
+	// ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	drawScene();  // ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½Ý¹ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -81,26 +81,26 @@ GLvoid drawScene() {
 	}
 }
 
-// ¹öÆÛ ÃÊ±âÈ­ ÇÔ¼ö
+// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½Ô¼ï¿½
 void InitBuffer() {
 	//-----------------------------------------------------------------------------------------------------------
-	for (const auto& model : karts) { // ¸ðµç ¸ðµ¨ initBuffer
+	for (const auto& model : karts) { // ï¿½ï¿½ï¿½ ï¿½ï¿½ initBuffer
 		model->initBuffer();
 	}
 
-	for (const auto& model : road1) { // ¸ðµç ¸ðµ¨ initBuffer
+	for (const auto& model : road1) { // ï¿½ï¿½ï¿½ ï¿½ï¿½ initBuffer
 		model->initBuffer();
 	}
 
-	for (const auto& model : road2) { // ¸ðµç ¸ðµ¨ initBuffer
+	for (const auto& model : road2) { // ï¿½ï¿½ï¿½ ï¿½ï¿½ initBuffer
 		model->initBuffer();
 	}
 
-	for (const auto& model : selectMaps) { // ¸ðµç ¸ðµ¨ initBuffer
+	for (const auto& model : selectMaps) { // ï¿½ï¿½ï¿½ ï¿½ï¿½ initBuffer
 		model->initBuffer();
 	}
 
-	for (const auto& model : countDown) { // ¸ðµç ¸ðµ¨ initBuffer
+	for (const auto& model : countDown) { // ï¿½ï¿½ï¿½ ï¿½ï¿½ initBuffer
 		model->initBuffer();
 	}
 

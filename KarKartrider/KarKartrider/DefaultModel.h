@@ -13,7 +13,7 @@
 
 using namespace std;
 
-// std::tupleÀÇ Ä¿½ºÅÒ ÇØ½Ã ÇÔ¼ö Á¤ÀÇ
+// std::tupleï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 struct TupleHash {
     template <typename T>
     static void hashCombine(std::size_t& seed, const T& value) {
@@ -52,17 +52,17 @@ public:
         GLint modelLoc = glGetUniformLocation(shaderProgramID, "model");
         GLint normalLoc = glGetUniformLocation(shaderProgramID, "normalMatrix");
         if (this->model_status) {
-            // VAO ¹ÙÀÎµù
+            // VAO ï¿½ï¿½ï¿½Îµï¿½
             glBindVertexArray(this->vao);
 
-            // **¹ý¼± Çà·Ä °è»ê**
+            // **ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½**
             glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(this->matrix)));
             glUniformMatrix3fv(normalLoc, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 
-            // **¸ðµ¨ Çà·Ä °»½Å**
+            // **ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½**
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(this->matrix));
 
-            GLuint lastBoundTextureID = 0; // ÀÌÀü ÅØ½ºÃ³ ID ÃßÀû
+            GLuint lastBoundTextureID = 0; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ID ï¿½ï¿½ï¿½ï¿½
             for (const auto& [materialName, ebo] : this->textureEBOs) {
                 auto it = this->materials.find(materialName);
                 if (it == this->materials.end()) {
@@ -74,7 +74,7 @@ public:
 
                 const Material& material = it->second;
 
-                // ÅØ½ºÃ³ ¹ÙÀÎµù
+                // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½Îµï¿½
                 bool textureBound = false;
                 for (const auto& texture : material.textures) {
                     if (texture.type == "diffuse") {
@@ -103,16 +103,16 @@ public:
                     glUniform1f(NsLoc, material.Ns);
                 }
 
-                // **EBO ·»´õ¸µ**
+                // **EBO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½**
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
                 glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(textureGroups[materialName].size()), GL_UNSIGNED_INT, 0);
             }
 
-            // **·»´õ¸µ ÈÄ »óÅÂ º¹±¸**
+            // **ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½**
             glDepthMask(GL_TRUE);
             glDisable(GL_BLEND);
 
-            // OpenGL »óÅÂ ÃÊ±âÈ­
+            // OpenGL ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, 0);
@@ -125,47 +125,47 @@ public:
 
     const void draw_rigidBody(GLuint shaderProgramID) override {
         if (this->rigidBody) {
-            RenderCollisionBox(this, shaderProgramID); // Ãæµ¹ ¹Ú½º ±×¸®±â
+            RenderCollisionBox(this, shaderProgramID); // ï¿½æµ¹ ï¿½Ú½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
         }
     }
 
     void initBuffer() override {
-        // Step 1: VAO »ý¼º ¹× ¹ÙÀÎµù
+        // Step 1: VAO ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
 
         std::unordered_map<std::tuple<unsigned int, unsigned int, unsigned int>, unsigned int, TupleHash> uniqueVertices;
-        std::vector<glm::vec3> vertexBuffer;   // À§Ä¡ µ¥ÀÌÅÍ
-        std::vector<glm::vec3> normalBuffer;   // ¹ý¼± µ¥ÀÌÅÍ
-        std::vector<glm::vec2> texCoordBuffer; // ÅØ½ºÃ³ ÁÂÇ¥ µ¥ÀÌÅÍ
+        std::vector<glm::vec3> vertexBuffer;   // ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        std::vector<glm::vec3> normalBuffer;   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        std::vector<glm::vec2> texCoordBuffer; // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        // Step 2: Face¸¦ ÅØ½ºÃ³º°·Î ±×·ìÈ­
+        // Step 2: Faceï¿½ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½È­
         for (const Face& face : this->faces) {
             std::string materialName = face.materialName.empty() ? "default" : face.materialName;
 
-            // »õ·Î¿î ÀçÁú¿¡ ´ëÇØ ÃÊ±âÈ­
+            // ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
             if (textureGroups.find(materialName) == textureGroups.end()) {
                 textureGroups[materialName] = {};
             }
 
-            for (int i = 0; i < 3; i++) { // »ï°¢ÇüÀÇ ¼¼ Á¤Á¡ Ã³¸®
+            for (int i = 0; i < 3; i++) { // ï¿½ï°¢ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
                 unsigned int vertexIndex = (i == 0) ? face.v1 : (i == 1) ? face.v2 : face.v3;
                 unsigned int texCoordIndex = (i == 0) ? face.t1 : (i == 1) ? face.t2 : face.t3;
                 unsigned int normalIndex = (i == 0) ? face.n1 : (i == 1) ? face.n2 : face.n3;
                 std::tuple<unsigned int, unsigned int, unsigned int> key = std::make_tuple(vertexIndex, texCoordIndex, normalIndex);
 
-                // °íÀ¯ÇÑ Á¤Á¡ÀÎÁö È®ÀÎ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
                 if (uniqueVertices.count(key) == 0) {
                     uniqueVertices[key] = static_cast<unsigned int>(vertexBuffer.size());
 
-                    // À§Ä¡ Ãß°¡
+                    // ï¿½ï¿½Ä¡ ï¿½ß°ï¿½
                     vertexBuffer.push_back(glm::vec3(
                         this->vertices[vertexIndex].x,
                         this->vertices[vertexIndex].y,
                         this->vertices[vertexIndex].z
                     ));
 
-                    // ÅØ½ºÃ³ ÁÂÇ¥ Ãß°¡
+                    // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½Ç¥ ï¿½ß°ï¿½
                     if (texCoordIndex != static_cast<unsigned int>(-1)) {
                         texCoordBuffer.push_back(glm::vec2(
                             this->texCoords[texCoordIndex].u,
@@ -176,7 +176,7 @@ public:
                         texCoordBuffer.push_back(glm::vec2(0.0f, 0.0f));
                     }
 
-                    // ¹ý¼± Ãß°¡
+                    // ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
                     normalBuffer.push_back(glm::vec3(
                         this->normals[normalIndex].nx,
                         this->normals[normalIndex].ny,
@@ -184,43 +184,43 @@ public:
                     ));
                 }
 
-                // ÀÎµ¦½º¸¦ ÅØ½ºÃ³ ±×·ì¿¡ Ãß°¡
+                // ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½×·ì¿¡ ï¿½ß°ï¿½
                 textureGroups[materialName].push_back(uniqueVertices[key]);
             }
         }
 
-        // Step 3: VBO ¼³Á¤ - À§Ä¡ µ¥ÀÌÅÍ
+        // Step 3: VBO ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         glGenBuffers(1, &vbos[0]);
         glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
         glBufferData(GL_ARRAY_BUFFER, vertexBuffer.size() * sizeof(glm::vec3), vertexBuffer.data(), GL_STATIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
         glEnableVertexAttribArray(0);
 
-        // Step 4: VBO ¼³Á¤ - ¹ý¼± µ¥ÀÌÅÍ
+        // Step 4: VBO ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         glGenBuffers(1, &vbos[1]);
         glBindBuffer(GL_ARRAY_BUFFER, vbos[1]);
         glBufferData(GL_ARRAY_BUFFER, normalBuffer.size() * sizeof(glm::vec3), normalBuffer.data(), GL_STATIC_DRAW);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
         glEnableVertexAttribArray(1);
 
-        // Step 5: VBO ¼³Á¤ - ÅØ½ºÃ³ ÁÂÇ¥ µ¥ÀÌÅÍ
+        // Step 5: VBO ï¿½ï¿½ï¿½ï¿½ - ï¿½Ø½ï¿½Ã³ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         glGenBuffers(1, &vbos[2]);
         glBindBuffer(GL_ARRAY_BUFFER, vbos[2]);
         glBufferData(GL_ARRAY_BUFFER, texCoordBuffer.size() * sizeof(glm::vec2), texCoordBuffer.data(), GL_STATIC_DRAW);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
         glEnableVertexAttribArray(2);
 
-        // Step 6: ÅØ½ºÃ³º° EBO »ý¼º
+        // Step 6: ï¿½Ø½ï¿½Ã³ï¿½ï¿½ EBO ï¿½ï¿½ï¿½ï¿½
         for (auto& [materialName, indices] : textureGroups) {
             GLuint ebo;
             glGenBuffers(1, &ebo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-            textureEBOs[materialName] = ebo; // EBO ÀúÀå
+            textureEBOs[materialName] = ebo; // EBO ï¿½ï¿½ï¿½ï¿½
         }
 
-        // Step 7: VAO ¹ÙÀÎµù ÇØÁ¦
+        // Step 7: VAO ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½
         glBindVertexArray(0);
     }
 

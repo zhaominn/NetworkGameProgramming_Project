@@ -1,6 +1,6 @@
 #pragma once
 
-#include <limits>  // std::numeric_limits »ç¿ëÀ» À§ÇÑ Çì´õ Ãß°¡
+#include <limits>  // std::numeric_limits ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
 #include <gl/glm/glm/glm.hpp>
 #include <gl/glm/glm/gtx/matrix_decompose.hpp>
 
@@ -13,14 +13,14 @@
 
 void removeRigidBodyFromModel(Model& model);
 
-// Bullet Physics °ü·Ã º¯¼öµé
+// Bullet Physics ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 btBroadphaseInterface* broadphase;
 btDefaultCollisionConfiguration* collisionConfiguration;
 btCollisionDispatcher* dispatcher;
 btSequentialImpulseConstraintSolver* solver;
 btDiscreteDynamicsWorld* dynamicsWorld;
 
-// Bullet Physics ÃÊ±âÈ­ ÇÔ¼ö
+// Bullet Physics ï¿½Ê±ï¿½È­ ï¿½Ô¼ï¿½
 void initPhysics() {
     broadphase = new btDbvtBroadphase();
     collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -30,18 +30,18 @@ void initPhysics() {
     dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
 }
 
-// ModelÀÇ AABB¸¦ °è»êÇÏ¿© Å©±â¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö
+// Modelï¿½ï¿½ AABBï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ Å©ï¿½â¸¦ ï¿½ï¿½È¯ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 glm::vec3 calculateModelSize(const Model* model) {
-    // ÃÊ±â ÃÖ¼Ò, ÃÖ´ë°ªÀ» ¼³Á¤
+    // ï¿½Ê±ï¿½ ï¿½Ö¼ï¿½, ï¿½Ö´ë°ªï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     glm::vec3 min(std::numeric_limits<float>::max());
     glm::vec3 max(std::numeric_limits<float>::lowest());
 
-    // ¸ðµç Á¤Á¡ ¼øÈ¸
+    // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
     for (const Vertex& vertex : model->vertices) {
-        // Á¤Á¡ À§Ä¡¸¦ ¿ùµå °ø°£À¸·Î º¯È¯
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
         glm::vec4 transformedVertex = model->matrix * glm::vec4(vertex.x, vertex.y, vertex.z, 1.0f);
 
-        // ÃÖ¼Ò°ª°ú ÃÖ´ë°ª °»½Å
+        // ï¿½Ö¼Ò°ï¿½ï¿½ï¿½ ï¿½Ö´ë°ª ï¿½ï¿½ï¿½ï¿½
         min.x = std::min(min.x, transformedVertex.x);
         min.y = std::min(min.y, transformedVertex.y);
         min.z = std::min(min.z, transformedVertex.z);
@@ -51,17 +51,17 @@ glm::vec3 calculateModelSize(const Model* model) {
         max.z = std::max(max.z, transformedVertex.z);
     }
 
-    // Æø, ³ôÀÌ, ±íÀÌ¸¦ °è»ê
+    // ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½
     return max - min;
 }
 
-// ¸ðµ¨¿¡ ´ëÇÑ Ãæµ¹ °´Ã¼¿Í °­Ã¼ »ý¼º ¹× ¹°¸® ¼¼°è¿¡ Ãß°¡
+// ï¿½ðµ¨¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½è¿¡ ï¿½ß°ï¿½
 void addModelToPhysicsWorld(Model* model) {
-    // ¸ðµ¨ÀÇ Å©±â °è»ê (AABB)
+    // ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ (AABB)
     glm::vec3 size = calculateModelSize(model);
     btCollisionShape* shape = nullptr;
     if (model->type == "box") {
-        // °¢ ¸ðµ¨¿¡ µ¶¸³ÀûÀÎ Ãæµ¹ ¹Ú½º »ý¼º
+        // ï¿½ï¿½ ï¿½ðµ¨¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
         shape = new btBoxShape(btVector3(size.x * 0.5f, size.y * 0.5f, size.z * 0.5f));
     }
     else if (model->type == "sphere") {
@@ -95,25 +95,25 @@ void addModelToPhysicsWorld(Model* model) {
         return;
     }
 
-    // OpenGLÀÇ modelMatrix¿¡¼­ À§Ä¡, È¸Àü, ½ºÄÉÀÏ ÃßÃâ
+    // OpenGLï¿½ï¿½ modelMatrixï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡, È¸ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     glm::vec3 translation, scale, skew;
     glm::vec4 perspective;
     glm::quat rotation;
     glm::decompose(model->matrix, scale, rotation, translation, skew, perspective);
 
-    // Bullet Physics¿¡¼­ »ç¿ëÇÏ´Â btTransformÀ¸·Î º¯È¯
+    // Bullet Physicsï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ btTransformï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
     btTransform startTransform;
     startTransform.setIdentity();
     startTransform.setOrigin(btVector3(translation.x, translation.y, translation.z));
 
-    // Áú·® ¹× °ü¼º ¼³Á¤
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     btScalar mass = 1.0f;
     btVector3 localInertia(0, 0, 0);
     if (mass != 0.0f) {
         shape->calculateLocalInertia(mass, localInertia);
     }
 
-    // RigidBody »ý¼º ¹× ¹°¸® ¼¼°è¿¡ Ãß°¡
+    // RigidBody ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½è¿¡ ï¿½ß°ï¿½
     btDefaultMotionState* motionState = new btDefaultMotionState(startTransform);
     btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
     btRigidBody* body = new btRigidBody(rbInfo);
@@ -123,7 +123,7 @@ void addModelToPhysicsWorld(Model* model) {
 }
 
 
-// ¸ðµç ¸ðµ¨¿¡ ´ëÇÑ ¹°¸® ¼¼°è Ãæµ¹ °´Ã¼ ÃÊ±âÈ­
+// ï¿½ï¿½ï¿½ ï¿½ðµ¨¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½Ã¼ ï¿½Ê±ï¿½È­
 void initializeModelsWithPhysics(std::vector<Model*>& models) {
     for (auto& model : models) {
         addModelToPhysicsWorld(model);
@@ -148,19 +148,19 @@ void cleanupPhysics() {
     delete broadphase;
 }
 
-// Æ¯Á¤ ¸ðµ¨À» »èÁ¦ÇÏ´Â ÇÔ¼ö
+// Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 void removeModelFromWorld(std::vector<Model*>& models, Model*& modelToDelete) {
-    // ¹°¸® ¼¼°è¿¡¼­ ¸ðµ¨ÀÇ RigidBody Á¦°Å
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½è¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ RigidBody ï¿½ï¿½ï¿½ï¿½
     if (modelToDelete->rigidBody) {
         dynamicsWorld->removeRigidBody(modelToDelete->rigidBody);
 
-        // RigidBody¿¡ ÇÒ´çµÈ ¸®¼Ò½º ÇØÁ¦
+        // RigidBodyï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½ï¿½
         delete modelToDelete->rigidBody->getMotionState();
         delete modelToDelete->rigidBody;
         modelToDelete->rigidBody = nullptr;
     }
 
-    // models º¤ÅÍ¿¡¼­ ÇØ´ç ¸ðµ¨ Á¦°Å
+    // models ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     auto it = std::find_if(models.begin(), models.end(), [&](const Model* model) {
         return *&model == *&modelToDelete;
         });
@@ -170,13 +170,13 @@ void removeModelFromWorld(std::vector<Model*>& models, Model*& modelToDelete) {
     }
 }
 
-// Æ¯Á¤ ¸ðµ¨ÀÇ RigidBody¸¸ Á¦°ÅÇÏ´Â ÇÔ¼ö
+// Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ RigidBodyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 void removeRigidBodyFromModel(Model*& model) {
     if (model->rigidBody) {
-        // ¹°¸® ¼¼°è¿¡¼­ RigidBody Á¦°Å
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½è¿¡ï¿½ï¿½ RigidBody ï¿½ï¿½ï¿½ï¿½
         dynamicsWorld->removeRigidBody(model->rigidBody);
 
-        // RigidBody¿¡ ÇÒ´çµÈ ¸®¼Ò½º ÇØÁ¦
+        // RigidBodyï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½ï¿½
         delete model->rigidBody->getMotionState();
         delete model->rigidBody;
         model->rigidBody = nullptr;
@@ -193,7 +193,7 @@ void UpdateRigidBodyTransforms(std::vector<Model*>models) {
         btTransform transform;
         transform.setFromOpenGLMatrix(glm::value_ptr(modelMatrix));
 
-        // µð¹ö±ë ·Î±×
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½
         /*std::cout << "Updating RigidBody for Model: " << model->name
             << " | OpenGL Position: (" << modelMatrix[3][0] << ", "
             << modelMatrix[3][1] << ", " << modelMatrix[3][2] << ")"
@@ -211,7 +211,7 @@ void UpdateRigidBodyTransform(Model*& model) {
     btTransform transform;
     transform.setFromOpenGLMatrix(glm::value_ptr(modelMatrix));
 
-    // µð¹ö±ë ·Î±×
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½
     std::cout << "Updating RigidBody for Model: " << model->name
         << " | OpenGL Position: (" << modelMatrix[3][0] << ", "
         << modelMatrix[3][1] << ", " << modelMatrix[3][2] << ")"
@@ -221,9 +221,9 @@ void UpdateRigidBodyTransform(Model*& model) {
 }
 
 void RenderCollisionBox(const Model* model, GLuint shaderProgram) {
-    if (!model->rigidBody) return; // ¹°¸® °´Ã¼°¡ ¾øÀ¸¸é °Ç³Ê¶Ü
+    if (!model->rigidBody) return; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç³Ê¶ï¿½
 
-    // AABB °è»ê
+    // AABB ï¿½ï¿½ï¿½
     btVector3 aabbMin, aabbMax;
     model->rigidBody->getCollisionShape()->getAabb(model->rigidBody->getWorldTransform(), aabbMin, aabbMax);
 
@@ -242,12 +242,12 @@ void RenderCollisionBox(const Model* model, GLuint shaderProgram) {
     };
 
     GLuint indices[24] = {
-        0, 1, 1, 2, 2, 3, 3, 0,  // ¾Õ¸é
-        4, 5, 5, 6, 6, 7, 7, 4,  // µÞ¸é
-        0, 4, 1, 5, 2, 6, 3, 7   // ¾Õ¸é-µÞ¸é ¿¬°á
+        0, 1, 1, 2, 2, 3, 3, 0,  // ï¿½Õ¸ï¿½
+        4, 5, 5, 6, 6, 7, 7, 4,  // ï¿½Þ¸ï¿½
+        0, 4, 1, 5, 2, 6, 3, 7   // ï¿½Õ¸ï¿½-ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½
     };
 
-    // VAO/VBO/EBO ¼³Á¤
+    // VAO/VBO/EBO ï¿½ï¿½ï¿½ï¿½
     GLuint vao, vbo, ebo;
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -264,10 +264,10 @@ void RenderCollisionBox(const Model* model, GLuint shaderProgram) {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // ¼ÎÀÌ´õ »ç¿ë ¹× À¯´ÏÆû ¼³Á¤
+    // ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     glUseProgram(shaderProgram);
 
-    // ÀÌÀü Çà·ÄÀÇ ¿µÇâÀ» ¾ø¾Ö±â À§ÇØ identity Çà·Ä·Î ¼³Á¤
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ identity ï¿½ï¿½Ä·ï¿½ ï¿½ï¿½ï¿½ï¿½
     glm::mat4 identityMatrix = glm::mat4(1.0f);
     GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
     GLint viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -276,15 +276,15 @@ void RenderCollisionBox(const Model* model, GLuint shaderProgram) {
     if (viewLoc != -1) glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(identityMatrix));
     if (projectionLoc != -1) glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(identityMatrix));
 
-    // AABB ·»´õ¸µ ÇÃ·¡±× È°¼ºÈ­
+    // AABB ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
     GLint isRigidBodyLoc = glGetUniformLocation(shaderProgram, "isRigidBody");
     if (isRigidBodyLoc != -1) glUniform1i(isRigidBodyLoc, 1);
 
-    // AABB ¹Ú½º ·»´õ¸µ
+    // AABB ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     glBindVertexArray(vao);
     glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, 0);
 
-    // »óÅÂ º¹¿ø ¹× ¸®¼Ò½º Á¤¸®
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (isRigidBodyLoc != -1) glUniform1i(isRigidBodyLoc, 0);
     glBindVertexArray(0);
     glDeleteVertexArrays(1, &vao);

@@ -3,10 +3,10 @@
 #include <opencv2/opencv.hpp>
 
 void loadVideo(const std::string& fileName, const std::string& path, bool* isRunning) {
-    // 1. OpenCV ¹öÀü Ãâ·Â
+    // 1. OpenCV ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     std::cout << "OpenCV Version: " << CV_VERSION << std::endl;
 
-    // 2. µ¿¿µ»ó ÆÄÀÏ ¿­±â
+    // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     cv::VideoCapture cap(path + fileName);
 
     if (!cap.isOpened()) {
@@ -14,22 +14,22 @@ void loadVideo(const std::string& fileName, const std::string& path, bool* isRun
         return;
     }
 
-    // 4. À©µµ¿ì »ý¼º (Ã¢ ÀÌ¸§ ÁöÁ¤)
+    // 4. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Ã¢ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½)
     cv::namedWindow("Kartrider Intro", cv::WINDOW_NORMAL);
 
-    // 5. Ã¢ À§Ä¡ ¹× Å©±â ¼³Á¤
+    // 5. Ã¢ ï¿½ï¿½Ä¡ ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     cv::moveWindow("Kartrider Intro", location_x, location_y);
     cv::resizeWindow("Kartrider Intro", window_width, window_height);
 
-    // 6. µ¿¿µ»ó Àç»ý ·çÇÁ
+    // 6. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     cv::Mat frame;
     while (isRunning) {
-        cap >> frame; // ÇÁ·¹ÀÓ ÀÐ±â
+        cap >> frame; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
         if (frame.empty()) {
-            break; // µ¿¿µ»ó ³¡
+            break; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         }
 
-        // Ã¢ »óÅÂ È®ÀÎ: Ã¢ÀÌ ´ÝÈ÷¸é ·çÇÁ Á¾·á
+        // Ã¢ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½: Ã¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (cv::getWindowProperty("Kartrider Intro", cv::WND_PROP_VISIBLE) < 1) {
             exit(0);
             break;
@@ -38,16 +38,16 @@ void loadVideo(const std::string& fileName, const std::string& path, bool* isRun
         cv::moveWindow("Kartrider Intro", location_x, location_y);
         cv::resizeWindow("Kartrider Intro", window_width, window_height);
 
-        // ÇÁ·¹ÀÓ È­¸é¿¡ Ãâ·Â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È­ï¿½é¿¡ ï¿½ï¿½ï¿½
         cv::imshow("Kartrider Intro", frame);
 
-        // ESC Å°¸¦ ´©¸£¸é Á¾·á
+        // ESC Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (cv::waitKey(30) == 27) {
             break;
         }
     }
 
-    // 7. ÀÚ¿ø ÇØÁ¦
+    // 7. ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½
     cap.release();
     cv::destroyAllWindows();
 }
