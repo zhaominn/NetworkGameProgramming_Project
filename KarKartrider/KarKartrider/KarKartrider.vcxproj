@@ -182,6 +182,7 @@
     <ClInclude Include="Ui_v2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BulletPhysics.cpp" />
     <ClCompile Include="filetobuf.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mode.cpp" />
