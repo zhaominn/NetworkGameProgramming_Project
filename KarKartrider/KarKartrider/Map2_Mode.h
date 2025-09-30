@@ -12,6 +12,8 @@
 #include <glm/glm/gtx/quaternion.hpp>
 #include <functional>  // std::function을 사용하기 위해 필요
 
+#include "CustomContactResultCallback.h"
+
 class Map2_Mode : public Mode {
 public:
 

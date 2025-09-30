@@ -13,6 +13,9 @@
 #include <unordered_map> // keystate
 #include <functional>  // std::function을 사용하기 위해 필요
 
+#include "CustomContactResultCallback.h"
+
+
 class Map1_Mode : public Mode {
 public:
 	std::function<void()> goSelectMode; // 셀렉트 모드로 돌아가는 함수

@@ -183,6 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BulletPhysics.cpp" />
+    <ClCompile Include="CustomContactResultCallback.cpp" />
     <ClCompile Include="filetobuf.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mode.cpp" />
