@@ -187,5 +187,14 @@
     <ClCompile Include="Model.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
+    <ClCompile Include="LoadProgress.cpp">
+      <Filter>소스 파일\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadMtl.cpp">
+      <Filter>소스 파일\Load</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadObj.cpp">
+      <Filter>소스 파일\Load</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

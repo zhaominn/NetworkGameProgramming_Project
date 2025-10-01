@@ -1,35 +1,37 @@
 #pragma once
-#include<iostream>
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <type_traits>
 #include <glm/glm/glm.hpp>
 
 #include "DefaultModel.h"
 #include "Model.h"
 
-void printProgressBar(int progress, int total) {
-    const int barWidth = 50; // 로딩바 너비
-    float percentage = static_cast<float>(progress) / total;
+// 진행률 표시줄 (선언)
+void printProgressBar(int progress, int total);
 
-    std::cout << "\r[";
-    int pos = static_cast<int>(barWidth * percentage);
-    for (int i = 0; i < barWidth; ++i) {
-        if (i < pos) std::cout << "=";
-        else if (i == pos) std::cout << ">";
-        else std::cout << " ";
-    }
-    std::cout << "] " << static_cast<int>(percentage * 100.0) << "%";
-    std::cout.flush();
-}
-
-template <typename T, typename = std::enable_if<std::is_base_of<Model, T>::value>>
-void loadModelWithProgress(const std::string& modelPath, const std::string path, const std::string& modelName, const std::string& modelType, glm::mat4 scale, std::vector<Model*>& models, bool rigid_status, bool draw_status) {
+// 템플릿 함수 (헤더에만 구현)
+template <typename T, typename = std::enable_if_t<std::is_base_of<Model, T>::value>>
+void loadModelWithProgress(
+    const std::string& modelPath,
+    const std::string path,
+    const std::string& modelName,
+    const std::string& modelType,
+    glm::mat4 scale,
+    std::vector<Model*>& models,
+    bool rigid_status,
+    bool draw_status)
+{
     std::cout << "Loading model: " << modelName << std::endl;
 
-    const int totalSteps = 4; // 총 작업 단계 수
+    const int totalSteps = 4;
     int currentStep = 0;
 
     // Step 1: OBJ 파일 로드
     std::cout << "Step 1/4: Reading OBJ file..." << std::endl;
-    T* model = new T(modelPath, path, modelName, modelType, rigid_status, scale);  // 템플릿으로 모델 생성
+    T* model = new T(modelPath, path, modelName, modelType, rigid_status, scale);
     currentStep++;
     printProgressBar(currentStep, totalSteps);
 
@@ -69,17 +71,13 @@ void loadModelWithProgress(const std::string& modelPath, const std::string path,
     currentStep++;
     printProgressBar(currentStep, totalSteps);
 
-    // 모델 로드 완료
     std::cout << "\nModel loaded successfully!" << std::endl;
 
     if (rigid_status) {
         addModelToPhysicsWorld(model);
-
-        //충돌 세계 추가완료
-        std::cout << "\nModel add PhysicsWorld add!" << std::endl;
+        std::cout << "\nModel added to PhysicsWorld!" << std::endl;
     }
 
     model->draw_status = draw_status;
-
     models.push_back(model);
 }

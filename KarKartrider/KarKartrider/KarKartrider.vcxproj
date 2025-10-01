@@ -186,6 +186,9 @@
     <ClCompile Include="CustomContactResultCallback.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="filetobuf.cpp" />
+    <ClCompile Include="LoadMtl.cpp" />
+    <ClCompile Include="LoadObj.cpp" />
+    <ClCompile Include="LoadProgress.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mode.cpp" />
     <ClCompile Include="Model.cpp" />
