@@ -49,6 +49,12 @@
     <Filter Include="소스 파일\BulletPhysics">
       <UniqueIdentifier>{bf296005-6b5f-461d-b407-feb997a1bdc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Debug">
+      <UniqueIdentifier>{8a6ef3ee-20d5-4f61-b308-a4606171a8a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Object">
+      <UniqueIdentifier>{98c23089-07ee-412e-ab5b-ad77555bc113}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="vertex.glsl">
@@ -174,6 +180,12 @@
     </ClCompile>
     <ClCompile Include="CustomContactResultCallback.cpp">
       <Filter>소스 파일\BulletPhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>소스 파일\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>소스 파일\Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

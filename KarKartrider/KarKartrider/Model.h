@@ -7,6 +7,12 @@
 #include <unordered_map>
 #include <tuple>
 
+#include <glew.h>
+
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
+
 #include"include/btBulletDynamicsCommon.h"
 
 struct Vertex {
