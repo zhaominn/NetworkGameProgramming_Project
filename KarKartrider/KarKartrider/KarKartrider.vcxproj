@@ -197,6 +197,7 @@
     <ClCompile Include="Mode.cpp" />
     <ClCompile Include="RoadModel.cpp" />
     <ClCompile Include="Ui.cpp" />
+    <ClCompile Include="Ui_v2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

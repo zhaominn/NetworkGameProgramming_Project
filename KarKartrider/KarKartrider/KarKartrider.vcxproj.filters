@@ -214,5 +214,8 @@
     <ClCompile Include="Ui.cpp">
       <Filter>소스 파일\Ui</Filter>
     </ClCompile>
+    <ClCompile Include="Ui_v2.cpp">
+      <Filter>소스 파일\Ui</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
