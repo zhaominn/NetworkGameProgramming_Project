@@ -23,22 +23,18 @@
 
 class LogoMode : public Mode {
 public:
-    bool isRunning; // ���α׷� ���� ���¸� ��Ÿ���� �÷���
+    bool isRunning;
 
-    /* �⺻ ������ �ʼ�~~ */
     LogoMode() : isRunning(true) {}
     ~LogoMode() {
         delete this;
     }
 
     void init() override {
-        // 1. ������ ��� ������ ����
         std::thread videoThread(&LogoMode::runVideo, this);
 
-        // 2. ���� ��� ������ ����
         std::thread soundThread(&LogoMode::runSound, this);
 
-        // 3. �� �ε� �� Bullet Physics �ʱ�ȭ (���� �����忡�� ����)
         loadModelWithProgress<KartModel>("bazzi_face2.obj", "obj/character/", "character_face", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
         loadModelWithProgress<KartModel>("bazzi_body.obj", "obj/character/", "character_body", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
         loadModelWithProgress<KartModel>("booster.obj", "obj/car/booster/", "booster", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
@@ -96,7 +92,6 @@ public:
         m1 = glm::scale(m1, glm::vec3(5.0, 15.0, 15.0));
         loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m1, road2_barricate, true, false);
 
-        //����
         glm::mat4 m2 = glm::mat4(1.0f);
         m2 = glm::translate(m2, glm::vec3(146.8, 0.0, -146.8));
         m2 = glm::rotate(m2, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
@@ -128,16 +123,13 @@ public:
 
         //loadModelWithProgress<KartModel>("pause.obj", "obj/ui/", "pause", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), pause, true, true);
          
-        //����� �ε� ��
         loadModelWithProgress<MapModel>("village_road.obj", "asset/select_mode/", "village_road", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), selectMaps, false, true);
 
-        //// ����� ���� ��
         glm::mat4 map2_matrix = glm::mat4(1.0f);
         map2_matrix = glm::translate(map2_matrix, glm::vec3(2.5, 0.0, 0.0));
         map2_matrix = glm::scale(map2_matrix, glm::vec3(1.0, 1.0, 1.0));
         loadModelWithProgress<MapModel>("villiage_unha.obj", "asset/select_mode/", "villiage_unha", "box", map2_matrix, selectMaps, false, true);
 
-        // �ʼ��� Ű���� ����Ű
         glm::mat4 arrow_matrix = glm::mat4(1.0f);
         arrow_matrix = glm::translate(arrow_matrix, glm::vec3(-0.2, -1.0, 1.0));
         arrow_matrix = glm::scale(arrow_matrix, glm::vec3(0.5, 0.5, 0.5));
@@ -150,11 +142,9 @@ public:
         enter_matrix = glm::rotate(enter_matrix, glm::radians(-80.0f), glm::vec3(1.0, 0.0, 0.0));
         loadModelWithProgress<MapModel>("enter_key.obj", "asset/select_mode/", "enter_key", "box", enter_matrix, selectMaps, false, true);
 
-        // 5. ������ �� ���� ������ ���� ���
         videoThread.join();
         soundThread.join();
 
-        // 4. ���α׷� ���� �÷��� ����
         isRunning = false;
         SelectMapMode* selectMapMode = new SelectMapMode();
         MM.SetMode(selectMapMode);
@@ -177,12 +167,10 @@ public:
     }
 
 private:
-    // ������ ���� �Լ�
     void runVideo() {
         loadVideo("kartrider_intro.mp4", "./asset/select_mode/", &isRunning);
     }
 
-    // ���� ���� �Լ�
     void runSound() {
         play_sound2D("kartrider_intro.WAV", "./asset/select_mode/", false, &isRunning);
     }

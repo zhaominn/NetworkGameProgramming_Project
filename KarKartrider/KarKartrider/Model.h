@@ -24,9 +24,9 @@ struct Vertex {
 };
 
 struct Texture {
-    std::string type;  // �ؽ�ó ���� (e.g., diffuse, specular, normal, ambient)
-    GLuint id;         // OpenGL �ؽ�ó ID
-    std::string path;  // �ؽ�ó ���� ���
+    std::string type;
+    GLuint id;         
+    std::string path;  
 };
 
 struct TextureCoord {
@@ -38,65 +38,62 @@ struct Normal {
 };
 
 struct Face {
-    unsigned int v1, v2, v3;  // ���� �ε���
-    unsigned int t1, t2, t3;  // �ؽ�ó ��ǥ �ε��� (������)
-    unsigned int n1, n2, n3;  // ���� ���� �ε���
-    std::string materialName; // Face�� ����ϴ� ���� �̸� (usemtl)
+    unsigned int v1, v2, v3;  
+    unsigned int t1, t2, t3;  
+    unsigned int n1, n2, n3;  
+    std::string materialName; 
 };
 
 struct Material {
     std::string name;
-    glm::vec3 Ka;  // ȯ�汤 ���
-    glm::vec3 Kd;  // ���ݻ籤 ���
-    glm::vec3 Ks;  // �ݻ籤 ���
-    float Ns;      // ��¦�� ����
+    glm::vec3 Ka;  
+    glm::vec3 Kd;  
+    glm::vec3 Ks;  
+    float Ns;      
 
-    std::string map_Ka; // ȯ�汤 �ؽ�ó ���� ���
-    std::string map_Kd; // ���ݻ籤 �ؽ�ó ���� ���
-    std::string map_Ks; // �ݻ籤 �ؽ�ó ���� ���
+    std::string map_Ka; 
+    std::string map_Kd; 
+    std::string map_Ks; 
 
-    GLuint ambientTextureID = 0;  // ȯ�汤 �ؽ�ó ID
-    GLuint diffuseTextureID = 0;  // ���ݻ籤 �ؽ�ó ID
-    GLuint specularTextureID = 0; // �ݻ籤 �ؽ�ó ID
+    GLuint ambientTextureID = 0;  
+    GLuint diffuseTextureID = 0;  
+    GLuint specularTextureID = 0; 
 
-    std::vector<Texture> textures;  // ���� �ؽ�ó ����
+    std::vector<Texture> textures;  
 
-    bool hasTexture_s = false;  // �ؽ�ó�� �ִ��� ����
+    bool hasTexture_s = false;  
 
-    // �ؽ�ó�� �ִ��� Ȯ��
     bool hasTexture() const { return !textures.empty(); }
 };
 
 class Model {
 public:
-    std::vector<Vertex> vertices;  // ���� �迭
-    std::vector<TextureCoord> texCoords;  // �ؽ�ó ��ǥ �迭 (�߰�)
-    std::vector<Normal> normals;   // ���� ���� �迭
-    std::vector<Face> faces;       // �� �迭
+    std::vector<Vertex> vertices;  
+    std::vector<TextureCoord> texCoords;  
+    std::vector<Normal> normals;  
+    std::vector<Face> faces;       
 
     glm::mat4 matrix = glm::mat4(1.0f);
-    glm::mat4 translateMatrix = glm::mat4(1.0f);  // ���� �̵��� ��ġ�� ������ ����
-    glm::mat4 rotateMatrix = glm::mat4(1.0f);    // ���� �ʱ� ȸ�� ���
+    glm::mat4 translateMatrix = glm::mat4(1.0f);  
+    glm::mat4 rotateMatrix = glm::mat4(1.0f);   
 
     std::unordered_map<std::string, Material> materials;
 
     std::string name;
-    std::string type; // �� ���� Ÿ�� ex) box, sphere, cylinder
+    std::string type;
 
-    GLuint textureID;  // �ؽ�ó ID �ʵ� �߰�
+    GLuint textureID; 
 
     bool model_status = true;
-    btRigidBody* rigidBody = nullptr;  // �� ���� ��ü
+    btRigidBody* rigidBody = nullptr;  
     bool rigid_status = true;
     bool draw_status = true;
 
     GLuint vao;
     GLuint vbos[4];
-    // �ؽ�ó���� Face�� �׷�ȭ
     std::unordered_map<std::string, std::vector<unsigned int>> textureGroups;
     std::unordered_map<std::string, GLuint> textureEBOs;
 
-    // ������ �ؽ�ó ����
     std::unordered_map<std::string, Texture> materialTextureMap;
 
     virtual void load_obj(std::string name, std::string path, std::string obj_name, std::string obj_type, glm::mat4 start_matrix = glm::mat4(1.0f)) = 0;
@@ -104,5 +101,5 @@ public:
     virtual const void draw_rigidBody(GLuint shaderProgramID) = 0;
     virtual void initBuffer() = 0;
 
-    virtual ~Model() = default; // ���� �Ҹ���
+    virtual ~Model() = default; 
 };

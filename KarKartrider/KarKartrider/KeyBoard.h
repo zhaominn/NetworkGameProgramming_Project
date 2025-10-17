@@ -10,7 +10,6 @@
 #include "root.h"
 #include "Camera.h"
 
-//Ű
 std::unordered_map<char, bool> keyState;
 
 void keyDown_s(const char& key) {
