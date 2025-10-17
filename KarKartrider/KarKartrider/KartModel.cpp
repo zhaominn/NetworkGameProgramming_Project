@@ -1,23 +1,21 @@
-#include "RoadModel.h"
+#include "KartModel.h"
 
 #include "TupleHash.h"
 
-using namespace std;
-
-RoadModel::RoadModel(string name, string path, string obj_name, string obj_type, bool rigid_status, glm::mat4 start_matrix)
+KartModel::KartModel(string name, string path, string obj_name, string obj_type, bool rigid_status, glm::mat4 start_matrix)
 {
     read_obj_file(name, path, this, obj_name, obj_type);
-    this->translateMatrix = start_matrix * this->matrix;
+    this->translateMatrix = start_matrix * this->translateMatrix;
     this->rigid_status = rigid_status;
 }
 
-void RoadModel::load_obj(string name, string path, string obj_name, string obj_type, glm::mat4 start_matrix)
+void KartModel::load_obj(string name, string path, string obj_name, string obj_type, glm::mat4 start_matrix)
 {
     read_obj_file(name, path, this, obj_name, obj_type);
-    this->translateMatrix = start_matrix * this->matrix;
+    this->translateMatrix = start_matrix * this->translateMatrix;
 }
 
-const void RoadModel::draw(GLint shaderProgramID, bool(*isKeyPressed_s)(const char&))
+const void KartModel::draw(GLint shaderProgramID, bool(*isKeyPressed_s)(const char&))
 {
     if (!this->draw_status) return;
 
@@ -92,14 +90,14 @@ const void RoadModel::draw(GLint shaderProgramID, bool(*isKeyPressed_s)(const ch
     }
 }
 
-const void RoadModel::draw_rigidBody(GLuint shaderProgramID)
+const void KartModel::draw_rigidBody(GLuint shaderProgramID)
 {
     if (this->rigidBody) {
         RenderCollisionBox(this, shaderProgramID); // �浹 �ڽ� �׸���
     }
 }
 
-void RoadModel::initBuffer()
+void KartModel::initBuffer()
 {
     // Step 1: VAO ���� �� ���ε�
     glGenVertexArrays(1, &vao);
