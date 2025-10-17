@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include "Model.h"
 
-// MTL ÆÄÀÏÀ» ÀÐ¾î¿Í¼­ ÀçÁú Á¤º¸¸¦ ÆÄ½ÌÇÏ´Â ÇÔ¼ö ¼±¾ð
+// MTL ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½Í¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ä½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 void read_mtl_file(
     const std::string& filename,
     const std::string path,

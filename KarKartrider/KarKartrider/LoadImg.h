@@ -4,10 +4,10 @@
 #include "root.h"
 
 void loadImage(const std::string& fileName, const std::string& path) {
-    // 1. OpenCV ¹öÀü Ãâ·Â
+    // 1. OpenCV ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     std::cout << "OpenCV Version: " << CV_VERSION << std::endl;
 
-    // 2. ÀÌ¹ÌÁö ÆÄÀÏ ¿­±â
+    // 2. ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     cv::Mat image = cv::imread(path + fileName);
 
     if (image.empty()) {
@@ -15,29 +15,29 @@ void loadImage(const std::string& fileName, const std::string& path) {
         return;
     }
 
-    // 3. À©µµ¿ì »ý¼º (Ã¢ ÀÌ¸§ ÁöÁ¤)
+    // 3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Ã¢ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½)
     cv::namedWindow("Kartrider Image", cv::WINDOW_NORMAL);
 
-    // 4. Ã¢ À§Ä¡ ¹× Å©±â ¼³Á¤
+    // 4. Ã¢ ï¿½ï¿½Ä¡ ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     cv::moveWindow("Kartrider Image", location_x, location_y);
     cv::resizeWindow("Kartrider Image", window_width, window_height);
 
-    // 5. ÀÌ¹ÌÁö Ãâ·Â ·çÇÁ
+    // 5. ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     while (true) {
-        // Ã¢ »óÅÂ È®ÀÎ: Ã¢ÀÌ ´ÝÈ÷¸é ·çÇÁ Á¾·á
+        // Ã¢ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½: Ã¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (cv::getWindowProperty("Kartrider Image", cv::WND_PROP_VISIBLE) < 1) {
             break;
         }
 
-        // ÀÌ¹ÌÁö È­¸é¿¡ Ãâ·Â
+        // ï¿½Ì¹ï¿½ï¿½ï¿½ È­ï¿½é¿¡ ï¿½ï¿½ï¿½
         cv::imshow("Kartrider Image", image);
 
-        // ESC Å°¸¦ ´©¸£¸é Á¾·á
+        // ESC Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (cv::waitKey(30) == 27) {
             break;
         }
     }
 
-    // 6. À©µµ¿ì ´Ý±â
+    // 6. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý±ï¿½
     cv::destroyAllWindows();
 }

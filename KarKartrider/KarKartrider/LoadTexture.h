@@ -9,9 +9,9 @@
 
 #include "include/stb_image.h"
 
-/// ÅØ½ºÃ³ ·Îµå ÇÔ¼ö: OpenGL ÅØ½ºÃ³¸¦ »ý¼ºÇÏ°í ÆÄÀÏ¿¡¼­ µ¥ÀÌÅÍ¸¦ ·Îµå
-/// @param path ÅØ½ºÃ³ ÆÄÀÏ °æ·Î
-/// @return OpenGL ÅØ½ºÃ³ ID
+/// ï¿½Ø½ï¿½Ã³ ï¿½Îµï¿½ ï¿½Ô¼ï¿½: OpenGL ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Îµï¿½
+/// @param path ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+/// @return OpenGL ï¿½Ø½ï¿½Ã³ ID
 Texture load_texture(const std::string& path, const std::string& type) {
     Texture texture;
     texture.type = type;
@@ -26,29 +26,29 @@ Texture load_texture(const std::string& path, const std::string& type) {
         throw std::runtime_error("Failed to load texture");
     }
 
-    // OpenGL ÅØ½ºÃ³ ID »ý¼º
+    // OpenGL ï¿½Ø½ï¿½Ã³ ID ï¿½ï¿½ï¿½ï¿½
     GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    // ÅØ½ºÃ³ µ¥ÀÌÅÍ ¾÷·Îµå ¹× ¼³Á¤
+    // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     GLenum format = (nrChannels == 3) ? GL_RGB : GL_RGBA;
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    // ÅØ½ºÃ³ ÇÊÅÍ ¹× ·¡ÇÎ ¿É¼Ç ¼³Á¤
+    // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½É¼ï¿½ ï¿½ï¿½ï¿½ï¿½
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // CPU ¸Þ¸ð¸®¿¡¼­ ÅØ½ºÃ³ µ¥ÀÌÅÍ ÇØÁ¦
+    // CPU ï¿½Þ¸ð¸®¿ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     stbi_image_free(data);
 
-    // ÅØ½ºÃ³ ID¸¦ Texture ±¸Á¶Ã¼¿¡ ÀúÀå
+    // ï¿½Ø½ï¿½Ã³ IDï¿½ï¿½ Texture ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     texture.id = textureID;
 
     //std::cout << "[INFO] Texture loaded: " << path << " (ID: " << textureID << ")" << std::endl;
 
-    return texture;  // Texture ±¸Á¶Ã¼ ¹ÝÈ¯
+    return texture;  // Texture ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½ï¿½È¯
 }

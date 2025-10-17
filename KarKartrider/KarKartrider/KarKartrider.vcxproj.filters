@@ -55,6 +55,9 @@
     <Filter Include="소스 파일\Object">
       <UniqueIdentifier>{98c23089-07ee-412e-ab5b-ad77555bc113}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Ui">
+      <UniqueIdentifier>{88aa40d6-446d-44eb-9f31-94c6d648ae84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="vertex.glsl">
@@ -207,6 +210,9 @@
     </ClCompile>
     <ClCompile Include="DefaultModel.cpp">
       <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui.cpp">
+      <Filter>소스 파일\Ui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

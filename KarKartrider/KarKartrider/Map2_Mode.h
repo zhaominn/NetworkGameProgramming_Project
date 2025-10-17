@@ -10,17 +10,17 @@
 
 #include <glm/glm/gtc/quaternion.hpp>
 #include <glm/glm/gtx/quaternion.hpp>
-#include <functional>  // std::functionÀ» »ç¿ëÇÏ±â À§ÇØ ÇÊ¿ä
+#include <functional>  // std::functionï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 
 #include "CustomContactResultCallback.h"
 
 class Map2_Mode : public Mode {
 public:
 
-	std::function<void()> goSelectMode; // ¼¿·ºÆ® ¸ðµå·Î µ¹¾Æ°¡´Â ÇÔ¼ö
+	std::function<void()> goSelectMode; // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 
-	glm::quat cameraRotationQuat = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)); // ÇöÀç Ä«¸Þ¶ó Çà·ÄÀ» ÄõÅÍ´Ï¾ðÀ¸·Î ÀúÀå
-	float reducedRotationInfluence = 0.0f; // º¸°£ÇÒ ÆÛ¼¾Æ®
+	glm::quat cameraRotationQuat = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)); // ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	float reducedRotationInfluence = 0.0f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Û¼ï¿½Æ®
 
 	GLfloat kart_speed = 0.0f;
 
@@ -45,17 +45,17 @@ public:
 	bool left = false;
 	bool right = false;
 
-	glm::vec3 cameraTargetPos = glm::vec3(0.0, 0.0, 5.0); // Ä«¸Þ¶óÀÇ ¸ñÇ¥ À§Ä¡
-	glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 5.0);       // Ä«¸Þ¶óÀÇ ÇöÀç À§Ä¡
+	glm::vec3 cameraTargetPos = glm::vec3(0.0, 0.0, 5.0); // Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡
+	glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 5.0);       // Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
 	glm::vec3 cameraDirection = glm::vec3(0.0, 0.0, -1.0);
 	glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0);
 	glm::mat4 projection = glm::mat4(1.0f);
 	glm::mat4 view = glm::mat4(1.0f);
 
-	// Ä«¸Þ¶ó È¸Àü °¢µµ
-	float yaw = -90.0f; // ¼öÆò È¸Àü (±âº»: -ZÃà)
-	float pitch = 0.0f; // ¼öÁ÷ È¸Àü (±âº»: ¼öÆò)
-	float TURN_ANGLE = 1.0f; // È¸Àü °¢µµ (±âº» 1µµ) (Ä«Æ® È¸Àü °¢µµ)
+	// Ä«ï¿½Þ¶ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	float yaw = -90.0f; // ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ (ï¿½âº»: -Zï¿½ï¿½)
+	float pitch = 0.0f; // ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ (ï¿½âº»: ï¿½ï¿½ï¿½ï¿½)
+	float TURN_ANGLE = 1.0f; // È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½âº» 1ï¿½ï¿½) (Ä«Æ® È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 
 	//sound
 	bool isBackgroundSound = false;
@@ -77,48 +77,48 @@ public:
 
 	// ----- game ------
 	int booster_cnt = 2;
-	const int MAX_BOOSTER_CNT = 2;        // ÃÖ´ë ºÎ½ºÅÍ °³¼ö
-	bool isBoosterRegenActive = true;     // ºÎ½ºÅÍ Àç»ý¼º È°¼ºÈ­ ¿©ºÎ
-	std::thread boosterRegenThread;       // ºÎ½ºÅÍ Àç»ý¼º ½º·¹µå
-	bool isBoosterActive = false; // ºÎ½ºÆ® È°¼ºÈ­ »óÅÂ
-	bool isGameOver = false; // °ÔÀÓ Á¾·á »óÅÂ ÇÃ·¡±×
+	const int MAX_BOOSTER_CNT = 2;        // ï¿½Ö´ï¿½ ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	bool isBoosterRegenActive = true;     // ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½
+	std::thread boosterRegenThread;       // ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	bool isBoosterActive = false; // ï¿½Î½ï¿½Æ® È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½
+	bool isGameOver = false; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
 	int game_timer = 30;
 
-	//Ä³¸¯ÅÍ ¾ó±¼ È¸Àü °¢µµ
-	float character_face_rotation = 0.0f; // Ä³¸¯ÅÍ ¾ó±¼ÀÇ ÇöÀç YÃà È¸Àü °¢µµ
-	const float MAX_FACE_ROTATION = 25.0f; // °í°³°¡ ÁÂ¿ì·Î ÃÖ´ë È¸ÀüÇÒ °¢µµ (µµ ´ÜÀ§)
-	const float ROTATION_SPEED = 5.0f;     // °í°³ È¸Àü ¼Óµµ (ÇÁ·¹ÀÓ´ç È¸Àü °¢µµ)
-	const float RETURN_SPEED = 2.0f;       // °í°³°¡ Á¤¸éÀ¸·Î µ¹¾Æ°¡´Â ¼Óµµ (ÇÁ·¹ÀÓ´ç È¸Àü °¢µµ)
+	//Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	float character_face_rotation = 0.0f; // Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Yï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	const float MAX_FACE_ROTATION = 25.0f; // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â¿ï¿½ï¿½ ï¿½Ö´ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	const float ROTATION_SPEED = 5.0f;     // ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½Óµï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½Ó´ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	const float RETURN_SPEED = 2.0f;       // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ ï¿½Óµï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½Ó´ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 
-	float booster_head_tilt = 0.0f; // Ä³¸¯ÅÍ ¸Ó¸®ÀÇ XÃà È¸Àü °¢µµ
-	const float MAX_HEAD_TILT = 20.0f; // ºÎ½ºÅÍ »ç¿ë ½Ã ÃÖ´ë XÃà È¸Àü °¢µµ
-	const float TILT_SPEED = 2.0f;     // ºÎ½ºÅÍ ½Ã ¸Ó¸®ÀÇ È¸Àü ¼Óµµ
+	float booster_head_tilt = 0.0f; // Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¸ï¿½ï¿½ï¿½ Xï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	const float MAX_HEAD_TILT = 20.0f; // ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ Xï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	const float TILT_SPEED = 2.0f;     // ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ó¸ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½Óµï¿½
 
 	Map2_Mode() {
-		Mode::currentInstance = this;  // Map1_Mode ÀÎ½ºÅÏ½º¸¦ currentInstance¿¡ ÇÒ´ç
+		Mode::currentInstance = this;  // Map1_Mode ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ currentInstanceï¿½ï¿½ ï¿½Ò´ï¿½
 		isCountNSound = true;
 		isCountGoSound = true;
-		// ºÎ½ºÅÍ Àç»ý¼º ½º·¹µå ½ÃÀÛ
+		// ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		boosterRegenThread = std::thread(&Map2_Mode::startBoosterRegen, this);
 	}
 	~Map2_Mode(){}
 
-	// ºÎ½ºÅÍ Àç»ý¼º ·ÎÁ÷
+	// ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void startBoosterRegen() {
 		while (isBoosterRegenActive) {
-			// ºÎ½ºÅÍ°¡ ÃÖ´ë °³¼ö¿¡ µµ´ÞÇÏÁö ¾Ê¾ÒÀ» ¶§¸¸ ´ë±â ÈÄ Áõ°¡
+			// ï¿½Î½ï¿½ï¿½Í°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			if (booster_cnt < MAX_BOOSTER_CNT) {
-				std::this_thread::sleep_for(std::chrono::seconds(6)); // 3ÃÊ ´ë±â
+				std::this_thread::sleep_for(std::chrono::seconds(6)); // 3ï¿½ï¿½ ï¿½ï¿½ï¿½
 
-				// ºÎ½ºÅÍ Áõ°¡ (´Ù½Ã È®ÀÎÇØ Á¶°Ç ÃæÁ· ½Ã Áõ°¡)
+				// ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ù½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 				if (booster_cnt < MAX_BOOSTER_CNT) {
-					++booster_cnt; // ºÎ½ºÅÍ °³¼ö Áõ°¡
+					++booster_cnt; // ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					std::cout << "Booster regenerated! Current boosters: " << booster_cnt << std::endl;
 				}
 			}
 			else {
-				// ¸¸¾à ºÎ½ºÅÍ°¡ ÀÌ¹Ì ÃÖ´ëÄ¡¶ó¸é ÀÏÁ¤ ½Ã°£ ´ë±â ÈÄ ´Ù½Ã È®ÀÎ
-				std::this_thread::sleep_for(std::chrono::milliseconds(100)); // 0.1ÃÊ ´ë±â
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Í°ï¿½ ï¿½Ì¹ï¿½ ï¿½Ö´ï¿½Ä¡ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ È®ï¿½ï¿½
+				std::this_thread::sleep_for(std::chrono::milliseconds(100)); // 0.1ï¿½ï¿½ ï¿½ï¿½ï¿½
 			}
 		}
 	}
@@ -126,88 +126,88 @@ public:
 	void draw_dashBoard() {
 		glUseProgram(shaderProgramID_UI);
 
-		// ÅØ½ºÃ³ È°¼ºÈ­ ÇÃ·¡±×
+		// ï¿½Ø½ï¿½Ã³ È°ï¿½ï¿½È­ ï¿½Ã·ï¿½ï¿½ï¿½
 		GLint isTextureLocation = glGetUniformLocation(shaderProgramID_UI, "isTexture");
 		glUniform1i(isTextureLocation, true);
 
-		// ÅØ½ºÃ³ ¸ðµ¨ ·»´õ¸µ
+		// ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		for (const auto& dashBoard : dashBoards) {
 			dashBoard->draw(shaderProgramID_UI, isKeyPressed_s);
 		}
 		glUniform1i(isTextureLocation, false);
 
-		glUseProgram(0); // ¿ø·¡ ¼ÎÀÌ´õ·Î º¹¿ø
+		glUseProgram(0); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	}
 
 	void draw_speed() {
-		glUseProgram(shaderProgramID_UI); // UI ·»´õ¸µ¿ë ¼ÎÀÌ´õ È°¼ºÈ­
+		glUseProgram(shaderProgramID_UI); // UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ È°ï¿½ï¿½È­
 
-		// isUI ÇÃ·¡±× È°¼ºÈ­
+		// isUI ï¿½Ã·ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
 		GLint isUILocation = glGetUniformLocation(shaderProgramID_UI, "isTimer");
-		glUniform1i(isUILocation, true); // UI ¸ðµå È°¼ºÈ­
+		glUniform1i(isUILocation, true); // UI ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
 
 		glPushMatrix();
-		glPixelZoom(5.0f, 5.0f);  // xÃà, yÃà È®´ë ºñÀ² (2¹è È®´ë)
+		glPixelZoom(5.0f, 5.0f);  // xï¿½ï¿½, yï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (2ï¿½ï¿½ È®ï¿½ï¿½)
 
-		// ÀÚµ¿Â÷ ¼Óµµ ¹®ÀÚ¿­ »ý¼º
+		// ï¿½Úµï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 		std::string speedText = std::to_string(static_cast<int>(kart_speed * 100));
 
-		// ÀÚµ¿Â÷ ¼Óµµ¸¦ È­¸é ¿ìÃø »ó´Ü¿¡ Ç¥½Ã
-		glRasterPos2f(0.0f, -0.97f); // È­¸é ¿ìÃø »ó´Ü
+		// ï¿½Úµï¿½ï¿½ï¿½ ï¿½Óµï¿½ï¿½ï¿½ È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ü¿ï¿½ Ç¥ï¿½ï¿½
+		glRasterPos2f(0.0f, -0.97f); // È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		for (char c : speedText) {
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
 		}
 
-		glPixelZoom(1.0f, 1.0f);  // ¿ø·¡ Å©±â·Î º¹±¸
+		glPixelZoom(1.0f, 1.0f);  // ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		glPopMatrix();
-		glUniform1i(isUILocation, false); // UI ¸ðµå È°¼ºÈ­
+		glUniform1i(isUILocation, false); // UI ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
 
-		glUseProgram(0); // ¿ø·¡ ¼ÎÀÌ´õ·Î º¹¿ø
+		glUseProgram(0); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	}
 
 	void draw_ui() {
 		glUseProgram(shaderProgramID_UI);
 
-		// È°¼ºÈ­ ÇÃ·¡±×
+		// È°ï¿½ï¿½È­ ï¿½Ã·ï¿½ï¿½ï¿½
 		GLint isUILocation = glGetUniformLocation(shaderProgramID_UI, "isTimer");
 		glUniform1i(isUILocation, true);
 
 		std::string uiText = "map : village road";
-		glRasterPos2f(-0.95f, 0.85f); // ÁÂ»ó´Ü À§Ä¡
+		glRasterPos2f(-0.95f, 0.85f); // ï¿½Â»ï¿½ï¿½ ï¿½ï¿½Ä¡
 		for (char c : uiText) {
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
 		}
 		glUniform1i(isUILocation, false);
 
-		// ÅØ½ºÃ³ È°¼ºÈ­ ÇÃ·¡±×
+		// ï¿½Ø½ï¿½Ã³ È°ï¿½ï¿½È­ ï¿½Ã·ï¿½ï¿½ï¿½
 		GLint isTextureLocation = glGetUniformLocation(shaderProgramID_UI, "isTexture");
 		glUniform1i(isTextureLocation, true);
 
-		// ÅØ½ºÃ³ ¸ðµ¨ ·»´õ¸µ
+		// ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		for (int i = 0; i < booster_cnt; ++i) {
 			booster_uis[i]->draw(shaderProgramID_UI, isKeyPressed_s);
 		}
 		glUniform1i(isTextureLocation, false);
 
-		glUseProgram(0); // ¿ø·¡ ¼ÎÀÌ´õ·Î º¹¿ø
+		glUseProgram(0); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	}
 
 	void draw_timer() {
 		glUseProgram(shaderProgramID_UI);
 
-		// È°¼ºÈ­ ÇÃ·¡±×
+		// È°ï¿½ï¿½È­ ï¿½Ã·ï¿½ï¿½ï¿½
 		GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isTimer");
 		glUniform1i(isTimerLocation, true);
 
-		// Å¸ÀÌ¸Ó ÅØ½ºÆ®
+		// Å¸ï¿½Ì¸ï¿½ ï¿½Ø½ï¿½Æ®
 		std::string timerText = "Time: " + std::to_string(game_timer);
-		glRasterPos2f(-0.95f, 0.9f); // ÁÂ»ó´Ü À§Ä¡
+		glRasterPos2f(-0.95f, 0.9f); // ï¿½Â»ï¿½ï¿½ ï¿½ï¿½Ä¡
 		for (char c : timerText) {
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
 		}
 		glUniform1i(isTimerLocation, false);
 
-		glUseProgram(0); // ¿ø·¡ ¼ÎÀÌ´õ·Î º¹¿ø
+		glUseProgram(0); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	}
 
 	void init() override {
@@ -215,7 +215,7 @@ public:
 		UpdateRigidBodyTransforms(road2_barricate);
 		UpdateRigidBodyTransforms(karts);
 
-		// Move »óÅÂ ÃÊ±âÈ­
+		// Move ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 		kart_keyState[UP] = false;
 		kart_keyState[DOWN] = false;
 		kart_keyState[LEFT] = false;
@@ -223,14 +223,14 @@ public:
 
 		start_count = -1;
 
-		for (const auto& kart : karts) { // Ä«Æ® À§Ä¡ ÃÊ±âÈ­
+		for (const auto& kart : karts) { // Ä«Æ® ï¿½ï¿½Ä¡ ï¿½Ê±ï¿½È­
 			kart->translateMatrix = glm::mat4(1.0f);
 			kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(165.0, 1.0, 30.0));
 		}
-		for (const auto& c : character) { //Ä«Æ®¿Í °°Àº Çà·Ä Àû¿ë
+		for (const auto& c : character) { //Ä«Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			c->translateMatrix = karts[0]->translateMatrix;
 		}
-		for (const auto& c : countDown) { //Ä«Æ®¿Í °°Àº Çà·Ä Àû¿ë
+		for (const auto& c : countDown) { //Ä«Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			c->translateMatrix = karts[0]->translateMatrix;
 			c->translateMatrix = glm::translate(c->translateMatrix, glm::vec3(0.0, 4.0, 0.0));
 		}
@@ -253,23 +253,23 @@ public:
 	}
 
 	void playCountdown(int count) {
-		if (count < 3) { // count_n »ç¿îµå 3¹ø ½ÇÇà
+		if (count < 3) { // count_n ï¿½ï¿½ï¿½ï¿½ 3ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			if (countNSoundThread.joinable()) {
 				countNSoundThread.join();
 			}
 
 			countNSoundThread = std::thread(&Map2_Mode::count_n, this);
 
-			countNSoundThread.join(); // ÀÌ ºÎºÐÀº count_n.wav°¡ ³¡³¯ ¶§±îÁö ±â´Ù¸³´Ï´Ù.
+			countNSoundThread.join(); // ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ count_n.wavï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù¸ï¿½ï¿½Ï´ï¿½.
 		}
-		else if (count == 3) { // count_go »ç¿îµå ½ÇÇà
+		else if (count == 3) { // count_go ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			if (countGoSoundThread.joinable()) {
 				countGoSoundThread.join();
 			}
 
 			countGoSoundThread = std::thread(&Map2_Mode::count_go, this);
 
-			// ÇÃ·¡±× ÃÊ±âÈ­
+			// ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 			//isCountGoSound = false;
 			isCountNSound = false;
 			isBackgroundSound = true;
@@ -280,58 +280,58 @@ public:
 	void updateCameraDirection() {
 		glm::mat3 rotationMatrix = glm::mat3(karts[0]->translateMatrix);
 
-		// ±âº» Ä«¸Þ¶ó ¹æÇâ º¤ÅÍ °è»ê
+		// ï¿½âº» Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		glm::vec3 direction;
 		direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 		direction.y = sin(glm::radians(pitch));
 		direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 
-		// È¸Àü Çà·ÄÀ» Àû¿ëÇÑ ¹æÇâ º¤ÅÍ °è»ê
+		// È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		glm::vec3 rotatedDirection = rotationMatrix * direction;
 
 		//-----------------------
-		// Ä«Æ®¸¦ ¹Ù¶óº¸µµ·Ï ¼³Á¤
+		// Ä«Æ®ï¿½ï¿½ ï¿½Ù¶óº¸µï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		glm::vec3 carPosition = glm::vec3(karts[0]->translateMatrix[3]);
 
-		// ÀÚµ¿Â÷¸¦ ¹Ù¶óº¸´Â ¹æÇâ °è»ê (ÀÚµ¿Â÷ À§Ä¡ - Ä«¸Þ¶ó À§Ä¡)
+		// ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½Úµï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ - Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ä¡)
 		cameraDirection = glm::normalize(rotatedDirection) + carPosition;
 	}
 
 	void setCamera() {
 		glm::vec3 carPosition = glm::vec3(karts[0]->translateMatrix[3]);
 
-		// ÀÚµ¿Â÷ÀÇ È¸Àü Çà·Ä ÃßÃâ (3x3 Çà·Ä)
+		// ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (3x3 ï¿½ï¿½ï¿½)
 		glm::mat3 carRotationMatrix = glm::mat3(karts[0]->translateMatrix);
 
-		// ÀÚµ¿Â÷ È¸Àü Çà·ÄÀ» ÄõÅÍ´Ï¾ðÀ¸·Î º¯È¯
+		// ï¿½Úµï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 		glm::quat carRotationQuat = glm::quat_cast(carRotationMatrix);
 
-		// ÀÚµ¿Â÷ È¸Àü°ú ±âº» È¸ÀüÀ» º¸°£
+		// ï¿½Úµï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½âº» È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		glm::quat interpolatedRotation = glm::slerp(cameraRotationQuat, carRotationQuat, reducedRotationInfluence);
 		cameraRotationQuat = interpolatedRotation;
 
-		// º¸°£µÈ È¸ÀüÀ» Çà·Ä·Î º¯È¯
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä·ï¿½ ï¿½ï¿½È¯
 		glm::mat3 adjustedRotationMatrix = glm::mat3_cast(interpolatedRotation);
 
-		// Ä«¸Þ¶ó ¸ñÇ¥ À§Ä¡ Á¤ÀÇ (¼Óµµ¿¡ µû¶ó µ¿ÀûÀ¸·Î Á¶Á¤)
-		// "kart_speed"¸¦ »ç¿ëÇÏ¿© Ä«¸Þ¶ó ¸ñÇ¥¸¦ µ¿ÀûÀ¸·Î ¼³Á¤
+		// Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ (ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+		// "kart_speed"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		glm::vec3 baseOffset = glm::vec3(0.0f, 6.0f + (kart_speed * 2.0f), 14.0f + (kart_speed * 10.0f));
 		glm::vec3 rotatedOffset = adjustedRotationMatrix * baseOffset;
 
-		// ¸ñÇ¥ À§Ä¡ °è»ê
+		// ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½
 		cameraTargetPos = carPosition + rotatedOffset;
 
-		// ÇöÀç Ä«¸Þ¶ó À§Ä¡¸¦ ¸ñÇ¥ À§Ä¡·Î Á¡ÁøÀûÀ¸·Î ÀÌµ¿ (º¸°£ ¼Óµµ Á¶Á¤ °¡´É)
-		float cameraFollowSpeed = 0.1f; // Ä«¸Þ¶ó°¡ ¸ñÇ¥·Î µû¶ó°¡´Â ¼Óµµ (0.0 ~ 1.0)
+		// ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+		float cameraFollowSpeed = 0.1f; // Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ó°¡´ï¿½ ï¿½Óµï¿½ (0.0 ~ 1.0)
 		cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
 
-		// Ä«¸Þ¶ó°¡ ÀÚµ¿Â÷¸¦ ¹Ù¶óº¸µµ·Ï ¹æÇâ ¾÷µ¥ÀÌÆ®
-		cameraDirection = carPosition; // Ä«¸Þ¶ó°¡ Ç×»ó ÀÚµ¿Â÷¸¦ ¹Ù¶óº½
+		// Ä«ï¿½Þ¶ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸µï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+		cameraDirection = carPosition; // Ä«ï¿½Þ¶ï¿½ ï¿½×»ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶ï¿½
 	}
 
 	void goSelectMode_() {
 		Pause = true;
-		if (goSelectMode) { // goSelectMode°¡ ¼³Á¤µÇ¾î ÀÖ´Ù¸é ½ÇÇà
+		if (goSelectMode) { // goSelectModeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 			isBackgroundSound = false;
 			isMotorSound = false;
 			if (motorSoundThread.joinable()) {
@@ -339,31 +339,31 @@ public:
 			}
 			goSelectMode();
 		}
-		isBoosterRegenActive = false; // ºÎ½ºÅÍ Àç»ý¼º Á¾·á
+		isBoosterRegenActive = false; // ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		if (boosterRegenThread.joinable()) {
-			boosterRegenThread.join(); // ½º·¹µå Á¾·á
+			boosterRegenThread.join(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		}
 	}
 
 	void finish_game() {
 		if (finish_cnt != 0) {
 			isBackgroundSound = false;
-			if (isWinSound) return; // ÀÌ¹Ì ½ÇÇà ÁßÀÌ¸é Á¾·á
+			if (isWinSound) return; // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 			isWinSound = true;
-			isGameOver = true; // °ÔÀÓ Á¾·á »óÅÂ ¼³Á¤
+			isGameOver = true; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-			// »õ·Î¿î ½º·¹µå »ý¼º ¹× ºÐ¸®
+			// ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ð¸ï¿½
 			winSoundThread = std::thread([this]() {
-				win_sound();  // »ç¿îµå Àç»ý
-				isWinSound = false; // »ç¿îµå Àç»ý ¿Ï·á ÈÄ ÇÃ·¡±× ÇØÁ¦
+				win_sound();  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+				isWinSound = false; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				});
 
 			winSoundThread.detach();
 
-			// 5ÃÊ ÈÄ goSelectMode_() ½ÇÇàÀ» À§ÇÑ ½º·¹µå »ý¼º
+			// 5ï¿½ï¿½ ï¿½ï¿½ goSelectMode_() ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			std::thread([this]() {
-				std::this_thread::sleep_for(std::chrono::seconds(9)); // 5ÃÊ ´ë±â
-				goSelectMode_(); // 5ÃÊ ÈÄ ½ÇÇà
+				std::this_thread::sleep_for(std::chrono::seconds(9)); // 5ï¿½ï¿½ ï¿½ï¿½ï¿½
+				goSelectMode_(); // 5ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				}).detach();
 		}
 		else {
@@ -374,11 +374,11 @@ public:
 	void draw_finish_time() {
 		glUseProgram(shaderProgramID_UI);
 
-		// È°¼ºÈ­ ÇÃ·¡±×
+		// È°ï¿½ï¿½È­ ï¿½Ã·ï¿½ï¿½ï¿½
 		GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isRed");
 		glUniform1i(isTimerLocation, true);
 
-		// Å¸ÀÌ¸Ó ÅØ½ºÆ®
+		// Å¸ï¿½Ì¸ï¿½ ï¿½Ø½ï¿½Æ®
 		std::string Text = "Time: " + std::to_string(30 - game_timer);
 
 		glRasterPos2f(0.0f, 0.0f);
@@ -387,110 +387,110 @@ public:
 		}
 		glUniform1i(isTimerLocation, false);
 
-		glUseProgram(0); // ¿ø·¡ ¼ÎÀÌ´õ·Î º¹¿ø
+		glUseProgram(0); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	}
 
 	void lose_game() {
-		if (isGameOver) return; // ÀÌ¹Ì Á¾·á »óÅÂ¶ó¸é ½ÇÇàÇÏÁö ¾ÊÀ½
+		if (isGameOver) return; // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-		isGameOver = true; // °ÔÀÓ Á¾·á »óÅÂ ¼³Á¤
-		isBackgroundSound = false; // ¹è°æÀ½¾Ç Á¾·á
+		isGameOver = true; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		isBackgroundSound = false; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 		std::cout << "Game Over! Time is up!" << std::endl;
 
-		// ÆÐ¹è »ç¿îµå Àç»ý
+		// ï¿½Ð¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		if (!isLoseSound) {
 			isLoseSound = true;
 			loseSoundThread = std::thread([this]() {
 				lose_sound();
-				isLoseSound = false; // »ç¿îµå Àç»ý ¿Ï·á ÈÄ ÇÃ·¡±× ÇØÁ¦
+				isLoseSound = false; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				});
 			loseSoundThread.detach();
 
-			// 5ÃÊ ÈÄ goSelectMode_() ½ÇÇàÀ» À§ÇÑ ½º·¹µå »ý¼º
+			// 5ï¿½ï¿½ ï¿½ï¿½ goSelectMode_() ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			std::thread([this]() {
-				std::this_thread::sleep_for(std::chrono::seconds(9)); // 5ÃÊ ´ë±â
-				goSelectMode_(); // 5ÃÊ ÈÄ ½ÇÇà
+				std::this_thread::sleep_for(std::chrono::seconds(9)); // 5ï¿½ï¿½ ï¿½ï¿½ï¿½
+				goSelectMode_(); // 5ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				}).detach();
 		}
 	}
 
 	void checkCollisionKart() {
 		for (auto& kart : karts) {
-			if (kart->name != "car") continue; // Ä«Æ®°¡ "car" ÀÌ¸§ÀÌ ¾Æ´Ï¸é ½ºÅµ
+			if (kart->name != "car") continue; // Ä«Æ®ï¿½ï¿½ "car" ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½Æ´Ï¸ï¿½ ï¿½ï¿½Åµ
 
-			// Áß·ÂÀ» Á¦°Å (ÇÑ ¹ø¸¸ ¼³Á¤)
+			// ï¿½ß·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 			kart->rigidBody->setGravity(btVector3(0.0f, 0.0f, 0.0f));
 
 			for (const auto& barri : road2_barricate) {
-				// Ãæµ¹ ÄÝ¹é °´Ã¼ »ý¼º
+				// ï¿½æµ¹ ï¿½Ý¹ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
 				CustomContactResultCallback resultCallback;
 
-				// µÎ °´Ã¼ÀÇ Ãæµ¹ °¨Áö
+				// ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½
 				dynamicsWorld->contactPairTest(kart->rigidBody, barri->rigidBody, resultCallback);
 
-				if (resultCallback.hitDetected) { // Ãæµ¹ÀÌ °¨ÁöµÇ¾úÀ» ¶§
+				if (resultCallback.hitDetected) { // ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½
 
 					if (barri->name == "finish_ch") {
 						finish_cnt++;
 						continue;
 					}
 
-					if (barri->name == "finish") { //Á¾·á~~~~
+					if (barri->name == "finish") { //ï¿½ï¿½ï¿½ï¿½~~~~
 						finish_game();
 						continue;
 					}
 
-					// Ãæµ¹ »ç¿îµå Àç»ý (isCrashSound·Î Áßº¹ Àç»ý ¹æÁö)
+					// ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (isCrashSoundï¿½ï¿½ ï¿½ßºï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 					if (!isCrashSound) {
 						isCrashSound = true;
 						crashSoundThread = std::thread(&Map2_Mode::crash_sound, this);
-						crashSoundThread.detach(); // ½º·¹µå¸¦ ºÐ¸®ÇÏ¿© ºñµ¿±â Àç»ý
+						crashSoundThread.detach(); // ï¿½ï¿½ï¿½ï¿½ï¿½å¸¦ ï¿½Ð¸ï¿½ï¿½Ï¿ï¿½ ï¿½ñµ¿±ï¿½ ï¿½ï¿½ï¿½
 					}
 
-					// 1. Ãæµ¹ ¹æÇâ ¹× Ä§Åõ ±íÀÌ °¡Á®¿À±â
-					btVector3 collisionNormal = resultCallback.collisionNormal; // Ãæµ¹ ¹æÇâ
-					collisionNormal.setY(0.0f); // yÃà ¹æÇâ Á¦°Å (xz Æò¸é¿¡¼­¸¸ Ã³¸®)
+					// 1. ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Ä§ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+					btVector3 collisionNormal = resultCallback.collisionNormal; // ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½
+					collisionNormal.setY(0.0f); // yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (xz ï¿½ï¿½é¿¡ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½)
 
-					// Ä§Åõ ±íÀÌ Á¦ÇÑ
+					// Ä§ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					float penetrationDepth = std::abs(resultCallback.penetrationDepth);
-					const float MAX_PENETRATION_DEPTH = 2.0f; // ÃÖ´ë Ä§Åõ ±íÀÌ
+					const float MAX_PENETRATION_DEPTH = 2.0f; // ï¿½Ö´ï¿½ Ä§ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					if (penetrationDepth > MAX_PENETRATION_DEPTH) {
 						penetrationDepth = MAX_PENETRATION_DEPTH;
 					}
 
-					// 2. º¸Á¤ °ª °è»ê (Ä§Åõ ±íÀÌ¿¡ ±â¹ÝÇÑ ÀÌµ¿)
-					float correctionScale = 0.5f; // º¸Á¤ °ª °¨¼è °è¼ö
+					// 2. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ (Ä§ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½)
+					float correctionScale = 0.5f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 					btVector3 correction = correctionScale * collisionNormal * penetrationDepth;
 
-					// 3. ¼Óµµ ±â¹Ý Ãß°¡ ÀÌµ¿ Àû¿ë
+					// 3. ï¿½Óµï¿½ ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½
 					glm::vec3 kartVelocity = glm::vec3(-kart->translateMatrix[2]) * kart_speed;
-					float speedFactor = glm::length(kartVelocity); // Ä«Æ®ÀÇ ¼Óµµ Å©±â
-					correction += collisionNormal * speedFactor * 0.2f; // ¼Óµµ¿¡ ºñ·ÊÇÑ Ãß°¡ ÀÌµ¿ (0.2´Â Á¶Á¤ °¡´É)
+					float speedFactor = glm::length(kartVelocity); // Ä«Æ®ï¿½ï¿½ ï¿½Óµï¿½ Å©ï¿½ï¿½
+					correction += collisionNormal * speedFactor * 0.2f; // ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½Ìµï¿½ (0.2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 
-					// 4. Ä«Æ® À§Ä¡ ¾÷µ¥ÀÌÆ®
+					// 4. Ä«Æ® ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 					btTransform kartTransform;
 					kart->rigidBody->getMotionState()->getWorldTransform(kartTransform);
 					btVector3 kartPos = kartTransform.getOrigin();
 
-					btVector3 newKartPos = kartPos + correction; // ÃÖÁ¾ À§Ä¡ °è»ê
-					newKartPos.setY(1.0f); // yÃà °íÁ¤
+					btVector3 newKartPos = kartPos + correction; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½
+					newKartPos.setY(1.0f); // yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 					kartTransform.setOrigin(newKartPos);
 
-					// ¹°¸® ¿£Áø¿¡ »õ·Î¿î Transform Àû¿ë
+					// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ Transform ï¿½ï¿½ï¿½ï¿½
 					kart->rigidBody->getMotionState()->setWorldTransform(kartTransform);
 					kart->rigidBody->setWorldTransform(kartTransform);
 
-					// OpenGL º¯È¯ Çà·Ä¿¡ ¹Ý¿µ
+					// OpenGL ï¿½ï¿½È¯ ï¿½ï¿½Ä¿ï¿½ ï¿½Ý¿ï¿½
 					btScalar transformMatrix[16];
 					kartTransform.getOpenGLMatrix(transformMatrix);
 					kart->translateMatrix = glm::make_mat4(transformMatrix);
 
-					// 5. ¼Óµµ °¨¼Ò Ã³¸®
-					float decelerationFactor = 0.2f; // °¨¼Ó ºñÀ² (Ãæµ¹ ÈÄ ¼Óµµ °¨¼Ò)
+					// 5. ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
+					float decelerationFactor = 0.2f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½æµ¹ ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½)
 					kart_speed *= 1.0f - decelerationFactor;
-					if (kart_speed < 0.01f) { // ³Ê¹« ´À·ÁÁö¸é Á¤Áö
+					if (kart_speed < 0.01f) { // ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 						kart_speed = 0.0f;
 					}
 				}
@@ -501,16 +501,16 @@ public:
 
 	void checkEngineSound() {
 		if (kart_speed != 0.0f) {
-			if (!isMotorSound) { // ¿£Áø »ç¿îµå°¡ Àç»ý ÁßÀÌÁö ¾ÊÀ» ¶§¸¸ ½ÇÇà
+			if (!isMotorSound) { // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				isMotorSound = true;
-				motorSoundThread = std::thread(&Map2_Mode::engine_sound, this); // ¿£Áø »ç¿îµå ½ÃÀÛ
+				motorSoundThread = std::thread(&Map2_Mode::engine_sound, this); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			}
 		}
-		else { // ¼Óµµ°¡ 0ÀÏ °æ¿ì
+		else { // ï¿½Óµï¿½ï¿½ï¿½ 0ï¿½ï¿½ ï¿½ï¿½ï¿½
 			if (isMotorSound) {
 				isMotorSound = false;
 				if (motorSoundThread.joinable()) {
-					motorSoundThread.detach(); // ½º·¹µå Á¾·á (ÇÊ¿äÇÑ °æ¿ì detach)
+					motorSoundThread.detach(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ detach)
 				}
 			}
 		}
@@ -525,47 +525,47 @@ public:
 			}
 			else {
 
-				// °¡¼Ó/°¨¼Ó Ã³¸®
+				// ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 				if (kart_keyState[UP]) {
 					if (kart_speed < MAX_SPEED) {
-						kart_speed += ACCELERATION; // °¡¼Óµµ¿¡ µû¶ó Áõ°¡
-						if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED; // ÃÖ´ë ¼Óµµ Á¦ÇÑ
+						kart_speed += ACCELERATION; // ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+						if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED; // ï¿½Ö´ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
 					}
 				}
 				else if (kart_keyState[DOWN]) {
-					if (kart_speed > -MAX_SPEED / 2.0f) { // ÈÄÁø ¼Óµµ´Â ÀüÁøÀÇ Àý¹Ý±îÁö¸¸ Çã¿ë
-						kart_speed -= ACCELERATION; // ÈÄÁø ½Ã¿¡µµ °¡¼Óµµ ¹Ý¿µ
-						if (kart_speed < -MAX_SPEED / 2.0f) kart_speed = -MAX_SPEED / 2.0f; // ÈÄÁø ÃÖ´ë ¼Óµµ Á¦ÇÑ
+					if (kart_speed > -MAX_SPEED / 2.0f) { // ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ý±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+						kart_speed -= ACCELERATION; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Óµï¿½ ï¿½Ý¿ï¿½
+						if (kart_speed < -MAX_SPEED / 2.0f) kart_speed = -MAX_SPEED / 2.0f; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
 					}
 				}
 				else {
-					// ¼Óµµ°¡ °¨¼ÒÇÒ ¶§ °¨¼Ó
+					// ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					if (kart_speed > 0.0f) {
-						kart_speed -= DECELERATION; // ÀüÁø °¨¼Ó
-						if (kart_speed < 0.0f) kart_speed = 0.0f; // 0À¸·Î ¾ÈÁ¤È­
+						kart_speed -= DECELERATION; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+						if (kart_speed < 0.0f) kart_speed = 0.0f; // 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
 					}
 					else if (kart_speed < 0.0f) {
-						kart_speed += DECELERATION; // ÈÄÁø °¨¼Ó
-						if (kart_speed > 0.0f) kart_speed = 0.0f; // 0À¸·Î ¾ÈÁ¤È­
+						kart_speed += DECELERATION; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+						if (kart_speed > 0.0f) kart_speed = 0.0f; // 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
 					}
 				}
 
-				// ¼Óµµ¸¦ Á¦ÇÑ (MAX_SPEED¸¦ ÃÊ°úÇÏÁö ¾Êµµ·Ï)
+				// ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (MAX_SPEEDï¿½ï¿½ ï¿½Ê°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½)
 				if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED;
 
-				// Ä«Æ® ÀÌµ¿ Ã³¸®
-				if (kart_speed > 0.0f) { // ÀüÁø
+				// Ä«Æ® ï¿½Ìµï¿½ Ã³ï¿½ï¿½
+				if (kart_speed > 0.0f) { // ï¿½ï¿½ï¿½ï¿½
 					for (const auto& kart : karts) {
 						kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
 					}
 				}
-				else if (kart_speed < 0.0f) { // ÈÄÁø
+				else if (kart_speed < 0.0f) { // ï¿½ï¿½ï¿½ï¿½
 					for (const auto& kart : karts) {
 						kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
 					}
 				}
 
-				// ¹æÇâ ÀüÈ¯ Ã³¸®
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ Ã³ï¿½ï¿½
 				if (kart_keyState[LEFT]) {
 					if (kart_speed != 0.0f) {
 						for (const auto& kart : karts) {
@@ -586,38 +586,38 @@ public:
 					}
 				}
 
-				//Ä³¸¯ÅÍ 
-				for (const auto& c : character) { //Ä«Æ®¿Í °°Àº Çà·Ä Àû¿ë
+				//Ä³ï¿½ï¿½ï¿½ï¿½ 
+				for (const auto& c : character) { //Ä«Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					c->translateMatrix = karts[0]->translateMatrix;
 				}
 
-				// Ä«¸Þ¶ó È¸Àü º¸°£À² ¾÷µ¥ÀÌÆ® (¼Óµµ¿¡ µû¶ó Ä«¸Þ¶ó È¸ÀüÀÌ »¡¶óÁü)
+				// Ä«ï¿½Þ¶ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® (ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 				if (kart_speed != 0.0f) {
-					reducedRotationInfluence = 0.1f + (std::abs(kart_speed) / MAX_SPEED) * 0.4f; // ¼Óµµ ºñ·Ê º¸°£À²
+					reducedRotationInfluence = 0.1f + (std::abs(kart_speed) / MAX_SPEED) * 0.4f; // ï¿½Óµï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				}
 				else {
-					reducedRotationInfluence += 0.01f; // Å°°¡ ¾È ´­¸± ¶§ ÃµÃµÈ÷ È¸º¹
+					reducedRotationInfluence += 0.01f; // Å°ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ÃµÃµï¿½ï¿½ È¸ï¿½ï¿½
 					if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
 				}
 
-				// °í°³°¡ ÃµÃµÈ÷ Á¤¸éÀ¸·Î µ¹¾Æ°¡µµ·Ï º¸°£
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ ÃµÃµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				if (!kart_keyState[LEFT] && !kart_keyState[RIGHT]) {
 					if (character_face_rotation > 0.0f) {
 						character_face_rotation -= RETURN_SPEED;
 						if (character_face_rotation < 0.0f) {
-							character_face_rotation = 0.0f; // Á¤¸éÀ¸·Î °íÁ¤
+							character_face_rotation = 0.0f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 						}
 					}
 					else if (character_face_rotation < 0.0f) {
 						character_face_rotation += RETURN_SPEED;
 						if (character_face_rotation > 0.0f) {
-							character_face_rotation = 0.0f; // Á¤¸éÀ¸·Î °íÁ¤
+							character_face_rotation = 0.0f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 						}
 					}
 				}
 
 				if (isBoosterActive) {
-					// ¸Ó¸®¸¦ XÃàÀ¸·Î µÚ·Î ±â¿ïÀÌ±â (¼­¼­È÷ MAX_HEAD_TILT±îÁö)
+					// ï¿½Ó¸ï¿½ï¿½ï¿½ Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú·ï¿½ ï¿½ï¿½ï¿½ï¿½Ì±ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ MAX_HEAD_TILTï¿½ï¿½ï¿½ï¿½)
 					if (booster_head_tilt < MAX_HEAD_TILT) {
 						booster_head_tilt += TILT_SPEED;
 						if (booster_head_tilt > MAX_HEAD_TILT) {
@@ -626,7 +626,7 @@ public:
 					}
 				}
 				else {
-					// ¸Ó¸®¸¦ ¿ø·¡ »óÅÂ·Î º¹±¸ (¼­¼­È÷ 0µµ·Î º¹±Í)
+					// ï¿½Ó¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 					if (booster_head_tilt > 0.0f) {
 						booster_head_tilt -= TILT_SPEED;
 						if (booster_head_tilt < 0.0f) {
@@ -635,20 +635,20 @@ public:
 					}
 				}
 
-				// Ä³¸¯ÅÍ ¸ðµ¨ ¾÷µ¥ÀÌÆ® (¸Ó¸®ÀÇ XÃà È¸Àü Æ÷ÇÔ)
+				// Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® (ï¿½Ó¸ï¿½ï¿½ï¿½ Xï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 				for (const auto& c : character) {
 					if (c->name == "character_face") {
-						// ±âÁ¸ YÃà È¸Àü (character_face_rotation) Ãß°¡
+						// ï¿½ï¿½ï¿½ï¿½ Yï¿½ï¿½ È¸ï¿½ï¿½ (character_face_rotation) ï¿½ß°ï¿½
 						glm::mat4 headRotation = glm::rotate(
 							glm::mat4(1.0f),
 							glm::radians(-character_face_rotation),
 							glm::vec3(0.0f, 0.0f, 1.0f)
 						);
 
-						// XÃà È¸Àü Ãß°¡ (ºÎ½ºÅÍ »óÅÂ¿¡ µû¸¥ ¸Ó¸® ±â¿ïÀÓ)
+						// Xï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ß°ï¿½ (ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½)
 						headRotation = glm::rotate(
 							headRotation,
-							glm::radians(booster_head_tilt), // XÃà È¸Àü
+							glm::radians(booster_head_tilt), // Xï¿½ï¿½ È¸ï¿½ï¿½
 							glm::vec3(1.0f, 0.0f, 0.0f)
 						);
 
@@ -659,10 +659,10 @@ public:
 					}
 				}
 
-				// Ä«¸Þ¶ó ¾÷µ¥ÀÌÆ®
+				// Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 				setCamera();
-				// ÇöÀç Ä«¸Þ¶ó À§Ä¡¸¦ ¸ñÇ¥ À§Ä¡·Î Á¡ÁøÀûÀ¸·Î ÀÌµ¿
-				float cameraFollowSpeed = 0.1f; // Ä«¸Þ¶ó°¡ µû¶ó°¡´Â ¼Óµµ (0.0 ~ 1.0 »çÀÌÀÇ °ª)
+				// ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
+				float cameraFollowSpeed = 0.1f; // Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ó°¡´ï¿½ ï¿½Óµï¿½ (0.0 ~ 1.0 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½)
 				cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
 
 				checkCollisionKart();
@@ -673,7 +673,7 @@ public:
 
 	void mouseClick(int button, int state, int x, int y) override {
 		if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-			if (x <= 470 && x >= 400 && y <= 410 && y >= 360) { //´Ù½Ã½Ãµµ
+			if (x <= 470 && x >= 400 && y <= 410 && y >= 360) { //ï¿½Ù½Ã½Ãµï¿½
 				Pause = true;
 				isBackgroundSound = false;
 				isMotorSound = false;
@@ -681,10 +681,10 @@ public:
 					motorSoundThread.join();
 				}
 				Map2_Mode* map2Mode = new Map2_Mode();
-				map2Mode->goSelectMode = [this]() { goSelectMode(); }; // ¶÷´Ù·Î Àü´Þ
+				map2Mode->goSelectMode = [this]() { goSelectMode(); }; // ï¿½ï¿½ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½
 				MM.SetMode(map2Mode);
 			}
-			else if (x <= 580 && x >= 510 && y <= 410 && y >= 360) { //¸Þ´º
+			else if (x <= 580 && x >= 510 && y <= 410 && y >= 360) { //ï¿½Þ´ï¿½
 				goSelectMode_();
 			}
 		}
@@ -693,34 +693,34 @@ public:
 	void keyboard(unsigned char key, int x, int y) override {
 		if (key == 27) { //esc
 			if (Pause) {
-				//glutTimerFunc(16, timerHelper, 0); // Å¸ÀÌ¸Ó È£Ãâ
+				//glutTimerFunc(16, timerHelper, 0); // Å¸ï¿½Ì¸ï¿½ È£ï¿½ï¿½
 				//isMotorSound = true;
 			}
 			else {
 				glm::vec3 zAxis = glm::normalize(cameraPos - glm::vec3(karts[0]->translateMatrix[3]));
-				// ¿À¸¥ÂÊ º¤ÅÍ (XÃà) °è»ê
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Xï¿½ï¿½) ï¿½ï¿½ï¿½
 				glm::vec3 xAxis = glm::normalize(glm::cross(cameraUp, zAxis));
-				// »ó´Ü º¤ÅÍ (YÃà) °è»ê
+				// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Yï¿½ï¿½) ï¿½ï¿½ï¿½
 				glm::vec3 yAxis = glm::cross(zAxis, xAxis);
-				// 3x3 È¸Àü Çà·Ä »ý¼º
+				// 3x3 È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				glm::mat3 rotationMatrix = glm::mat3(
-					xAxis, // XÃà
-					yAxis, // YÃà
-					zAxis  // ZÃà
+					xAxis, // Xï¿½ï¿½
+					yAxis, // Yï¿½ï¿½
+					zAxis  // Zï¿½ï¿½
 				);
-				// 4x4 Çà·Ä·Î È®Àå
-				glm::mat4 modelMatrix = glm::mat4(1.0f); // ´ÜÀ§ Çà·Ä·Î ÃÊ±âÈ­
-				modelMatrix[0] = glm::vec4(rotationMatrix[0], 0.0f); // XÃà
-				modelMatrix[1] = glm::vec4(rotationMatrix[1], 0.0f); // YÃà
-				modelMatrix[2] = glm::vec4(rotationMatrix[2], 0.0f); // ZÃà
-				modelMatrix[3] = glm::vec4(cameraPos, 1.0f);          // À§Ä¡ Ãß°¡
+				// 4x4 ï¿½ï¿½Ä·ï¿½ È®ï¿½ï¿½
+				glm::mat4 modelMatrix = glm::mat4(1.0f); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä·ï¿½ ï¿½Ê±ï¿½È­
+				modelMatrix[0] = glm::vec4(rotationMatrix[0], 0.0f); // Xï¿½ï¿½
+				modelMatrix[1] = glm::vec4(rotationMatrix[1], 0.0f); // Yï¿½ï¿½
+				modelMatrix[2] = glm::vec4(rotationMatrix[2], 0.0f); // Zï¿½ï¿½
+				modelMatrix[3] = glm::vec4(cameraPos, 1.0f);          // ï¿½ï¿½Ä¡ ï¿½ß°ï¿½
 				pause[0]->translateMatrix = modelMatrix;
 				pause[0]->translateMatrix = glm::translate(pause[0]->translateMatrix, glm::vec3(0.0, 0.0, -2.0));
 
 
 				isMotorSound = false;
 				if (motorSoundThread.joinable()) {
-					motorSoundThread.detach(); // ½º·¹µå Á¾·á (ÇÊ¿äÇÑ °æ¿ì detach)
+					motorSoundThread.detach(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ detach)
 				}
 			}
 			Pause = !Pause;
@@ -730,41 +730,41 @@ public:
 		}
 	}
 
-	// ºÎ½ºÅÍ ½ÇÇà ÇÔ¼ö
+	// ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 	void activateBooster() {
 
-		// ºÎ½ºÆ®°¡ ÀÌ¹Ì È°¼ºÈ­ ÁßÀÌ¸é ½ÇÇàÇÏÁö ¾ÊÀ½
+		// ï¿½Î½ï¿½Æ®ï¿½ï¿½ ï¿½Ì¹ï¿½ È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		if (isBoosterActive) {
 			std::cout << "Booster is already active!" << std::endl;
 			return;
 		}
 
-		// ºÎ½ºÆ® È°¼ºÈ­ »óÅÂ·Î ¼³Á¤
+		// ï¿½Î½ï¿½Æ® È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½ï¿½
 		isBoosterActive = true;
 
 		std::cout << "Booster activated! Remaining boosters: " << booster_cnt << std::endl;
 
-		// ±âÁ¸ MAX_SPEED¿Í ACCELERATION °ªÀ» ÀúÀå
+		// ï¿½ï¿½ï¿½ï¿½ MAX_SPEEDï¿½ï¿½ ACCELERATION ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		float originalMaxSpeed = MAX_SPEED;
 		float originalAcceleration = ACCELERATION;
 
-		// ºÎ½ºÅÍ ¼Óµµ ¹× °¡¼Óµµ ¼³Á¤
-		MAX_SPEED = BOOSTER_SPEED;           // ºÎ½ºÅÍ ¼Óµµ
-		ACCELERATION *= 1.05f;                // °¡¼Óµµ¸¦ 1.5¹è·Î Áõ°¡ (Á¶Á¤ °¡´É)
+		// ï¿½Î½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
+		MAX_SPEED = BOOSTER_SPEED;           // ï¿½Î½ï¿½ï¿½ï¿½ ï¿½Óµï¿½
+		ACCELERATION *= 1.05f;                // ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ 1.5ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 
-		// ºÎ½ºÅÍ »ç¿îµå Àç»ý
+		// ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		if (!isBoosterSound) {
 			isBoosterSound = true;
 			boosterSoundThread = std::thread(&Map2_Mode::booster_sound, this);
-			boosterSoundThread.detach(); // ºñµ¿±â ½ÇÇà
+			boosterSoundThread.detach(); // ï¿½ñµ¿±ï¿½ ï¿½ï¿½ï¿½ï¿½
 		}
 
-		// ºÎ½ºÅÍ Á¾·á ÈÄ ¼Óµµ ¹× °¡¼Óµµ º¹±¸
+		// ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
 		std::thread([this, originalMaxSpeed, originalAcceleration]() {
-			std::this_thread::sleep_for(std::chrono::duration<double>(4.4)); // ºÎ½ºÅÍ Áö¼Ó ½Ã°£ 3ÃÊ
-			MAX_SPEED = originalMaxSpeed;        // ¿ø·¡ ¼Óµµ º¹±¸
-			ACCELERATION = originalAcceleration; // ¿ø·¡ °¡¼Óµµ º¹±¸
-			isBoosterActive = false;             // ºÎ½ºÆ® ºñÈ°¼ºÈ­ »óÅÂ·Î ¼³Á¤
+			std::this_thread::sleep_for(std::chrono::duration<double>(4.4)); // ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ 3ï¿½ï¿½
+			MAX_SPEED = originalMaxSpeed;        // ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
+			ACCELERATION = originalAcceleration; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
+			isBoosterActive = false;             // ï¿½Î½ï¿½Æ® ï¿½ï¿½È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½ï¿½
 			std::cout << "Booster ended. MAX_SPEED and ACCELERATION restored." << std::endl;
 			}).detach();
 	}
@@ -781,14 +781,14 @@ public:
 			break;
 		case GLUT_KEY_LEFT:
 			kart_keyState[LEFT] = true;
-			// ¿ÞÂÊ ¹æÇâÀ¸·Î °í°³ È¸Àü
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
 			if (character_face_rotation > -MAX_FACE_ROTATION) {
 				character_face_rotation -= ROTATION_SPEED;
 			}
 			break;
 		case GLUT_KEY_RIGHT:
 			kart_keyState[RIGHT] = true;
-			// ¿À¸¥ÂÊ ¹æÇâÀ¸·Î °í°³ È¸Àü
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
 			if (character_face_rotation < MAX_FACE_ROTATION) {
 				character_face_rotation += ROTATION_SPEED;
 			}
@@ -797,17 +797,17 @@ public:
 
 		int modifiers = glutGetModifiers();
 
-		// Ctrl ´Üµ¶ °¨Áö
+		// Ctrl ï¿½Üµï¿½ ï¿½ï¿½ï¿½ï¿½
 		if (modifiers & GLUT_ACTIVE_CTRL) {
-			// ºÎ½ºÆ®°¡ ÀÌ¹Ì È°¼ºÈ­ ÁßÀÌ°Å³ª ºÎ½ºÆ® °³¼ö°¡ 0ÀÌ¸é ½ÇÇàÇÏÁö ¾ÊÀ½
+			// ï¿½Î½ï¿½Æ®ï¿½ï¿½ ï¿½Ì¹ï¿½ È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½Ì°Å³ï¿½ ï¿½Î½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			if (isBoosterActive) {
 				std::cout << "Booster is already active!" << std::endl;
 				return;
 			}
 
-			if (booster_cnt > 0) { // ºÎ½ºÅÍ°¡ ³²¾Æ ÀÖ´Â °æ¿ì
-				booster_cnt--; // ºÎ½ºÅÍ °³¼ö °¨¼Ò
-				activateBooster(); // ºÎ½ºÅÍ È°¼ºÈ­
+			if (booster_cnt > 0) { // ï¿½Î½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½
+				booster_cnt--; // ï¿½Î½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+				activateBooster(); // ï¿½Î½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
 			}
 			else {
 				std::cout << "No boosters left!" << std::endl;
@@ -866,18 +866,18 @@ public:
 
 		glEnable(GL_DEPTH_TEST);
 
-		for (const auto& kart : karts) { // ½ÇÁ¦ ¸ðµ¨ draw
+		for (const auto& kart : karts) { // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ draw
 			kart->draw(shaderProgramID, isKeyPressed_s);
 		}
-		for (const auto& road : road2) { // ½ÇÁ¦ ¸ðµ¨ draw
+		for (const auto& road : road2) { // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ draw
 			road->draw(shaderProgramID, isKeyPressed_s);
 		}
-		for (const auto& c : character) { // ½ÇÁ¦ ¸ðµ¨ draw
+		for (const auto& c : character) { // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ draw
 			if (c->name == "booster" && !isBoosterActive)
 				continue;
 			c->draw(shaderProgramID, isKeyPressed_s);
 		}
-		for (const auto& barricate : road2_barricate) { // ½ÇÁ¦ ¸ðµ¨ draw
+		for (const auto& barricate : road2_barricate) { // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ draw
 			barricate->draw(shaderProgramID, isKeyPressed_s);
 		}
 		if (start_count >= 0 && start_count < 4) {
@@ -903,10 +903,10 @@ public:
 	void draw_bb() override {
 		if (!bb_status)
 			return;
-		for (const auto& model : karts) { // ¸ðµ¨ bb draw
+		for (const auto& model : karts) { // ï¿½ï¿½ bb draw
 			model->draw_rigidBody(shaderProgramID);
 		}
-		for (const auto& barricate : road2_barricate) { // ¸ðµ¨ bb draw
+		for (const auto& barricate : road2_barricate) { // ï¿½ï¿½ bb draw
 			barricate->draw_rigidBody(shaderProgramID);
 		}
 	}
@@ -917,47 +917,47 @@ public:
 private:
 
 	void updatePhysics(float deltaTime) {
-		// ¹°¸® ¿£Áø ¾÷µ¥ÀÌÆ® (deltaTime¿¡ µû¶ó Á¤È®µµ Á¶Àý)
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® (deltaTimeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 		dynamicsWorld->stepSimulation(deltaTime);
 
-		// ¹°¸® ¿£Áø¿¡¼­ °´Ã¼ÀÇ Transform ¾÷µ¥ÀÌÆ®
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ Transform ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 		UpdateRigidBodyTransforms(karts);
 		UpdateRigidBodyTransforms(road2_barricate);
 
-		// Ãæµ¹ Ã³¸® (¹°¸® ¿£Áø ¾÷µ¥ÀÌÆ® ÈÄ ½ÇÇà)
+		// ï¿½æµ¹ Ã³ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 		checkCollisionKart();
 	}
 
 	static void timerHelper(int value) {
 		if (Map2_Mode* instance = dynamic_cast<Map2_Mode*>(Mode::currentInstance)) {
-			const float deltaTime = 1.0f / 60.0f; // 60FPS ±âÁØ, ÇÑ ÇÁ·¹ÀÓÀÇ ½Ã°£
+			const float deltaTime = 1.0f / 60.0f; // 60FPS ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
 
-			// ¹°¸® ¿£Áø ¹× °ÔÀÓ ·ÎÁ÷ ¾÷µ¥ÀÌÆ® (°ÔÀÓ Á¾·á »óÅÂ¿¡¼­µµ °è¼Ó ½ÇÇà)
-			instance->updatePhysics(deltaTime); // ¹°¸® ¿£Áø ¾÷µ¥ÀÌÆ®
-			instance->timer(); // ·»´õ¸µ ¹× °ÔÀÓ ·ÎÁ÷ ¾÷µ¥ÀÌÆ®
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+			instance->updatePhysics(deltaTime); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+			instance->timer(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 
-			// °ÔÀÓ Å¸ÀÌ¸Ó °»½Å (°ÔÀÓ Á¾·á »óÅÂ¿¡¼­´Â Å¸ÀÌ¸Ó¸¦ °¨¼Ò½ÃÅ°Áö ¾ÊÀ½)
+			// ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸Ó¸ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 			if (!instance->isGameOver) {
 				static float elapsedTime = 0.0f;
 				elapsedTime += deltaTime;
-				if (elapsedTime >= 1.0f) { // 1ÃÊ°¡ Áö³µ´Ù¸é
+				if (elapsedTime >= 1.0f) { // 1ï¿½Ê°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ù¸ï¿½
 					elapsedTime = 0.0f;
-					instance->game_timer--; // Å¸ÀÌ¸Ó 1ÃÊ °¨¼Ò
-					if (instance->game_timer <= 0) { // Å¸ÀÌ¸Ó°¡ 0ÀÌ µÇ¸é
+					instance->game_timer--; // Å¸ï¿½Ì¸ï¿½ 1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+					if (instance->game_timer <= 0) { // Å¸ï¿½Ì¸Ó°ï¿½ 0ï¿½ï¿½ ï¿½Ç¸ï¿½
 						instance->game_timer = 0;
-						instance->lose_game(); // ÆÐ¹è Ã³¸®
+						instance->lose_game(); // ï¿½Ð¹ï¿½ Ã³ï¿½ï¿½
 					}
 				}
 			}
 		}
 
-		// ·»´õ¸µ ¾÷µ¥ÀÌÆ®¸¦ 60FPS·Î À¯Áö
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ 60FPSï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		glutPostRedisplay();
-		glutTimerFunc(16, timerHelper, value); // 16ms °£°ÝÀ¸·Î È£Ãâ (¾à 60FPS)
+		glutTimerFunc(16, timerHelper, value); // 16ms ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½ (ï¿½ï¿½ 60FPS)
 	}
 
 
-	// bgm ½ÇÇà ÇÔ¼ö
+	// bgm ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 	void backgroundSound() {
 		play_sound2D("village_04.ogg", "./asset/map_1/", true, &isBackgroundSound);
 	}
