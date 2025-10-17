@@ -24,9 +24,9 @@ struct Vertex {
 };
 
 struct Texture {
-    std::string type;  // ÅØ½ºÃ³ À¯Çü (e.g., diffuse, specular, normal, ambient)
-    GLuint id;         // OpenGL ÅØ½ºÃ³ ID
-    std::string path;  // ÅØ½ºÃ³ ÆÄÀÏ °æ·Î
+    std::string type;  // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ (e.g., diffuse, specular, normal, ambient)
+    GLuint id;         // OpenGL ï¿½Ø½ï¿½Ã³ ID
+    std::string path;  // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 };
 
 struct TextureCoord {
@@ -38,65 +38,65 @@ struct Normal {
 };
 
 struct Face {
-    unsigned int v1, v2, v3;  // Á¤Á¡ ÀÎµ¦½º
-    unsigned int t1, t2, t3;  // ÅØ½ºÃ³ ÁÂÇ¥ ÀÎµ¦½º (¼±ÅÃÀû)
-    unsigned int n1, n2, n3;  // ¹ý¼± º¤ÅÍ ÀÎµ¦½º
-    std::string materialName; // Face°¡ »ç¿ëÇÏ´Â ÀçÁú ÀÌ¸§ (usemtl)
+    unsigned int v1, v2, v3;  // ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
+    unsigned int t1, t2, t3;  // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½Ç¥ ï¿½Îµï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+    unsigned int n1, n2, n3;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
+    std::string materialName; // Faceï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ (usemtl)
 };
 
 struct Material {
     std::string name;
-    glm::vec3 Ka;  // È¯°æ±¤ °è¼ö
-    glm::vec3 Kd;  // ³­¹Ý»ç±¤ °è¼ö
-    glm::vec3 Ks;  // ¹Ý»ç±¤ °è¼ö
-    float Ns;      // ¹ÝÂ¦ÀÓ °­µµ
+    glm::vec3 Ka;  // È¯ï¿½æ±¤ ï¿½ï¿½ï¿½
+    glm::vec3 Kd;  // ï¿½ï¿½ï¿½Ý»ç±¤ ï¿½ï¿½ï¿½
+    glm::vec3 Ks;  // ï¿½Ý»ç±¤ ï¿½ï¿½ï¿½
+    float Ns;      // ï¿½ï¿½Â¦ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-    std::string map_Ka; // È¯°æ±¤ ÅØ½ºÃ³ ÆÄÀÏ °æ·Î
-    std::string map_Kd; // ³­¹Ý»ç±¤ ÅØ½ºÃ³ ÆÄÀÏ °æ·Î
-    std::string map_Ks; // ¹Ý»ç±¤ ÅØ½ºÃ³ ÆÄÀÏ °æ·Î
+    std::string map_Ka; // È¯ï¿½æ±¤ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    std::string map_Kd; // ï¿½ï¿½ï¿½Ý»ç±¤ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    std::string map_Ks; // ï¿½Ý»ç±¤ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 
-    GLuint ambientTextureID = 0;  // È¯°æ±¤ ÅØ½ºÃ³ ID
-    GLuint diffuseTextureID = 0;  // ³­¹Ý»ç±¤ ÅØ½ºÃ³ ID
-    GLuint specularTextureID = 0; // ¹Ý»ç±¤ ÅØ½ºÃ³ ID
+    GLuint ambientTextureID = 0;  // È¯ï¿½æ±¤ ï¿½Ø½ï¿½Ã³ ID
+    GLuint diffuseTextureID = 0;  // ï¿½ï¿½ï¿½Ý»ç±¤ ï¿½Ø½ï¿½Ã³ ID
+    GLuint specularTextureID = 0; // ï¿½Ý»ç±¤ ï¿½Ø½ï¿½Ã³ ID
 
-    std::vector<Texture> textures;  // ¿©·¯ ÅØ½ºÃ³ °ü¸®
+    std::vector<Texture> textures;  // ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½
 
-    bool hasTexture_s = false;  // ÅØ½ºÃ³°¡ ÀÖ´ÂÁö ¿©ºÎ
+    bool hasTexture_s = false;  // ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-    // ÅØ½ºÃ³°¡ ÀÖ´ÂÁö È®ÀÎ
+    // ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
     bool hasTexture() const { return !textures.empty(); }
 };
 
 class Model {
 public:
-    std::vector<Vertex> vertices;  // Á¤Á¡ ¹è¿­
-    std::vector<TextureCoord> texCoords;  // ÅØ½ºÃ³ ÁÂÇ¥ ¹è¿­ (Ãß°¡)
-    std::vector<Normal> normals;   // ¹ý¼± º¤ÅÍ ¹è¿­
-    std::vector<Face> faces;       // ¸é ¹è¿­
+    std::vector<Vertex> vertices;  // ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­
+    std::vector<TextureCoord> texCoords;  // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½Ç¥ ï¿½è¿­ (ï¿½ß°ï¿½)
+    std::vector<Normal> normals;   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­
+    std::vector<Face> faces;       // ï¿½ï¿½ ï¿½è¿­
 
     glm::mat4 matrix = glm::mat4(1.0f);
-    glm::mat4 translateMatrix = glm::mat4(1.0f);  // ¸ðµ¨ÀÌ ÀÌµ¿ÇÑ À§Ä¡¸¦ ÀúÀåÇÒ º¤ÅÍ
-    glm::mat4 rotateMatrix = glm::mat4(1.0f);    // ¸ðµ¨ÀÇ ÃÊ±â È¸Àü Çà·Ä
+    glm::mat4 translateMatrix = glm::mat4(1.0f);  // ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    glm::mat4 rotateMatrix = glm::mat4(1.0f);    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½
 
     std::unordered_map<std::string, Material> materials;
 
     std::string name;
-    std::string type; // ¸ðµ¨ µµÇü Å¸ÀÔ ex) box, sphere, cylinder
+    std::string type; // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ex) box, sphere, cylinder
 
-    GLuint textureID;  // ÅØ½ºÃ³ ID ÇÊµå Ãß°¡
+    GLuint textureID;  // ï¿½Ø½ï¿½Ã³ ID ï¿½Êµï¿½ ï¿½ß°ï¿½
 
     bool model_status = true;
-    btRigidBody* rigidBody = nullptr;  // °¢ ¸ðµ¨ÀÇ °­Ã¼
+    btRigidBody* rigidBody = nullptr;  // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼
     bool rigid_status = true;
     bool draw_status = true;
 
     GLuint vao;
     GLuint vbos[4];
-    // ÅØ½ºÃ³º°·Î Face¸¦ ±×·ìÈ­
+    // ï¿½Ø½ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ Faceï¿½ï¿½ ï¿½×·ï¿½È­
     std::unordered_map<std::string, std::vector<unsigned int>> textureGroups;
     std::unordered_map<std::string, GLuint> textureEBOs;
 
-    // ÀçÁú°ú ÅØ½ºÃ³ ¸ÅÇÎ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½
     std::unordered_map<std::string, Texture> materialTextureMap;
 
     virtual void load_obj(std::string name, std::string path, std::string obj_name, std::string obj_type, glm::mat4 start_matrix = glm::mat4(1.0f)) = 0;
@@ -104,5 +104,5 @@ public:
     virtual const void draw_rigidBody(GLuint shaderProgramID) = 0;
     virtual void initBuffer() = 0;
 
-    virtual ~Model() = default; // °¡»ó ¼Ò¸êÀÚ
+    virtual ~Model() = default; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ò¸ï¿½ï¿½ï¿½
 };

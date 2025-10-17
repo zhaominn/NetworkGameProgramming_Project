@@ -178,6 +178,7 @@
     <ClInclude Include="root.h" />
     <ClInclude Include="SelectMapMode.h" />
     <ClInclude Include="shaderMaker.h" />
+    <ClInclude Include="TupleHash.h" />
     <ClInclude Include="Ui.h" />
     <ClInclude Include="Ui_v2.h" />
   </ItemGroup>
@@ -192,6 +193,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mode.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="RoadModel.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
