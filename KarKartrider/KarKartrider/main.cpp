@@ -1,19 +1,17 @@
-#include <iostream>
-#include <vector> 
-
-#include "shaderMaker.h"
+#include "Pch.h"
 #include "DefaultModel.h"
 #include "KeyBoard.h"
-#include "Camera.h"
 #include "Light.h"
 #include "Debug.h"
-#include "LoadProgress.h"
-#include "root.h"
 #include "LogoMode.h"
+#include "shaderMaker.h"
+#include "root.h"
+
 
 using namespace std;
 
 void InitBuffer();
+void initPhysics();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 

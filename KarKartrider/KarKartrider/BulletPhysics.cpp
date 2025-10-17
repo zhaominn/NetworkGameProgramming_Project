@@ -1,30 +1,20 @@
-#include "BulletPhysics.h"
-
-#include <limits>
-#include <algorithm>
-#include <iostream>
-
-#include <glm/glm/glm.hpp>
-#include <glm/glm/gtx/matrix_decompose.hpp>
-#include <glm/glm/gtc/type_ptr.hpp>
-
-#include <glew.h>
-
+#include "Pch.h"
 #include "Model.h"
+#include "BulletPhysics.h"
 #include "CustomContactResultCallback.h"
 
 // Bullet
-#include "include/btBulletCollisionCommon.h"
-#include "include/btBulletDynamicsCommon.h"
+#include "btBulletCollisionCommon.h"
+#include "btBulletDynamicsCommon.h"
 
-// --- 전역 Bullet 포인터 정의 (.h의 extern에 대한 실제 메모리) ---
+
 btBroadphaseInterface* broadphase = nullptr;
 btDefaultCollisionConfiguration* collisionConfiguration = nullptr;
 btCollisionDispatcher* dispatcher = nullptr;
 btSequentialImpulseConstraintSolver* solver = nullptr;
 btDiscreteDynamicsWorld* dynamicsWorld = nullptr;
 
-// Bullet Physics 초기화
+// Bullet Physics
 void initPhysics() {
     broadphase = new btDbvtBroadphase();
     collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -34,7 +24,7 @@ void initPhysics() {
     dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
 }
 
-// Model의 AABB를 구해 크기 반환
+// Model
 glm::vec3 calculateModelSize(const Model* model) {
     glm::vec3 min(std::numeric_limits<float>::max());
     glm::vec3 max(std::numeric_limits<float>::lowest());
@@ -54,7 +44,6 @@ glm::vec3 calculateModelSize(const Model* model) {
     return max - min;
 }
 
-// 물리월드에 모델 추가
 void addModelToPhysicsWorld(Model* model) {
     glm::vec3 size = calculateModelSize(model);
 
@@ -80,9 +69,9 @@ void addModelToPhysicsWorld(Model* model) {
         shape = new btConeShape(radius, height);
     }
     else if (model->type == "plane") {
-        float radius = size.x * 0.5f; // (원본 그대로 유지)
+        float radius = size.x * 0.5f;
         float height = size.y;
-        shape = new btConeShape(radius, height); // 원본 코드 유지
+        shape = new btConeShape(radius, height); 
     }
     else {
         shape = new btBoxShape(btVector3(size.x * 0.5f, 0.01f, size.z * 0.5f));
@@ -93,7 +82,7 @@ void addModelToPhysicsWorld(Model* model) {
         return;
     }
 
-    // OpenGL model matrix에서 변환 성분 분해
+    // OpenGL model matrix
     glm::vec3 translation, scale, skew;
     glm::vec4 perspective;
     glm::quat rotation;
@@ -117,14 +106,14 @@ void addModelToPhysicsWorld(Model* model) {
     model->rigidBody = body;
 }
 
-// 모든 모델을 물리월드에 초기화
+//
 void initializeModelsWithPhysics(std::vector<Model*>& models) {
     for (auto& model : models) {
         addModelToPhysicsWorld(model);
     }
 }
 
-// Bullet 자원 정리
+// Bullet
 void cleanupPhysics() {
     if (!dynamicsWorld) return;
 
@@ -145,7 +134,7 @@ void cleanupPhysics() {
     delete broadphase; broadphase = nullptr;
 }
 
-// 특정 모델을 월드/컨테이너에서 제거
+
 void removeModelFromWorld(std::vector<Model*>& models, Model*& modelToDelete) {
     if (modelToDelete && modelToDelete->rigidBody) {
         dynamicsWorld->removeRigidBody(modelToDelete->rigidBody);
@@ -162,7 +151,7 @@ void removeModelFromWorld(std::vector<Model*>& models, Model*& modelToDelete) {
     }
 }
 
-// 특정 모델의 RigidBody만 제거
+
 void removeRigidBodyFromModel(Model*& model) {
     if (model && model->rigidBody) {
         dynamicsWorld->removeRigidBody(model->rigidBody);
@@ -172,7 +161,7 @@ void removeRigidBodyFromModel(Model*& model) {
     }
 }
 
-// 여러 모델의 물리 Transform 업데이트
+
 void UpdateRigidBodyTransforms(std::vector<Model*> models) {
     for (auto& model : models) {
         if (!model || !model->rigidBody) continue;
@@ -184,7 +173,7 @@ void UpdateRigidBodyTransforms(std::vector<Model*> models) {
     }
 }
 
-// 단일 모델의 물리 Transform 업데이트
+
 void UpdateRigidBodyTransform(Model*& model) {
     if (!model || !model->rigidBody) return;
 
@@ -200,7 +189,7 @@ void UpdateRigidBodyTransform(Model*& model) {
     model->rigidBody->setWorldTransform(transform);
 }
 
-// AABB 충돌박스 렌더링 (라인)
+
 void RenderCollisionBox(const Model* model, GLuint shaderProgram) {
     if (!model || !model->rigidBody) return;
 
@@ -246,7 +235,7 @@ void RenderCollisionBox(const Model* model, GLuint shaderProgram) {
 
     glUseProgram(shaderProgram);
 
-    // 셰이더에 기본 행렬(Identity) 세팅 (원본 유지)
+    //
     glm::mat4 identityMatrix(1.0f);
     GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
     GLint viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -255,7 +244,7 @@ void RenderCollisionBox(const Model* model, GLuint shaderProgram) {
     if (viewLoc != -1) glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(identityMatrix));
     if (projectionLoc != -1) glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(identityMatrix));
 
-    // rigid body 라인 렌더링용 플래그
+    //
     GLint isRigidBodyLoc = glGetUniformLocation(shaderProgram, "isRigidBody");
     if (isRigidBodyLoc != -1) glUniform1i(isRigidBodyLoc, 1);
 

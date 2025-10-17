@@ -1,6 +1,7 @@
 #pragma once
 #include <glew.h>
 
+// 전역 변수 선언 (정의는 shaderMaker.cpp 한 곳에만 둡니다)
 extern GLint width;
 extern GLint height;
 
@@ -18,7 +19,7 @@ extern GLuint fragmentShader_UI;
 extern GLchar* vertexSource_UI;
 extern GLchar* fragmentSource_UI;
 
-
+// 함수 선언(구현은 shaderMaker.cpp에 있음)
 void make_vertexShaders();
 void make_fragmentShaders();
 void make_shaderProgram();

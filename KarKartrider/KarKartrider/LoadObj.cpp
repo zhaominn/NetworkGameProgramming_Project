@@ -1,20 +1,17 @@
+#include "Pch.h"
 #include "loadobj.h"
 #include "LoadMtl.h"
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
-#include <unordered_map>
 
-// OBJ ÆÄÀÏÀ» ÀÐ¾î¿Í¼­ ¸ðµ¨ µ¥ÀÌÅÍ¸¦ ÆÄ½ÌÇÏ´Â ÇÔ¼ö (±¸Çö)
+
+// OBJ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½Í¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Ä½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½ (ï¿½ï¿½ï¿½ï¿½)
 void read_obj_file(const std::string& filename,
     const std::string path,
     Model* model,
     const std::string& name,
     const std::string& type)
 {
-    std::ifstream file(path + filename);  // ÆÄÀÏ ÀÐ±â ¸ðµå·Î ¿­±â
+    std::ifstream file(path + filename);  // ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (!file.is_open()) {
         std::cerr << "Error opening file: " << filename << std::endl;
         return;

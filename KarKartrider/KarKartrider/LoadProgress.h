@@ -1,18 +1,12 @@
 #pragma once
-
-#include <iostream>
-#include <vector>
-#include <string>
 #include <type_traits>
 #include <glm/glm/glm.hpp>
-
 #include "DefaultModel.h"
-#include "Model.h"
 
-// 진행률 표시줄 (선언)
+
 void printProgressBar(int progress, int total);
 
-// 템플릿 함수 (헤더에만 구현)
+
 template <typename T, typename = std::enable_if_t<std::is_base_of<Model, T>::value>>
 void loadModelWithProgress(
     const std::string& modelPath,
@@ -29,13 +23,13 @@ void loadModelWithProgress(
     const int totalSteps = 4;
     int currentStep = 0;
 
-    // Step 1: OBJ 파일 로드
+
     std::cout << "Step 1/4: Reading OBJ file..." << std::endl;
     T* model = new T(modelPath, path, modelName, modelType, rigid_status, scale);
     currentStep++;
     printProgressBar(currentStep, totalSteps);
 
-    // Step 2: MTL 파일 처리
+
     std::cout << "\nStep 2/4: Processing Materials (MTL file)..." << std::endl;
     for (const auto& [materialName, material] : model->materials) {
         std::cout << "Processing material: " << materialName << std::endl;
@@ -49,7 +43,7 @@ void loadModelWithProgress(
     currentStep++;
     printProgressBar(currentStep, totalSteps);
 
-    // Step 3: 텍스처 로드
+
     std::cout << "\nStep 3/4: Loading textures..." << std::endl;
     for (const auto& [materialName, material] : model->materials) {
         for (const auto& texture : material.textures) {
@@ -65,7 +59,7 @@ void loadModelWithProgress(
     currentStep++;
     printProgressBar(currentStep, totalSteps);
 
-    // Step 4: 버퍼 초기화
+
     std::cout << "\nStep 4/4: Initializing buffers..." << std::endl;
     model->initBuffer();
     currentStep++;

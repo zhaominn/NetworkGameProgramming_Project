@@ -1,23 +1,23 @@
 #version 330 core
 
-in vec3 Color;         // ¹öÅØ½º ¼ÎÀÌ´õ¿¡¼­ Àü´Þ¹ÞÀº »ö»ó
-in vec2 TexCoords;     // ÅØ½ºÃ³ ÁÂÇ¥
+in vec3 Color;         // ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Þ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+in vec2 TexCoords;     // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½Ç¥
 
-out vec4 FragColor;    // ÃÖÁ¾ Ãâ·Â »ö»ó
+out vec4 FragColor;    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-uniform sampler2D texture1; // ÅØ½ºÃ³ »ùÇÃ·¯
-uniform bool isRed;         // UI ¸ðµå ÇÃ·¡±×
-uniform bool isTimer;       // Å¸ÀÌ¸Ó ÇÃ·¡±×
-uniform bool isTexture;     // ÅØ½ºÃ³ ÇÃ·¡±×
+uniform sampler2D texture1; // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½Ã·ï¿½
+uniform bool isRed;         // UI ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
+uniform bool isTimer;       // Å¸ï¿½Ì¸ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
+uniform bool isTexture;     // ï¿½Ø½ï¿½Ã³ ï¿½Ã·ï¿½ï¿½ï¿½
 
 void main() {
     if (isRed) {
-        FragColor = vec4(1.0, 0.0, 0.0, 1.0); // »¡°£»ö
+        FragColor = vec4(1.0, 0.0, 0.0, 1.0); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     } else if (isTimer) {
-        FragColor = vec4(1.0, 1.0, 1.0, 1.0); // Èò»ö
+        FragColor = vec4(1.0, 1.0, 1.0, 1.0); // ï¿½ï¿½ï¿½
     } else if (isTexture) {
-        FragColor = texture(texture1, TexCoords); // ÅØ½ºÃ³ »ùÇÃ¸µ
+        FragColor = texture(texture1, TexCoords); // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½Ã¸ï¿½
     } else {
-        FragColor = vec4(0.0, 0.0, 0.0, 1.0); // ±âº»°ª (°ËÁ¤»ö)
+        FragColor = vec4(0.0, 0.0, 0.0, 1.0); // ï¿½âº»ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     }
 }

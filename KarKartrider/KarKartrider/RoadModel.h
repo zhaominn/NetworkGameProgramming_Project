@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Model.h"
+
 using namespace std;
 
 class RoadModel : public Model {
@@ -17,5 +19,4 @@ public:
     const void draw_rigidBody(GLuint shaderProgramID) override;
 
     void initBuffer() override;
-
 };

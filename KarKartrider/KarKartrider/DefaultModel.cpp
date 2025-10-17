@@ -1,14 +1,8 @@
-#include <vector>
-#include <string>
-#include <glew.h>
-#include <glm/glm/gtc/type_ptr.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
-#include <unordered_map>
-
-#include "Model.h"
+#include "Pch.h"
 #include "BulletPhysics.h"
 #include "DefaultModel.h"
 #include "TupleHash.h"
+#include "LoadObj.h"
 
 DefaultModel::DefaultModel(string name, string path, string obj_name, string obj_type, bool rigid_status, glm::mat4 start_matrix)
 {

@@ -1,7 +1,6 @@
 #pragma once
-
 #include <string>
-#include "Model.h"
+class Model;
 
 void read_obj_file(
     const std::string& filename,

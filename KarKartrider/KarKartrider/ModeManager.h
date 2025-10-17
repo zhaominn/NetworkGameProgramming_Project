@@ -1,4 +1,6 @@
 #pragma once
+
+//#include "Mode.h"
 #include "Mode.h"
 
 class ModeManager {
@@ -8,45 +10,19 @@ private:
 public:
 	ModeManager() : mode(nullptr) {}
 	~ModeManager(){}
-	void SetMode(Mode* m) {
-		if (mode)
-			mode->finish();
-		mode = m;
-		mode->init();
-	}
+	void SetMode(Mode* m);
 
-	void draw_model() {
-		if (mode)
-			mode->draw_model();
-	}
+	void draw_model();
 
-	void draw_bb() {
-		if (mode)
-			mode->draw_bb();
-	}
+	void draw_bb();
 
-	void finish() {
-		if (mode)
-			mode->finish();
-	}
+	void finish();
 
-	void keyboard(unsigned char key, int x, int y) {
-		if (mode)
-			mode->keyboard(key, x, y);
-	}
+	void keyboard(unsigned char key, int x, int y);
 
-	void specialKey(int key, int x, int y) {
-		if (mode)
-			mode->specialKey(key, x, y);
-	}
+	void specialKey(int key, int x, int y);
 
-	void specialKeyUp(int key, int x, int y) {
-		if (mode)
-			mode->specialKeyUp(key, x, y);
-	}
+	void specialKeyUp(int key, int x, int y);
 
-	void mouseClick(int button, int state, int x, int y) {
-		if (mode)
-			mode->mouseClick(button, state, x, y);
-	}
+	void mouseClick(int button, int state, int x, int y);
 };

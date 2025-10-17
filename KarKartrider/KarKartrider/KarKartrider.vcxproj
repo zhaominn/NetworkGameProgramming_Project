@@ -74,15 +74,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\opencv\build\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;$(ProjectDir)include;C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\opencv\build\include;</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>irrKlang.lib;opencv_world4100.lib;glew32.lib;glew32s.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\lib;C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -91,9 +93,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\opencv\build\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;$(ProjectDir)include;C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\opencv\build\include;</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -101,24 +105,26 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>irrKlang.lib;opencv_world4100.lib;glew32.lib;glew32s.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\lib;C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\opencv\build\include;C:\Users\somin\OneDrive\KartRider\KarKartrider\KarKartrider\include;C:\Users\neneee\KartRider\KarKartrider\KarKartrider\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;$(ProjectDir)include;$(ProjectDir)include;C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\opencv\build\include;C:\Users\somin\OneDrive\KartRider\KarKartrider\KarKartrider\include;C:\Users\neneee\KartRider\KarKartrider\KarKartrider\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>glew32.lib freeglut.lib %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>irrKlang.lib;opencv_world4100.lib;glew32.lib;glew32s.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\lib;C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,10 +133,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGSNDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;C:\Users\neneee\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;$(ProjectDir)include;$(ProjectDir)include;C:\Users\neneee\NetworkGameProgramming_Project\KarKartrider\KarKartrider\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +147,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>irrKlang.lib;opencv_world4100.lib;glew32.lib;glew32s.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>glew32.lib freeglut.lib %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalLibraryDirectories>C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\KarKartrider\KarKartrider\lib;C:\Users\neneee\NetworkGameProgramming_Project\KarKartrider\KarKartrider\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -174,6 +182,7 @@
     <ClInclude Include="Mode.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModeManager.h" />
+    <ClInclude Include="Pch.h" />
     <ClInclude Include="RoadModel.h" />
     <ClInclude Include="root.h" />
     <ClInclude Include="SelectMapMode.h" />
@@ -184,18 +193,37 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BulletPhysics.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterModel.cpp" />
     <ClCompile Include="CustomContactResultCallback.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="DefaultModel.cpp" />
     <ClCompile Include="filetobuf.cpp" />
     <ClCompile Include="KartModel.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="LoadMtl.cpp" />
     <ClCompile Include="LoadObj.cpp" />
     <ClCompile Include="LoadProgress.cpp" />
+    <ClCompile Include="LoadSound.cpp" />
+    <ClCompile Include="LogoMode.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Map1_Mode.cpp" />
+    <ClCompile Include="Map2_Mode.cpp" />
+    <ClCompile Include="MapModel.cpp" />
     <ClCompile Include="Mode.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModeManager.cpp" />
+    <ClCompile Include="Pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="RoadModel.cpp" />
+    <ClCompile Include="root.cpp" />
+    <ClCompile Include="SelectMapMode.cpp" />
+    <ClCompile Include="shaderMaker.cpp" />
     <ClCompile Include="Ui.cpp" />
     <ClCompile Include="Ui_v2.cpp" />
   </ItemGroup>

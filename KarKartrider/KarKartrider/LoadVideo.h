@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include "root.h"                       
 
 void loadVideo(const std::string& fileName, const std::string& path, bool* isRunning) {
     std::cout << "OpenCV Version: " << CV_VERSION << std::endl;

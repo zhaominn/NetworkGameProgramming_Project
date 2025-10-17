@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "Model.h"
 
 using namespace std;
 
@@ -19,6 +19,4 @@ public:
     const void draw_rigidBody(GLuint shaderProgramID) override;
 
     void initBuffer() override;
-
-
 };

@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-
 using namespace std;
 
 class Ui : public Model {

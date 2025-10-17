@@ -1,63 +1,63 @@
 #version 330 core
 
-// ÀÔ·Â µ¥ÀÌÅÍ
-in vec3 FragPos;   // ¿ùµå °ø°£¿¡¼­ÀÇ ÇÁ·¡±×¸ÕÆ® À§Ä¡ (Vertex Shader¿¡¼­ Àü´Þ)
-in vec3 Normal;    // Á¤Á¡ÀÇ ¹ý¼± º¤ÅÍ (Vertex Shader¿¡¼­ Àü´Þ)
-in vec2 TexCoords; // ÅØ½ºÃ³ ÁÂÇ¥ (Vertex Shader¿¡¼­ Àü´Þ)
+// ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+in vec3 FragPos;   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½Æ® ï¿½ï¿½Ä¡ (Vertex Shaderï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+in vec3 Normal;    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Vertex Shaderï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+in vec2 TexCoords; // ï¿½Ø½ï¿½Ã³ ï¿½ï¿½Ç¥ (Vertex Shaderï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 
-// Ãâ·Â µ¥ÀÌÅÍ
-out vec4 FragColor; // ÃÖÁ¾ Ãâ·Â »ö»ó
+// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+out vec4 FragColor; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-// Ä«¸Þ¶ó¿Í ±¤¿ø °ü·Ã Uniform º¯¼ö
-uniform vec3 viewPos;      // Ä«¸Þ¶ó(ºä¾î) À§Ä¡
-uniform vec3 lightPos;     // ±¤¿øÀÇ À§Ä¡
-uniform vec3 lightColor;   // ±¤¿øÀÇ »ö»ó
+// Ä«ï¿½Þ¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Uniform ï¿½ï¿½ï¿½ï¿½
+uniform vec3 viewPos;      // Ä«ï¿½Þ¶ï¿½(ï¿½ï¿½ï¿½) ï¿½ï¿½Ä¡
+uniform vec3 lightPos;     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
+uniform vec3 lightColor;   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-// ÅØ½ºÃ³ ¹× ÅØ½ºÃ³ À¯¹« ÇÃ·¡±×
-uniform sampler2D map_Ka;  // È¯°æ±¤ ÅØ½ºÃ³
-uniform sampler2D map_Kd;  // ³­¹Ý»ç±¤ ÅØ½ºÃ³
-uniform sampler2D map_Ks;  // ¹Ý»ç±¤ ÅØ½ºÃ³
-uniform bool hasKaTexture; // È¯°æ±¤ ÅØ½ºÃ³ À¯¹« ÇÃ·¡±×
-uniform bool hasKdTexture; // ³­¹Ý»ç±¤ ÅØ½ºÃ³ À¯¹« ÇÃ·¡±×
-uniform bool hasKsTexture; // ¹Ý»ç±¤ ÅØ½ºÃ³ À¯¹« ÇÃ·¡±×
+// ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
+uniform sampler2D map_Ka;  // È¯ï¿½æ±¤ ï¿½Ø½ï¿½Ã³
+uniform sampler2D map_Kd;  // ï¿½ï¿½ï¿½Ý»ç±¤ ï¿½Ø½ï¿½Ã³
+uniform sampler2D map_Ks;  // ï¿½Ý»ç±¤ ï¿½Ø½ï¿½Ã³
+uniform bool hasKaTexture; // È¯ï¿½æ±¤ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
+uniform bool hasKdTexture; // ï¿½ï¿½ï¿½Ý»ç±¤ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
+uniform bool hasKsTexture; // ï¿½Ý»ç±¤ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
 
-// ±âº» ÀçÁú ¼Ó¼º
-uniform vec3 Ka;           // ±âº» È¯°æ±¤ °è¼ö
-uniform vec3 Kd;           // ±âº» ³­¹Ý»ç±¤ °è¼ö
-uniform vec3 Ks;           // ±âº» ¹Ý»ç±¤ °è¼ö
-uniform float Ns;          // ¹ÝÂ¦ÀÓ °­µµ (Shininess)
+// ï¿½âº» ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½
+uniform vec3 Ka;           // ï¿½âº» È¯ï¿½æ±¤ ï¿½ï¿½ï¿½
+uniform vec3 Kd;           // ï¿½âº» ï¿½ï¿½ï¿½Ý»ç±¤ ï¿½ï¿½ï¿½
+uniform vec3 Ks;           // ï¿½âº» ï¿½Ý»ç±¤ ï¿½ï¿½ï¿½
+uniform float Ns;          // ï¿½ï¿½Â¦ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Shininess)
 
-uniform bool isUI;          // UI ¸ðµå ÇÃ·¡±×
+uniform bool isUI;          // UI ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
 
 void main() {
-    // 1. ¹ý¼± º¤ÅÍ Á¤±ÔÈ­
+    // 1. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
     vec3 norm = normalize(Normal);
 
-    // 2. ±¤¿ø ¹æÇâ °è»ê
+    // 2. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     vec3 lightDir = normalize(lightPos - FragPos);
 
-    // 3. Ä«¸Þ¶ó ¹æÇâ °è»ê
+    // 3. Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     vec3 viewDir = normalize(viewPos - FragPos);
 
-    // 4. **È¯°æ±¤ (Ambient) °è»ê**
-    vec3 ambientColor = hasKaTexture ? texture(map_Ka, TexCoords).rgb : Ka; // ÅØ½ºÃ³ ¶Ç´Â ±âº»°ª
+    // 4. **È¯ï¿½æ±¤ (Ambient) ï¿½ï¿½ï¿½**
+    vec3 ambientColor = hasKaTexture ? texture(map_Ka, TexCoords).rgb : Ka; // ï¿½Ø½ï¿½Ã³ ï¿½Ç´ï¿½ ï¿½âº»ï¿½ï¿½
     vec3 ambient = ambientColor * lightColor;
 
-    // 5. **³­¹Ý»ç±¤ (Diffuse) °è»ê**
+    // 5. **ï¿½ï¿½ï¿½Ý»ç±¤ (Diffuse) ï¿½ï¿½ï¿½**
     float diff = max(dot(norm, lightDir), 0.0); // Lambert's cosine law
-    vec3 diffuseColor = hasKdTexture ? texture(map_Kd, TexCoords).rgb : Kd; // ÅØ½ºÃ³ ¶Ç´Â ±âº»°ª
+    vec3 diffuseColor = hasKdTexture ? texture(map_Kd, TexCoords).rgb : Kd; // ï¿½Ø½ï¿½Ã³ ï¿½Ç´ï¿½ ï¿½âº»ï¿½ï¿½
     vec3 diffuse = diffuseColor * diff * lightColor;
 
-    // 6. **¹Ý»ç±¤ (Specular) °è»ê**
-    vec3 reflectDir = reflect(-lightDir, norm); // ¹Ý»ç ¹æÇâ °è»ê
+    // 6. **ï¿½Ý»ç±¤ (Specular) ï¿½ï¿½ï¿½**
+    vec3 reflectDir = reflect(-lightDir, norm); // ï¿½Ý»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), Ns); // Phong reflection model
-    vec3 specularColor = hasKsTexture ? texture(map_Ks, TexCoords).rgb : Ks; // ÅØ½ºÃ³ ¶Ç´Â ±âº»°ª
+    vec3 specularColor = hasKsTexture ? texture(map_Ks, TexCoords).rgb : Ks; // ï¿½Ø½ï¿½Ã³ ï¿½Ç´ï¿½ ï¿½âº»ï¿½ï¿½
     vec3 specular = specularColor * spec * lightColor;
 
-    // 7. **ÃÖÁ¾ »ö»ó °è»ê**
+    // 7. **ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½**
     vec3 result = ambient + diffuse + specular;
 
-    // 8. ÃÖÁ¾ Ãâ·Â
+    // 8. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     //FragColor = vec4(texture(map_Kd, TexCoords).rgb, 1.0);
     vec4 texColor = texture(map_Kd, TexCoords);
     if (texColor.a < 0.1)
@@ -67,10 +67,10 @@ void main() {
 
 
  //FragColor = vec4(result, 1.0);
- //FragColor = vec4(Normal * 0.5 + 0.5, 1.0); // ¹ý¼±À» (0, 1) ¹üÀ§·Î º¯È¯
- //FragColor = vec4(TexCoords, 0.0, 1.0); // UV ÁÂÇ¥¸¦ »ö»óÀ¸·Î Ãâ·Â
- //FragColor = vec4(diff * lightColor, 1.0); // Á¶¸í°è»êÈ®ÀÎ
- //FragColor = vec4(texture(map_Kd, TexCoords).rgb, 1.0); //ÅØ½ºÃ³ Àû¿ëµÈ ÀÌ¹ÌÁö¸¸ ¹Ù·Î³ª¿À°Ô
- //FragColor = vec4(ambient, 1.0); //Á¶¸í °è»êÀÌ Á¤»óÀÎÁö È®ÀÎ (È¯°æ±¤ »ö»óÀ¸·Î ³ª¿À¸éµÊ)
- //FragColor = vec4(diffuse, 1.0); //³­¹Ý»ç±¤(diffuse)¸¸ Ãâ·ÂÇÏ¿© Á¶¸í °è»êÀÌ Á¤»óÀÎÁö È®ÀÎ
- //FragColor = vec4(specular, 1.0); //¹Ý»ç±¤(specular)¸¸ Ãâ·ÂÇÏ¿© Á¶¸í °è»êÀÌ Á¤»óÀÎÁö È®ÀÎ
+ //FragColor = vec4(Normal * 0.5 + 0.5, 1.0); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (0, 1) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+ //FragColor = vec4(TexCoords, 0.0, 1.0); // UV ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+ //FragColor = vec4(diff * lightColor, 1.0); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½
+ //FragColor = vec4(texture(map_Kd, TexCoords).rgb, 1.0); //ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·Î³ï¿½ï¿½ï¿½ï¿½ï¿½
+ //FragColor = vec4(ambient, 1.0); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ (È¯ï¿½æ±¤ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+ //FragColor = vec4(diffuse, 1.0); //ï¿½ï¿½ï¿½Ý»ç±¤(diffuse)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+ //FragColor = vec4(specular, 1.0); //ï¿½Ý»ç±¤(specular)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½

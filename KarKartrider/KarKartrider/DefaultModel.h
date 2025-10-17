@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LoadObj.h"
+#include "Model.h"
 
 using namespace std;
 
@@ -9,6 +9,7 @@ public:
     DefaultModel(){}
 
     DefaultModel(string name, string path, string obj_name, string obj_type, bool rigid_status, glm::mat4 start_matrix = glm::mat4(1.0f));
+    
     ~DefaultModel(){}
 
     void load_obj(string name, string path, string obj_name, string obj_type, glm::mat4 start_matrix = glm::mat4(1.0f)) override;
