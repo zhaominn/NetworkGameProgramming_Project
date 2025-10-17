@@ -22,12 +22,12 @@ int main(int argc, char** argv) {
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	int screenWidth = glutGet(GLUT_SCREEN_WIDTH);  // ������� ���� �ػ�
-	int screenHeight = glutGet(GLUT_SCREEN_HEIGHT); // ������� ���� �ػ�
+	int screenWidth = glutGet(GLUT_SCREEN_WIDTH);  
+	int screenHeight = glutGet(GLUT_SCREEN_HEIGHT); 
 	glutInitWindowPosition(location_x, location_y);
-	glutInitWindowSize(window_width, window_height); // â ũ�⸦ ȭ�� ũ��� ����
+	glutInitWindowSize(window_width, window_height); 
 	glutCreateWindow("KarKartrider");
-	//glutFullScreen(); // ��ü ȭ������ ��ȯ
+	//glutFullScreen(); 
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
@@ -40,20 +40,19 @@ int main(int argc, char** argv) {
 	make_shaderProgram();
 	make_shaderProgram_ui();
 
-	initPhysics(); // Bullet �ʱ�ȭ �Լ� ȣ��
+	initPhysics(); 
 
 	LogoMode* logoMode = new LogoMode();
-	MM.SetMode(logoMode); //�ʱ� ��� ����
+	MM.SetMode(logoMode); 
 
-	// ����� ���
 	/*debug_model(models.back());
 	debug_materials(models.back()->materials);*/
 
 
 	InitBuffer();
 
-	// �ʱ� ������ ���� ������
-	drawScene();  // ���÷��� �ݹ� �Լ� ���� ȣ��
+
+	drawScene(); 
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -81,26 +80,25 @@ GLvoid drawScene() {
 	}
 }
 
-// ���� �ʱ�ȭ �Լ�
 void InitBuffer() {
 	//-----------------------------------------------------------------------------------------------------------
-	for (const auto& model : karts) { // ��� �� initBuffer
+	for (const auto& model : karts) {
 		model->initBuffer();
 	}
 
-	for (const auto& model : road1) { // ��� �� initBuffer
+	for (const auto& model : road1) { 
 		model->initBuffer();
 	}
 
-	for (const auto& model : road2) { // ��� �� initBuffer
+	for (const auto& model : road2) {
 		model->initBuffer();
 	}
 
-	for (const auto& model : selectMaps) { // ��� �� initBuffer
+	for (const auto& model : selectMaps) {
 		model->initBuffer();
 	}
 
-	for (const auto& model : countDown) { // ��� �� initBuffer
+	for (const auto& model : countDown) { 
 		model->initBuffer();
 	}
 
