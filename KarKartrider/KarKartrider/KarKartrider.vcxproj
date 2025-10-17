@@ -187,6 +187,7 @@
     <ClCompile Include="CharacterModel.cpp" />
     <ClCompile Include="CustomContactResultCallback.cpp" />
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="DefaultModel.cpp" />
     <ClCompile Include="filetobuf.cpp" />
     <ClCompile Include="KartModel.cpp" />
     <ClCompile Include="LoadMtl.cpp" />
@@ -194,7 +195,6 @@
     <ClCompile Include="LoadProgress.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mode.cpp" />
-    <ClCompile Include="Model.cpp" />
     <ClCompile Include="RoadModel.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

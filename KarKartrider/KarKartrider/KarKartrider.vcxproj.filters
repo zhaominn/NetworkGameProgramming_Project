@@ -187,9 +187,6 @@
     <ClCompile Include="Debug.cpp">
       <Filter>소스 파일\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
     <ClCompile Include="LoadProgress.cpp">
       <Filter>소스 파일\Debug</Filter>
     </ClCompile>
@@ -206,6 +203,9 @@
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
     <ClCompile Include="CharacterModel.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="DefaultModel.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
   </ItemGroup>
