@@ -1,7 +1,7 @@
 #pragma once
 
-#include "include/btBulletCollisionCommon.h"
-#include "include/btBulletDynamicsCommon.h"
+#include "btBulletCollisionCommon.h"
+#include "btBulletDynamicsCommon.h"
 
 // Bullet 충돌 콜백 클래스
 class CustomContactResultCallback : public btCollisionWorld::ContactResultCallback {

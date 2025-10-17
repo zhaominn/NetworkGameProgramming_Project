@@ -1,8 +1,8 @@
+#include "Pch.h"
 #include "loadmtl.h"
 #include "LoadTexture.h"
-#include <fstream>
-#include <sstream>
-#include <iostream>
+
+
 
 void read_mtl_file(const std::string& filename,
     const std::string path,

@@ -13,7 +13,7 @@
 #include <glm/glm/gtc/matrix_transform.hpp>
 #include <glm/glm/gtc/type_ptr.hpp>
 
-#include"include/btBulletDynamicsCommon.h"
+class btRigidBody;
 
 struct Vertex {
     float x, y, z;

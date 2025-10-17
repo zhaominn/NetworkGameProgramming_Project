@@ -1,5 +1,5 @@
+#include "Pch.h"
 #include "loadprogress.h"
-#include <iostream>
 
 void printProgressBar(int progress, int total) {
     const int barWidth = 50;

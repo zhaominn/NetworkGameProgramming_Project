@@ -1,5 +1,5 @@
+#include "Pch.h"
 #include "filetobuf.h"
-#include <iostream>
 
 char* filetobuf(const char* file) {
 	FILE* fptr;

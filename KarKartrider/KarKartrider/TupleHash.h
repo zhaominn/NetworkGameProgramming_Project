@@ -2,7 +2,6 @@
 #include <tuple>
 #include <functional>
 
-// 템플릿 파라미터를 명확히 지정
 struct TupleHash {
     template <typename T>
     static void hashCombine(std::size_t& seed, const T& value) {

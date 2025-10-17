@@ -1,15 +1,8 @@
-#include <vector>
-#include <string>
-#include <glew.h>
-#include <glm/glm/gtc/type_ptr.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
-#include <unordered_map>
-
+#include "Pch.h"
 #include "Model.h"
 #include "LoadObj.h"
 #include "BulletPhysics.h"
 #include "KartModel.h"
-
 #include "TupleHash.h"
 
 KartModel::KartModel(string name, string path, string obj_name, string obj_type, bool rigid_status, glm::mat4 start_matrix)

@@ -1,3 +1,4 @@
+#include "Pch.h"
 #include "Debug.h"
 
 // 디버깅: Model 클래스 내부 데이터 출력 (포인터 버전)
