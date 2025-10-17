@@ -205,5 +205,8 @@
     <ClCompile Include="KartModel.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterModel.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
