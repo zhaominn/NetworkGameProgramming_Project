@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
 #include "Model.h"
 
 // MTL ������ �о�ͼ� ���� ������ �Ľ��ϴ� �Լ� ����

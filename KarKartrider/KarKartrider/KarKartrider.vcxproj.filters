@@ -58,6 +58,9 @@
     <Filter Include="소스 파일\Ui">
       <UniqueIdentifier>{88aa40d6-446d-44eb-9f31-94c6d648ae84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Mode">
+      <UniqueIdentifier>{4bf57727-adec-4752-afeb-3e7955ee51a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="vertex.glsl">

@@ -1,15 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <string>
-#include <glew.h>
-#include <glm/glm/gtc/type_ptr.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
-#include <unordered_map>
 
-#include "Model.h"
-#include "LoadObj.h"
-#include "BulletPhysics.h"
 
 
 using namespace std;

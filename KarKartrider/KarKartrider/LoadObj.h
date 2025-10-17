@@ -3,7 +3,7 @@
 #include <string>
 #include "Model.h"
 
-// OBJ ÆÄÀÏÀ» ÀÐ¾î¿Í¼­ ¸ðµ¨ µ¥ÀÌÅÍ¸¦ ÆÄ½ÌÇÏ´Â ÇÔ¼ö (¼±¾ð¸¸)
+// OBJ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½Í¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Ä½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½ (ï¿½ï¿½ï¿½ï¿½)
 void read_obj_file(
     const std::string& filename,
     const std::string path,

@@ -4,7 +4,16 @@
 
 #include "shaderMaker.h"
 #include "root.h"
-#include "KeyBoard.h"
+#include "KeyBoard.h"#include <vector>
+#include <string>
+#include <glew.h>
+#include <glm/glm/gtc/type_ptr.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <unordered_map>
+
+#include "Model.h"
+#include "LoadObj.h"
+#include "BulletPhysics.h"
 #include "LoadVideo.h"
 #include "LoadSound.h"
 #include "SelectMapMode.h"
@@ -14,22 +23,22 @@
 
 class LogoMode : public Mode {
 public:
-    bool isRunning; // ÇÁ·Î±×·¥ ½ÇÇà »óÅÂ¸¦ ³ªÅ¸³»´Â ÇÃ·¡±×
+    bool isRunning; // ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
 
-    /* ±âº» »ý¼ºÀÚ ÇÊ¼ö~~ */
+    /* ï¿½âº» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¼ï¿½~~ */
     LogoMode() : isRunning(true) {}
     ~LogoMode() {
         delete this;
     }
 
     void init() override {
-        // 1. µ¿¿µ»ó Àç»ý ½º·¹µå ½ÃÀÛ
+        // 1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         std::thread videoThread(&LogoMode::runVideo, this);
 
-        // 2. »ç¿îµå Àç»ý ½º·¹µå ½ÃÀÛ
+        // 2. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         std::thread soundThread(&LogoMode::runSound, this);
 
-        // 3. ¸ðµ¨ ·Îµå ¹× Bullet Physics ÃÊ±âÈ­ (¸ÞÀÎ ½º·¹µå¿¡¼­ ½ÇÇà)
+        // 3. ï¿½ï¿½ ï¿½Îµï¿½ ï¿½ï¿½ Bullet Physics ï¿½Ê±ï¿½È­ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½å¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         loadModelWithProgress<KartModel>("bazzi_face2.obj", "obj/character/", "character_face", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
         loadModelWithProgress<KartModel>("bazzi_body.obj", "obj/character/", "character_body", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
         loadModelWithProgress<KartModel>("booster.obj", "obj/car/booster/", "booster", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
@@ -53,7 +62,7 @@ public:
         loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-184.7, 0.0, 0.0)), glm::vec3(15.0, 15.0, 400.0)), road2_barricate, true, false);
         loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 184.7)), glm::vec3(400.0, 15.0, 15.0)), road2_barricate, true, false);
         loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -184.7)), glm::vec3(400.0, 15.0, 15.0)), road2_barricate, true, false);
-        //loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0)), glm::vec3(331.0, 331.0, 331.0)), road2_barricate, true, false); //°¡¿îµ¥ Àå¾Ö¹°
+        //loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0)), glm::vec3(331.0, 331.0, 331.0)), road2_barricate, true, false); //ï¿½ï¿½ï¿½îµ¥ ï¿½ï¿½Ö¹ï¿½
         loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(145.3, 0.0, 0.0)), glm::vec3(15.0, 15.0, 315.0)), road2_barricate, true, false);
         loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-145.3, 0.0, 0.0)), glm::vec3(15.0, 15.0, 315.0)), road2_barricate, true, false);
         loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 145.3)), glm::vec3(315.0, 15.0, 15.0)), road2_barricate, true, false);
@@ -87,7 +96,7 @@ public:
         m1 = glm::scale(m1, glm::vec3(5.0, 15.0, 15.0));
         loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m1, road2_barricate, true, false);
 
-        //¾ÈÂÊ
+        //ï¿½ï¿½ï¿½ï¿½
         glm::mat4 m2 = glm::mat4(1.0f);
         m2 = glm::translate(m2, glm::vec3(146.8, 0.0, -146.8));
         m2 = glm::rotate(m2, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
@@ -119,16 +128,16 @@ public:
 
         //loadModelWithProgress<KartModel>("pause.obj", "obj/ui/", "pause", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), pause, true, true);
          
-        //ºô¸®Áö ·Îµå ¸Ê
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ ï¿½ï¿½
         loadModelWithProgress<MapModel>("village_road.obj", "asset/select_mode/", "village_road", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), selectMaps, false, true);
 
-        //// ºô¸®Áö ¿îÇÏ ¸Ê
+        //// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         glm::mat4 map2_matrix = glm::mat4(1.0f);
         map2_matrix = glm::translate(map2_matrix, glm::vec3(2.5, 0.0, 0.0));
         map2_matrix = glm::scale(map2_matrix, glm::vec3(1.0, 1.0, 1.0));
         loadModelWithProgress<MapModel>("villiage_unha.obj", "asset/select_mode/", "villiage_unha", "box", map2_matrix, selectMaps, false, true);
 
-        // ¸Ê¼±ÅÃ Å°º¸µå ¹æÇâÅ°
+        // ï¿½Ê¼ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å°
         glm::mat4 arrow_matrix = glm::mat4(1.0f);
         arrow_matrix = glm::translate(arrow_matrix, glm::vec3(-0.2, -1.0, 1.0));
         arrow_matrix = glm::scale(arrow_matrix, glm::vec3(0.5, 0.5, 0.5));
@@ -141,11 +150,11 @@ public:
         enter_matrix = glm::rotate(enter_matrix, glm::radians(-80.0f), glm::vec3(1.0, 0.0, 0.0));
         loadModelWithProgress<MapModel>("enter_key.obj", "asset/select_mode/", "enter_key", "box", enter_matrix, selectMaps, false, true);
 
-        // 5. µ¿¿µ»ó ¹× »ç¿îµå ½º·¹µå Á¾·á ´ë±â
+        // 5. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         videoThread.join();
         soundThread.join();
 
-        // 4. ÇÁ·Î±×·¥ Á¾·á ÇÃ·¡±× ¼³Á¤
+        // 4. ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         isRunning = false;
         SelectMapMode* selectMapMode = new SelectMapMode();
         MM.SetMode(selectMapMode);
@@ -168,12 +177,12 @@ public:
     }
 
 private:
-    // µ¿¿µ»ó ½ÇÇà ÇÔ¼ö
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
     void runVideo() {
         loadVideo("kartrider_intro.mp4", "./asset/select_mode/", &isRunning);
     }
 
-    // »ç¿îµå ½ÇÇà ÇÔ¼ö
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
     void runSound() {
         play_sound2D("kartrider_intro.WAV", "./asset/select_mode/", false, &isRunning);
     }

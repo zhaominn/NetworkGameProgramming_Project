@@ -1,5 +1,14 @@
 #pragma once
 
+using namespace std;
+
+class Ui_v2 : public Model {
+public:
+    Ui_v2() {}
+
+    Ui_v2(string name, string path, string obj_name, string obj_type, bool rigid_status, glm::mat4 start_matrix = glm::mat4(1.0f));
+
+    ~Ui_v2() {}
 #include <vector>
 #include <string>
 #include <glew.h>
@@ -10,17 +19,6 @@
 #include "Model.h"
 #include "LoadObj.h"
 #include "BulletPhysics.h"
-
-using namespace std;
-
-class Ui_v2 : public Model {
-public:
-    Ui_v2() {}
-
-    Ui_v2(string name, string path, string obj_name, string obj_type, bool rigid_status, glm::mat4 start_matrix = glm::mat4(1.0f));
-
-    ~Ui_v2() {}
-
     void load_obj(string name, string path, string obj_name, string obj_type, glm::mat4 start_matrix = glm::mat4(1.0f)) override;
 
     const void draw(GLint shaderProgramID, bool (*isKeyPressed_s)(const char&)) override;
