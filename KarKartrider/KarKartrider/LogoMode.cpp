@@ -14,9 +14,8 @@
 
 void LogoMode::init()
 {
-    std::thread videoThread(&LogoMode::runVideo, this);
-
-    std::thread soundThread(&LogoMode::runSound, this);
+    //std::thread videoThread(&LogoMode::runVideo, this);
+    //std::thread soundThread(&LogoMode::runSound, this);
 
     loadModelWithProgress<KartModel>("bazzi_face2.obj", "obj/character/", "character_face", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
     loadModelWithProgress<KartModel>("bazzi_body.obj", "obj/character/", "character_body", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
@@ -124,8 +123,8 @@ void LogoMode::init()
     enter_matrix = glm::rotate(enter_matrix, glm::radians(-80.0f), glm::vec3(1.0, 0.0, 0.0));
     loadModelWithProgress<MapModel>("enter_key.obj", "asset/select_mode/", "enter_key", "box", enter_matrix, selectMaps, false, true);
 
-    videoThread.join();
-    soundThread.join();
+    //videoThread.join();
+    //soundThread.join();
 
     isRunning = false;
     SelectMapMode* selectMapMode = new SelectMapMode();
