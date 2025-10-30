@@ -183,6 +183,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModeManager.h" />
     <ClInclude Include="Pch.h" />
+    <ClInclude Include="protocol.h" />
     <ClInclude Include="RoadModel.h" />
     <ClInclude Include="root.h" />
     <ClInclude Include="SelectMapMode.h" />

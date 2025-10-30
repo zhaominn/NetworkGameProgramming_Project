@@ -64,6 +64,9 @@
     <Filter Include="헤더 파일\99.pch">
       <UniqueIdentifier>{3cae4c9f-428e-4b3b-aff1-461f994e2ce5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\protocol">
+      <UniqueIdentifier>{eaca0022-9038-4df0-879f-7fcf27581668}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="vertex.glsl">
@@ -178,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="SelectMapMode.h">
       <Filter>헤더 파일\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>헤더 파일\protocol</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
