@@ -47,3 +47,9 @@ bool NetworkMgr::Init()
 	std::cout << "success to connect! (server: " << SERVERIP << ")" << std::endl;
 	return true;
 }
+
+void NetworkMgr::SendPacket(char* packet, int size)
+{
+	send(m_sock, reinterpret_cast<char*>(&size), sizeof(int), 0);
+	send(m_sock, packet, size, 0);
+}

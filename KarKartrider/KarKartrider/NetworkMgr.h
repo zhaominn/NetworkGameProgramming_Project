@@ -26,6 +26,6 @@ public:
 	bool Init();
 
 public:
-	// void SendPacket();
+	void SendPacket(char* packet, int size);
 };
 
