@@ -40,8 +40,14 @@ unsigned int __stdcall ClientThread(void* pArguments) {
 			break;
 		}
 
-		
-		// packet_handler(player_id, recvBuf);
+		unsigned char packet_type = recvBuf[1];
+		if (packet_type == C2S_IS_READY) {
+
+		}
+		else if (packet_type == C2S_MOVE) {
+
+		}
+
 		printf("[Thread %d] Packet received from Player %s (Type: %d, Size: %d)\n",
 			player_id, player_name, recvBuf[1], recvBuf[0]);
 
