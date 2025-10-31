@@ -17,13 +17,13 @@
 class NetworkMgr
 {
 private:
-	SOCKET sock;
+	SOCKET m_sock;
 
 public:
 	NetworkMgr();
 	~NetworkMgr();
 
-	bool Initialize();
+	bool Init();
 
 public:
 	// void SendPacket();
