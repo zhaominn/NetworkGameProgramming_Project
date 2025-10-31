@@ -5,6 +5,7 @@
 #pragma comment (lib, "MSWSock.LIB")
 
 #include "protocol.h"
+#include <iostream>
 
 class Player
 {

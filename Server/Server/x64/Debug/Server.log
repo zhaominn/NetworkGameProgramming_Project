@@ -1,27 +1,2 @@
-﻿  Player.cpp
-  ServerMain.cpp
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\Player.h(7,12): error C2065: 'NAME_SIZE': 선언되지 않은 식별자입니다.
-  (소스 파일 'Player.cpp'을(를) 컴파일하는 중)
-  
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\Player.h(9,9): error C3646: 'socket': 알 수 없는 재정의 지정자입니다.
-  (소스 파일 'Player.cpp'을(를) 컴파일하는 중)
-  
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\Player.h(9,15): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
-  (소스 파일 'Player.cpp'을(를) 컴파일하는 중)
-  
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\protocol.h(32,16): error C2059: 구문 오류: '상수'
-  (소스 파일 'ServerMain.cpp'을(를) 컴파일하는 중)
-  
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(11,29): error C2065: 'g_cs': 선언되지 않은 식별자입니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(17,37): error C3861: 'err_quit': 식별자를 찾을 수 없습니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(25,3): error C3861: 'err_quit': 식별자를 찾을 수 없습니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(28,3): error C3861: 'err_quit': 식별자를 찾을 수 없습니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(30,2): error C3861: 'printf': 식별자를 찾을 수 없습니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(37,4): error C3861: 'printf': 식별자를 찾을 수 없습니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(41,25): error C2065: 'g_cs': 선언되지 않은 식별자입니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(42,3): error C3861: 'printf': 식별자를 찾을 수 없습니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(43,25): error C2065: 'g_cs': 선언되지 않은 식별자입니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(48,53): error C2065: 'ProcessClient': 선언되지 않은 식별자입니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(48,28): error C3861: '_beginthreadex': 식별자를 찾을 수 없습니다.
-C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\ServerMain.cpp(57,25): error C2065: 'g_cs': 선언되지 않은 식별자입니다.
-  코드를 생성하고 있습니다...
+﻿  ServerMain.cpp
+  Server.vcxproj -> C:\Users\user\Documents\GitHub\NetworkGameProgramming_Project\Server\x64\Debug\Server.exe
