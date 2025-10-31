@@ -27,5 +27,10 @@ public:
 
 public:
 	void SendPacket(char* packet, int size);
+
+public:
+	void RecvThread();
+
+	void ProcessPacket(char* buf, int len);
 };
 
