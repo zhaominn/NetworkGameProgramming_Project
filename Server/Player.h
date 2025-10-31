@@ -5,6 +5,7 @@
 #pragma comment (lib, "MSWSock.LIB")
 
 #include "protocol.h"
+#include <iostream>
 
 class Player
 {
@@ -12,10 +13,11 @@ public:
 	int id;
 	char name[NAME_SIZE];
 	short x, y, z;
+	bool isReady;
 	SOCKET socket;
 
 public:
-	Player() : id(-1), name("0"), x(0), y(0), z(0), socket(INVALID_SOCKET) {};
+	Player() : id(-1), name("0"), x(0), y(0), z(0), isReady(false),socket(INVALID_SOCKET) {};
 	~Player();
 };
 
