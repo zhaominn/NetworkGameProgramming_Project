@@ -3,10 +3,12 @@
 
 NetworkMgr::NetworkMgr()
 {
+
 }
 
 NetworkMgr::~NetworkMgr()
 {
+
 	// ╪рдо ╢щ╠Б
 	closesocket(sock);
 
@@ -16,5 +18,4 @@ NetworkMgr::~NetworkMgr()
 
 bool NetworkMgr::Initialize()
 {
-	return false;
 }
