@@ -18,22 +18,22 @@ constexpr int  MAX_USER = 3;
 
 // packet
 // C2S
-constexpr char CS_LOGIN = 0;
-constexpr char CS_IS_READY = 1;
-constexpr char CS_MOVE = 2;
-constexpr char CS_BOOSTER = 3;
-constexpr char CS_LOGOUT = 4;
+constexpr char C2S_LOGIN = 0;
+constexpr char C2S_IS_READY = 1;
+constexpr char C2S_MOVE = 2;
+constexpr char C2S_BOOSTER = 3;
+constexpr char C2S_LOGOUT = 4;
 // S2C
-constexpr char SC_PLAYER_INFO = 5;
-constexpr char SC_LOGIN_FAIL = 5;
-constexpr char SC_ENTER_ROOM = 5;
-constexpr char SC_IS_READY = 5;
-constexpr char SC_GAME_START = 5;
-constexpr char SC_MOVE = 5;
-constexpr char SC_BOOSTER = 5;
-constexpr char SC_WORLD_UPDATE = 5;
-constexpr char SC_RANK = 5;
-constexpr char SC_LOGOUT = 5;
+constexpr char S2C_PLAYER_INFO = 5;
+constexpr char S2C_LOGIN_FAIL = 5;
+constexpr char S2C_ENTER_ROOM = 5;
+constexpr char S2C_IS_READY = 5;
+constexpr char S2C_GAME_START = 5;
+constexpr char S2C_MOVE = 5;
+constexpr char S2C_BOOSTER = 5;
+constexpr char S2C_WORLD_UPDATE = 5;
+constexpr char S2C_RANK = 5;
+constexpr char S2C_LOGOUT = 5;
 
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
