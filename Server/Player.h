@@ -19,5 +19,8 @@ public:
 public:
 	Player() : id(-1), name("0"), x(0), y(0), z(0), isReady(false),socket(INVALID_SOCKET) {};
 	~Player();
+
+
+	void send_packet(void* packet);
 };
 
