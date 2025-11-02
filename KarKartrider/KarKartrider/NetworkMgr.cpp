@@ -57,27 +57,6 @@ void NetworkMgr::SendPacket(char* packet, int size)
 	send(m_sock, packet, size, 0);
 }
 
-void NetworkMgr::RecvThread()
-{
-	char buf[512];
-	while (m_running)
-	{
-		int ret = recv(m_sock, buf, sizeof(buf), 0);
-		if (ret > 0) {
-			ProcessPacket(buf, ret);
-		}
-		else if (ret == 0) {
-			std::cout << "[서버 연결 종료]" << std::endl;
-			m_running = false;
-		}
-		else {
-			std::cout << "[recv error]" << std::endl;
-			m_running = false;
-		}
-	}
-	std::cout << "RecvThread 종료" << std::endl;
-}
-
 void NetworkMgr::ProcessPacket(char* buf, int len)
 {
 	unsigned char type = buf[0];
