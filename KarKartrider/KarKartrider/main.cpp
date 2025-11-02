@@ -6,7 +6,8 @@
 #include "LogoMode.h"
 #include "shaderMaker.h"
 #include "root.h"
-
+#include "NetworkMgr.h"
+#include "protocol.h"
 
 using namespace std;
 
@@ -15,6 +16,16 @@ void initPhysics();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 
+struct PlayerKart {
+	int id;
+	char name[NAME_SIZE];
+	float x, y, z;
+	int booster_cnt;
+	float speed;
+};
+
+NetworkMgr networkmgr;
+std::array<PlayerKart, MAX_USER> g_players;
 
 int main(int argc, char** argv) {
 
@@ -61,6 +72,21 @@ int main(int argc, char** argv) {
 	glutMouseFunc(mouseClick);
 	glutMainLoop();
 
+	return 0;
+}
+
+DWORD WINAPI RecvThread(LPVOID lpParam)
+{
+	while (true)
+	{
+		int len = 0;
+		char buf[BUF_SIZE];
+
+		recv(networkmgr.GetSocket(), (char*)&len, sizeof(int), MSG_WAITALL);
+		recv(networkmgr.GetSocket(), buf, len, MSG_WAITALL);
+
+		networkmgr.ProcessPacket(buf, len);
+	}
 	return 0;
 }
 

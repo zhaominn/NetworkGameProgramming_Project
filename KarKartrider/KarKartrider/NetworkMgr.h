@@ -25,7 +25,12 @@ public:
 
 	bool Init();
 
+	SOCKET GetSocket() { return m_sock; }
+
 public:
 	void SendPacket(char* packet, int size);
+
+public:
+	void ProcessPacket(char* buf, int len);
 };
 

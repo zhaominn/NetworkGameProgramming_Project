@@ -1,6 +1,9 @@
 #include "Pch.h"
 #include "NetworkMgr.h"
 
+std::thread m_recvThread;
+std::atomic<bool> m_running{ false };
+
 NetworkMgr::NetworkMgr()
 {
 	m_sock = -1;	// < 0 이면 초기화가 안된거임
@@ -52,4 +55,20 @@ void NetworkMgr::SendPacket(char* packet, int size)
 {
 	send(m_sock, reinterpret_cast<char*>(&size), sizeof(int), 0);
 	send(m_sock, packet, size, 0);
+}
+
+void NetworkMgr::ProcessPacket(char* buf, int len)
+{
+	unsigned char type = buf[0];
+	switch (type) {
+	case S2C_MOVE:
+		// 서버에서 보낸 MOVE 패킷 처리
+		break;
+	case S2C_LOGIN_FAIL:
+		// 서버에서 보낸 로그인 패킷
+		break;
+	default:
+		std::cout << "찾을 수 없는 패킷 : " << (int)type << std::endl;
+		break;
+	}
 }
