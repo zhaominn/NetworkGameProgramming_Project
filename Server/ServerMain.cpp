@@ -10,49 +10,20 @@ enum game_state { READY, INGAME, END };
 CRITICAL_SECTION g_CS;
 float g_ElapsedTime;
 
-
-unsigned int __stdcall ClientThread(void* pArguments) {
+unsigned int __stdcall ClientThread(void* pArguments)
+{
 	int player_id = *(int*)pArguments;
 	free(pArguments);
 
-	SOCKET client_sock = g_users[player_id].socket;
-	char player_name[NAME_SIZE];
-	strcpy_s(player_name, g_users[player_id].name);
-
-	printf("[Thread %d] Player %s (Socket: %llu) Thread Start.\n", player_id, player_name, client_sock);
-
-	static char recvBuf[BUF_SIZE];
-	int32_t len;
+	printf("[Player %d] ClientThread Start.\n",
+		g_users[player_id].id);
 
 	while (true) {
-		len = recv(client_sock, recvBuf, BUF_SIZE, 0);
-
-		if (len <= 0) {
-			printf("[Thread %d] Player %s Close\n", player_id, player_name);
-			closesocket(client_sock);
-
-			EnterCriticalSection(&g_CS);
-			g_users[player_id].id = -1;
-			g_users[player_id].socket = INVALID_SOCKET;
-			strcpy_s(g_users[player_id].name, "0");
-			LeaveCriticalSection(&g_CS);
-
+		if (false == g_users[player_id].recv_packet())
 			break;
-		}
-
-		unsigned char packet_type = recvBuf[1];
-		if (packet_type == C2S_IS_READY) {
-
-		}
-		else if (packet_type == C2S_MOVE) {
-
-		}
-
-		printf("[Thread %d] Packet received from Player %s (Type: %d, Size: %d)\n",
-			player_id, player_name, recvBuf[1], recvBuf[0]);
-
 	}
 
+	printf("[Thread %d] Thread End.\n", player_id);
 	return 0;
 }
 

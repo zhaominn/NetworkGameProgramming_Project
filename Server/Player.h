@@ -1,11 +1,12 @@
-#pragma once
+#pragma onc
+//
 #include <WS2tcpip.h>
 #include <MSWSock.h>
 #pragma comment (lib,"WS2_32.LIB")
 #pragma comment (lib, "MSWSock.LIB")
-
 #include "protocol.h"
 #include <iostream>
+//
 
 class Player
 {
@@ -21,6 +22,7 @@ public:
 	~Player();
 
 
+	bool recv_packet();
 	void send_packet(void* packet);
 };
 
