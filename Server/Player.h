@@ -24,7 +24,7 @@ public:
 
 	bool recv_packet();
 	void send_packet(void* packet);
-
+	void process_packet(unsigned char* p);
 	void disconnect();
 };
 

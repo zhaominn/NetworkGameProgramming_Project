@@ -13,7 +13,6 @@ Player::~Player()
 
 bool Player::recv_packet()
 {
-
 	static char recvBuf[BUF_SIZE];
 	int32_t len;
 
@@ -25,7 +24,7 @@ bool Player::recv_packet()
 		return false;
 	}
 
-	// packet_handler(id, recvBuf);
+	process_packet((unsigned char*)recvBuf);
 	printf("[Thread %d] Packet received from Player %s (Type: %d)\n",
 		id, name, (unsigned char)recvBuf[1]);
 
@@ -42,6 +41,32 @@ void Player::send_packet(void* packet)
 		return;
 	}
 }
+
+void Player::process_packet(unsigned char* p)
+{
+	const unsigned char packet_type = p[1];
+	switch (packet_type) {
+	case C2S_IS_READY:
+	{
+
+	}
+	case C2S_MOVE:
+	{
+
+	}
+	case C2S_BOOSTER:
+	{
+
+	}
+	case C2S_LOGOUT:
+	{
+
+	}
+	default:
+		std::cout << "Error Invalid Packet Type\n";
+	}
+}
+
 
 void Player::disconnect()
 {
