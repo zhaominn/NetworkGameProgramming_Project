@@ -188,6 +188,9 @@
     <ClInclude Include="NetworkMgr.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="LoginMode.h">
+      <Filter>헤더 파일\Mode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -279,6 +282,9 @@
     </ClCompile>
     <ClCompile Include="NetworkMgr.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginMode.cpp">
+      <Filter>소스 파일\Mode</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

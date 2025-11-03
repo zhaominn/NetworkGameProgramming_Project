@@ -175,6 +175,7 @@
     <ClInclude Include="LoadTexture.h" />
     <ClInclude Include="DefaultModel.h" />
     <ClInclude Include="LoadVideo.h" />
+    <ClInclude Include="LoginMode.h" />
     <ClInclude Include="LogoMode.h" />
     <ClInclude Include="Map1_Mode.h" />
     <ClInclude Include="Map2_Mode.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="LoadObj.cpp" />
     <ClCompile Include="LoadProgress.cpp" />
     <ClCompile Include="LoadSound.cpp" />
+    <ClCompile Include="LoginMode.cpp" />
     <ClCompile Include="LogoMode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map1_Mode.cpp" />
