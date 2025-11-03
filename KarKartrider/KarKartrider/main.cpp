@@ -52,11 +52,11 @@ int main(int argc, char** argv) {
 
 	initPhysics(); 
 
-	/*LogoMode* logoMode = new LogoMode();
-	MM.SetMode(logoMode); */
+	LogoMode* logoMode = new LogoMode();
+	MM.SetMode(logoMode); 
 
-	LoginMode* loginMode = new LoginMode(); 
-	MM.SetMode(loginMode);
+	/*LoginMode* loginMode = new LoginMode(); 
+	MM.SetMode(loginMode);*/
 
 	/*debug_model(models.back());
 	debug_materials(models.back()->materials);*/
@@ -65,9 +65,10 @@ int main(int argc, char** argv) {
 	InitBuffer();
 
 
-	drawScene(); 
+	//drawScene(); 
 
 	glutDisplayFunc(drawScene);
+	glutIdleFunc(drawScene);
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(keyDown);
 	glutKeyboardUpFunc(keyUp);
@@ -95,13 +96,10 @@ DWORD WINAPI RecvThread(LPVOID lpParam)
 }
 
 GLvoid drawScene() {
-
-
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	MM.draw_model();
 	MM.draw_bb();
-
 	glutSwapBuffers();
-
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR) {
 		cout << "OpenGL error: " << err << endl;

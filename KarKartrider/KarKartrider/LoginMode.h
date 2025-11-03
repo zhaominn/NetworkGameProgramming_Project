@@ -6,6 +6,14 @@ class LoginMode : public Mode
 {
 public:
 
+    glm::vec3 cameraTargetPos = glm::vec3(0.0, 0.0, 5.0);
+    glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 5.0);
+    glm::vec3 cameraDirection = glm::vec3(0.0, 0.0, -1.0);
+    glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0);
+
+    glm::mat4 projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f); // 2D 투영
+    glm::mat4 view = glm::mat4(1.0f); // 카메라 변환 없음
+
     LoginMode();
     ~LoginMode();
 
@@ -26,9 +34,7 @@ public:
     void finish() override;
 
 private:
-    std::string inputText = "";
-
-    void RenderBitmapString(float x, float y, void* font, const std::string& str);
+    std::string inputText;
 
 };
 

@@ -1,8 +1,10 @@
-#include "Pch.h"
+ï»¿#include "Pch.h"
 #include "LoginMode.h"
+#include "Light.h"
 
 LoginMode::LoginMode()
 {
+    inputText = "";
 }
 
 LoginMode::~LoginMode()
@@ -12,7 +14,7 @@ LoginMode::~LoginMode()
 
 void LoginMode::init()
 {
-	draw_model();
+	//draw_model();
 }
 
 void LoginMode::mouseClick(int button, int state, int x, int y)
@@ -21,25 +23,25 @@ void LoginMode::mouseClick(int button, int state, int x, int y)
 
 void LoginMode::keyboard(unsigned char key, int x, int y)
 {
-	// Enter Å° Ã³¸®
+	// Enter í‚¤ ì²˜ë¦¬
 	if (key == '\r') {
-		std::cout << "ÀÔ·Â ¿Ï·á: " << inputText << std::endl;
+		std::cout << "ìž…ë ¥ ì™„ë£Œ: " << inputText << std::endl;
 		return;
 	}
 
-	// Backspace Ã³¸®
+	// Backspace ì²˜ë¦¬
 	if (key == 8 && !inputText.empty()) {
 		inputText.pop_back();
 	}
 	else {
-		// ÀÏ¹Ý ¹®ÀÚ ÀÔ·Â
-		if (key >= 32 && key <= 126) {  // ASCII Ãâ·Â °¡´ÉÇÑ ¹®ÀÚ¸¸ Çã¿ë
+		// ì¼ë°˜ ë¬¸ìž ìž…ë ¥
+		if (key >= 32 && key <= 126) {  // ASCII ì¶œë ¥ ê°€ëŠ¥í•œ ë¬¸ìžë§Œ í—ˆìš©
 			inputText += key;
 		}
 	}
 
-	glutPostRedisplay(); // ´Ù½Ã ±×¸®±â ¿äÃ»
-}
+	glutPostRedisplay(); // ë‹¤ì‹œ ê·¸ë¦¬ê¸° ìš”ì²­
+} 
 
 void LoginMode::specialKey(int key, int x, int y)
 {
@@ -51,25 +53,25 @@ void LoginMode::specialKeyUp(int key, int x, int y)
 
 void LoginMode::draw_model()
 {
-	glClearColor(1.0, 1.0, 1.0, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glUseProgram(0);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);  // 2D ÁÂÇ¥°è ¼³Á¤
-
+	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	// ÀÔ·Â ¾È³» ¹®±¸
-	glColor3f(0.0, 0.0, 0.0);  // ±ÛÀÚ »ö: °ËÁ¤
-	RenderBitmapString(-0.3f, 0.2f, GLUT_BITMAP_HELVETICA_18, "Enter text:");
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glRasterPos2f(-0.6f, 0.2f);
+	for (char c : std::string("Enter text:"))
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
 
-	// ÇöÀç ÀÔ·Â ÁßÀÎ ¹®ÀÚ¿­ Ãâ·Â
-	glColor3f(0.2f, 0.2f, 0.8f);  // ÆÄ¶õ»ö ÅØ½ºÆ®
-	RenderBitmapString(-0.3f, 0.0f, GLUT_BITMAP_HELVETICA_18, inputText);
+	glColor3f(0.2f, 0.2f, 0.8f);
+	glRasterPos2f(-0.6f, -0.3f);
+	for (char c : inputText)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
 
-	glFlush();
 }
 
 void LoginMode::draw_bb()
@@ -78,12 +80,4 @@ void LoginMode::draw_bb()
 
 void LoginMode::finish()
 {
-}
-
-// --- ±ÛÀÚ ±×¸®±â ÇÔ¼ö ---
-void LoginMode::RenderBitmapString(float x, float y, void* font, const std::string& str)
-{
-	glRasterPos2f(x, y);
-	for (char c : str)
-		glutBitmapCharacter(font, c);
 }
