@@ -3,8 +3,10 @@
 
 class LoginMode : public Mode
 {
-	LoginMode(){}
-	~LoginMode() { delete this; }
+public:
+
+    LoginMode();
+    ~LoginMode();
 
     void init() override;
 

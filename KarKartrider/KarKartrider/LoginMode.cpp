@@ -1,6 +1,15 @@
 #include "Pch.h"
 #include "LoginMode.h"
 
+LoginMode::LoginMode()
+{
+}
+
+LoginMode::~LoginMode()
+{
+	delete this;
+}
+
 void LoginMode::init()
 {
 }

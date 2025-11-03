@@ -9,6 +9,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <array>
 
 #include <irrKlang.h>
 #include <thread>
