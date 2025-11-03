@@ -1,5 +1,6 @@
 #pragma once
 #include "Mode.h" 
+#include "root.h"
 
 class LoginMode : public Mode
 {
