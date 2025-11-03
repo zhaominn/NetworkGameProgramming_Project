@@ -24,5 +24,11 @@ public:
     void draw_bb() override;
 
     void finish() override;
+
+private:
+    std::string inputText = "";
+
+    void RenderBitmapString(float x, float y, void* font, const std::string& str);
+
 };
 
