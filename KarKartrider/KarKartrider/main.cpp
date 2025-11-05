@@ -52,11 +52,11 @@ int main(int argc, char** argv) {
 
 	initPhysics(); 
 
-	LogoMode* logoMode = new LogoMode();
-	MM.SetMode(logoMode); 
+	/*LogoMode* logoMode = new LogoMode();
+	MM.SetMode(logoMode);*/
 
-	/*LoginMode* loginMode = new LoginMode(); 
-	MM.SetMode(loginMode);*/
+	LoginMode* loginMode = new LoginMode(); 
+	MM.SetMode(loginMode);
 
 	/*debug_model(models.back());
 	debug_materials(models.back()->materials);*/

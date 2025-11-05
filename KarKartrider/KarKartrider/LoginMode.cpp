@@ -1,6 +1,7 @@
 ﻿#include "Pch.h"
 #include "LoginMode.h"
 #include "Light.h"
+#include "SelectMapMode.h"
 
 LoginMode::LoginMode()
 {
@@ -26,6 +27,11 @@ void LoginMode::keyboard(unsigned char key, int x, int y)
 	// Enter 키 처리
 	if (key == '\r') {
 		std::cout << "입력 완료: " << inputText << std::endl;
+
+		SelectMapMode* selectMapMode = new SelectMapMode();
+		//selectMapMode->goSelectMode = [this]() { goSelectMode(); };
+		MM.SetMode(selectMapMode);
+
 		return;
 	}
 
