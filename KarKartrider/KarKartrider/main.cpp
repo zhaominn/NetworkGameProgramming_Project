@@ -30,6 +30,21 @@ std::array<PlayerKart, MAX_USER> g_players;
 
 int main(int argc, char** argv) {
 
+	if (!networkmgr.Init()) {
+		std::cout << "Init Socket error " << std::endl;
+		return 0;
+	}
+
+	char name[NAME_SIZE];
+	cout << "이름을 입력하세요 : ";
+	cin >> name;
+
+	S2C_PlayerInfo_Packet* packet = new S2C_PlayerInfo_Packet;
+	packet->type = C2S_LOGIN;
+	strncpy(packet->name, name, NAME_SIZE);
+	networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(CS_LOGIN_PACKET));
+	delete packet;
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	int screenWidth = glutGet(GLUT_SCREEN_WIDTH);  
@@ -52,8 +67,8 @@ int main(int argc, char** argv) {
 
 	initPhysics(); 
 
-	/*LogoMode* logoMode = new LogoMode();
-	MM.SetMode(logoMode);*/
+	//LogoMode* logoMode = new LogoMode();
+	//MM.SetMode(logoMode);
 
 	LoginMode* loginMode = new LoginMode(); 
 	MM.SetMode(loginMode);
