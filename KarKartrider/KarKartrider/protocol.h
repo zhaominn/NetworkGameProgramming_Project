@@ -46,7 +46,6 @@ struct S2C_PlayerInfo_Packet
 {
 	unsigned char size;
 	char type;
-	char name[NAME_SIZE];
 	char id;
 };
 

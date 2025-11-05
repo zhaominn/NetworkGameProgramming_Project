@@ -27,9 +27,10 @@ struct PlayerKart {
 
 NetworkMgr networkmgr;
 std::array<PlayerKart, MAX_USER> g_players;
+CRITICAL_SECTION CS;
 
 int main(int argc, char** argv) {
-
+	InitializeCriticalSection(&CS);
 	if (!networkmgr.Init()) {
 		std::cout << "Init Socket error " << std::endl;
 		return 0;
@@ -39,10 +40,11 @@ int main(int argc, char** argv) {
 	cout << "이름을 입력하세요 : ";
 	cin >> name;
 
-	S2C_PlayerInfo_Packet* packet = new S2C_PlayerInfo_Packet;
+	C2S_Login_Packet* packet = new C2S_Login_Packet;
+	packet->size = sizeof(C2S_Login_Packet);
 	packet->type = C2S_LOGIN;
 	strncpy(packet->name, name, NAME_SIZE);
-	networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(S2C_PlayerInfo_Packet));
+	networkmgr.SendPacket(reinterpret_cast<char*>(packet), packet->size);
 	delete packet;
 
 	glutInit(&argc, argv);
@@ -67,11 +69,11 @@ int main(int argc, char** argv) {
 
 	initPhysics(); 
 
-	//LogoMode* logoMode = new LogoMode();
-	//MM.SetMode(logoMode);
+	LogoMode* logoMode = new LogoMode();
+	MM.SetMode(logoMode);
 
-	LoginMode* loginMode = new LoginMode(); 
-	MM.SetMode(loginMode);
+	//LoginMode* loginMode = new LoginMode(); 
+	//MM.SetMode(loginMode);
 
 	/*debug_model(models.back());
 	debug_materials(models.back()->materials);*/
@@ -91,6 +93,8 @@ int main(int argc, char** argv) {
 	glutSpecialUpFunc(specialKeyUp);
 	glutMouseFunc(mouseClick);
 	glutMainLoop();
+
+	DeleteCriticalSection(&CS);
 
 	return 0;
 }
