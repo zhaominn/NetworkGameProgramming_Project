@@ -29,6 +29,21 @@ NetworkMgr networkmgr;
 std::array<PlayerKart, MAX_USER> g_players;
 CRITICAL_SECTION CS;
 
+DWORD WINAPI RecvThread(LPVOID lpParam)
+{
+	while (true)
+	{
+		int len = 0;
+		char buf[BUF_SIZE];
+
+		recv(networkmgr.GetSocket(), (char*)&len, sizeof(int), MSG_WAITALL);
+		recv(networkmgr.GetSocket(), buf, len, MSG_WAITALL);
+
+		networkmgr.ProcessPacket(buf, len);
+	}
+	return 0;
+}
+
 int main(int argc, char** argv) {
 	InitializeCriticalSection(&CS);
 	if (!networkmgr.Init()) {
@@ -92,25 +107,16 @@ int main(int argc, char** argv) {
 	glutSpecialFunc(specialKey);
 	glutSpecialUpFunc(specialKeyUp);
 	glutMouseFunc(mouseClick);
+
+	HANDLE hThread = CreateThread(NULL, 0, RecvThread, 0, 0, 0);
+	if (hThread == NULL) {
+		closesocket(networkmgr.GetSocket());
+	}
+
 	glutMainLoop();
 
 	DeleteCriticalSection(&CS);
 
-	return 0;
-}
-
-DWORD WINAPI RecvThread(LPVOID lpParam)
-{
-	while (true)
-	{
-		int len = 0;
-		char buf[BUF_SIZE];
-
-		recv(networkmgr.GetSocket(), (char*)&len, sizeof(int), MSG_WAITALL);
-		recv(networkmgr.GetSocket(), buf, len, MSG_WAITALL);
-
-		networkmgr.ProcessPacket(buf, len);
-	}
 	return 0;
 }
 
