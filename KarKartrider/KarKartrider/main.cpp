@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
 	S2C_PlayerInfo_Packet* packet = new S2C_PlayerInfo_Packet;
 	packet->type = C2S_LOGIN;
 	strncpy(packet->name, name, NAME_SIZE);
-	networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(CS_LOGIN_PACKET));
+	networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(S2C_PlayerInfo_Packet));
 	delete packet;
 
 	glutInit(&argc, argv);
