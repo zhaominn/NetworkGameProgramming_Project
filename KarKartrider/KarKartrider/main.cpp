@@ -60,6 +60,7 @@ int main(int argc, char** argv) {
 	packet->size = sizeof(C2S_Login_Packet);
 	packet->type = C2S_LOGIN;
 	strncpy(packet->name, name, NAME_SIZE);
+	std::cout << packet->name << std::endl;
 	networkmgr.SendPacket(reinterpret_cast<char*>(packet), packet->size);
 	delete packet;
 

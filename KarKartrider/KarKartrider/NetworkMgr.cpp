@@ -53,8 +53,7 @@ bool NetworkMgr::Init()
 
 void NetworkMgr::SendPacket(char* packet, int size)
 {
-	int totalSize = size;
-	send(m_sock, (char*)&totalSize, sizeof(int), 0);  
+	send(m_sock, (char*)&size, sizeof(int), 0); 
 	send(m_sock, packet, size, 0);
 }
 

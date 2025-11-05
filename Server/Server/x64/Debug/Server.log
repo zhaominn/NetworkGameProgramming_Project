@@ -1,16 +1,8 @@
-﻿  Player.cpp
-C:\Users\sally\OneDrive\바탕 화면\NGP\NetworkGameProgramming_Project\Server\Player.h(1,9): warning C4068: 알 수 없는 pragma 'onc'
-  (소스 파일 'Player.cpp'을(를) 컴파일하는 중)
-  
-C:\Users\sally\OneDrive\바탕 화면\NGP\NetworkGameProgramming_Project\Server\protocol.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Player.cpp'을(를) 컴파일하는 중)
-  
-  ServerMain.cpp
+﻿  ServerMain.cpp
 C:\Users\sally\OneDrive\바탕 화면\NGP\NetworkGameProgramming_Project\Server\Player.h(1,9): warning C4068: 알 수 없는 pragma 'onc'
   (소스 파일 'ServerMain.cpp'을(를) 컴파일하는 중)
   
 C:\Users\sally\OneDrive\바탕 화면\NGP\NetworkGameProgramming_Project\Server\protocol.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 'ServerMain.cpp'을(를) 컴파일하는 중)
   
-  코드를 생성하고 있습니다...
   Server.vcxproj -> C:\Users\sally\OneDrive\바탕 화면\NGP\NetworkGameProgramming_Project\Server\x64\Debug\Server.exe
