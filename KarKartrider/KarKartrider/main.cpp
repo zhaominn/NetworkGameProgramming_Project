@@ -33,6 +33,7 @@ DWORD WINAPI RecvThread(LPVOID lpParam)
 {
 	while (true)
 	{
+		std::cout << "recv" << std::endl;
 		int len = 0;
 		char buf[BUF_SIZE];
 

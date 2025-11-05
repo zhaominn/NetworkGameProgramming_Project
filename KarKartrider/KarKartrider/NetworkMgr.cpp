@@ -53,7 +53,8 @@ bool NetworkMgr::Init()
 
 void NetworkMgr::SendPacket(char* packet, int size)
 {
-	send(m_sock, reinterpret_cast<char*>(&size), sizeof(int), 0);
+	int totalSize = size;
+	send(m_sock, (char*)&totalSize, sizeof(int), 0);  
 	send(m_sock, packet, size, 0);
 }
 
@@ -61,11 +62,19 @@ void NetworkMgr::ProcessPacket(char* buf, int len)
 {
 	unsigned char type = buf[0];
 	switch (type) {
-	case S2C_MOVE:
-		// 서버에서 보낸 MOVE 패킷 처리
+	case S2C_PLAYER_INFO: {
+		std::cout << "패킷 받기 성공!" << std::endl;
+	}
 		break;
-	case S2C_LOGIN_FAIL:
+	case S2C_MOVE: {
+
+		// 서버에서 보낸 MOVE 패킷 처리
+	}
+		break;
+	case S2C_LOGIN_FAIL: {
+
 		// 서버에서 보낸 로그인 패킷
+	}
 		break;
 	default:
 		std::cout << "찾을 수 없는 패킷 : " << (int)type << std::endl;
