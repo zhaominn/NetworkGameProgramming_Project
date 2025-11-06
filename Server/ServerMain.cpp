@@ -157,14 +157,14 @@ int main()
 		g_users[new_player_id].m_y = 0;
 		g_users[new_player_id].m_z = 0;
 
-		C2S_Login_Packet* login_packet = (C2S_Login_Packet*)recvBuf;
+	/*	C2S_Login_Packet* login_packet = (C2S_Login_Packet*)recvBuf;
 		g_users[new_player_id].SetName(login_packet->name);
 
 		printf("\n[Main] Enter Client %s (ID: %d, %s:%d)\n",
 			g_users[new_player_id].GetName(),
 			new_player_id,
 			inet_ntoa(clientaddr.sin_addr),
-			ntohs(clientaddr.sin_port));
+			ntohs(clientaddr.sin_port));*/
 
 		LeaveCriticalSection(&g_CS);
 

@@ -46,26 +46,34 @@ void Player::process_packet(unsigned char* p)
 {
 	const unsigned char packet_type = p[1];
 	switch (packet_type) {
+	case C2S_LOGIN:
+	{
+		C2S_Login_Packet* login_packet = reinterpret_cast<C2S_Login_Packet*>(p);
+		SetName(login_packet->name);
+		std::cout << "login" << GetName() << std::endl;
+		std::cout << "id" << GetID() << std::endl;
+	}
+	break;
 	case C2S_IS_READY:
 	{
 
-		break;
 	}
+	break;
 	case C2S_MOVE:
 	{
 
-		break;
 	}
+	break;
 	case C2S_BOOSTER:
 	{
 
-		break;
 	}
+	break;
 	case C2S_LOGOUT:
 	{
 
-		break;
 	}
+	break;
 	default:
 		std::cout << "Error Invalid Packet Type\n";
 	}
@@ -99,8 +107,8 @@ void Player::SetId(short id)
 void Player::SetName(char* name)
 {
 	m_name = new char[NAME_SIZE + 1];
-	strncpy(m_name, name, NAME_SIZE); 
-	m_name[NAME_SIZE] = '\0';     
+	strncpy(m_name, name, NAME_SIZE);
+	m_name[NAME_SIZE] = '\0';
 }
 
 void Player::SetX(float x)
