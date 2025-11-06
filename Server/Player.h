@@ -1,4 +1,5 @@
-#pragma onc
+#pragma once
+#define _CRT_SECURE_NO_WARNINGS 
 //
 #include <WS2tcpip.h>
 #include <MSWSock.h>
@@ -11,20 +12,40 @@
 class Player
 {
 public:
-	int id;
-	char name[NAME_SIZE];
-	short x, y, z;
+	int m_id;
+	char* m_name;
+	float m_x, m_y, m_z;
 	bool isReady;
-	SOCKET socket;
+	bool isOnline;
+	SOCKET m_socket;
 
 public:
-	Player() : id(-1), name("0"), x(0), y(0), z(0), isReady(false),socket(INVALID_SOCKET) {};
+	Player() : m_id(-1), m_name(), m_x(0), m_y(0), m_z(0), isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {};
 	~Player();
-
 
 	bool recv_packet();
 	void send_packet(void* packet);
 	void process_packet(unsigned char* p);
 	void disconnect();
+
+	void SetSocket(SOCKET socket);
+	void SetId(short id);
+	void SetName(char* name);
+	void SetX(float x);
+	void SetY(float y);
+	void SetZ(float z);
+	void SetIsReady(bool ready);
+	void SetOnline(bool online);
+
+	SOCKET GetSocket() const { return m_socket; }
+	int GetID() const;
+	char* GetName() const;
+	float GetX() const;
+	float GetY() const;
+	float GetZ() const;
+	bool GetReady() const;
+	bool GetOnline() const;
+
+
 };
 

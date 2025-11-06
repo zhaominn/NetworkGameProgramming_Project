@@ -8,6 +8,7 @@ std::array<Player, MAX_USER> g_users;
 enum game_state { READY, INGAME, END };
 
 CRITICAL_SECTION g_CS;
+CRITICAL_SECTION g_CS_Send;
 float g_ElapsedTime;
 
 unsigned int __stdcall ClientThread(void* pArguments)
@@ -16,7 +17,7 @@ unsigned int __stdcall ClientThread(void* pArguments)
 	free(pArguments);
 
 	printf("[Player %d] ClientThread Start.\n",
-		g_users[player_id].id);
+		g_users[player_id].m_id);
 
 	while (true) {
 		if (false == g_users[player_id].recv_packet())
@@ -29,6 +30,32 @@ unsigned int __stdcall ClientThread(void* pArguments)
 
 DWORD WINAPI UpdatePositon(LPVOID lpParam)
 {
+	S2C_Move_Packet scpacket;
+	scpacket.size = sizeof(S2C_Move_Packet);
+	scpacket.type = S2C_MOVE;
+
+
+	// Collect the state of all players and send it to every player
+	while (true)
+	{
+		for (int from = 0; from < MAX_USER; ++from) {
+			if (!g_users[from].GetOnline()) continue;
+
+			scpacket.id = g_users[from].GetID();
+			scpacket.x = g_users[from].GetX();
+			scpacket.y = g_users[from].GetY();
+			scpacket.z = g_users[from].GetZ();
+
+			for (int to = 0; to < MAX_USER; ++to) {
+				if (!g_users[to].GetOnline()) continue;
+
+				EnterCriticalSection(&g_CS_Send);
+				send(g_users[to].GetSocket(), (char*)&scpacket, scpacket.size, 0);
+				LeaveCriticalSection(&g_CS_Send);
+			}
+		}
+
+	}
 
 }
 
@@ -53,9 +80,21 @@ int main()
 	if (listen(listen_sock, SOMAXCONN) == SOCKET_ERROR)
 		std::cout << "listen error" << std::endl;
 
+	HANDLE SendThread;
+	SendThread = CreateThread(NULL, 0, UpdatePositon, 0, 0, 0);
+	if (SendThread == NULL) {
+		std::cout << "closesocket()" << std::endl;
+		closesocket(listen_sock);
+	}
+	else {
+		CloseHandle(SendThread);
+	}
+
+	struct sockaddr_in clientaddr;
+	int addrlen = sizeof(clientaddr);
+	HANDLE hThread;
+
 	while (1) {
-		struct sockaddr_in clientaddr;
-		int addrlen = sizeof(clientaddr);
 		SOCKET client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
 		if (client_sock == INVALID_SOCKET) {
 			std::cout << "accept error" << std::endl;
@@ -87,7 +126,7 @@ int main()
 		int new_player_id = -1;
 		EnterCriticalSection(&g_CS);
 		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_users[i].id == -1) {
+			if (g_users[i].m_id == -1) {
 				new_player_id = i;
 				break;
 			}
@@ -106,17 +145,17 @@ int main()
 			continue;
 		}
 
-		g_users[new_player_id].id = new_player_id;
-		g_users[new_player_id].socket = client_sock;
-		g_users[new_player_id].x = 0;
-		g_users[new_player_id].y = 0;
-		g_users[new_player_id].z = 0;
+		g_users[new_player_id].m_id = new_player_id;
+		g_users[new_player_id].m_socket = client_sock;
+		g_users[new_player_id].m_x = 0;
+		g_users[new_player_id].m_y = 0;
+		g_users[new_player_id].m_z = 0;
 
 		C2S_Login_Packet* login_packet = (C2S_Login_Packet*)recvBuf;
-		strcpy_s(g_users[new_player_id].name, login_packet->name);
+		g_users[new_player_id].SetName(login_packet->name);
 
 		printf("\n[Main] Enter Client %s (ID: %d, %s:%d)\n",
-			g_users[new_player_id].name,
+			g_users[new_player_id].GetName(),
 			new_player_id,
 			inet_ntoa(clientaddr.sin_addr),
 			ntohs(clientaddr.sin_port));
@@ -133,8 +172,8 @@ int main()
 		if (send_result == SOCKET_ERROR) {
 			printf("Player info packet send error: %d\n", WSAGetLastError());
 			EnterCriticalSection(&g_CS);
-			g_users[new_player_id].id = -1;
-			g_users[new_player_id].socket = INVALID_SOCKET;
+			g_users[new_player_id].m_id = -1;
+			g_users[new_player_id].m_socket = INVALID_SOCKET;
 			LeaveCriticalSection(&g_CS);
 			closesocket(client_sock);
 			continue;
@@ -144,7 +183,7 @@ int main()
 		int* pPlayerID = (int*)malloc(sizeof(int));
 		*pPlayerID = new_player_id;
 
-		HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, &ClientThread, pPlayerID, 0, NULL);
+		hThread = (HANDLE)_beginthreadex(NULL, 0, &ClientThread, pPlayerID, 0, NULL);
 
 		if (hThread != NULL) {
 			CloseHandle(hThread);

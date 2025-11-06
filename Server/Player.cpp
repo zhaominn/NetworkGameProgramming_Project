@@ -8,7 +8,7 @@ extern std::array<Player, MAX_USER> g_users;
 
 Player::~Player()
 {
-
+	delete m_name;
 }
 
 bool Player::recv_packet()
@@ -16,7 +16,7 @@ bool Player::recv_packet()
 	static char recvBuf[BUF_SIZE];
 	int32_t len;
 
-	len = recv(socket, recvBuf, BUF_SIZE, 0);
+	len = recv(m_socket, recvBuf, BUF_SIZE, 0);
 
 	if (len <= 0) {
 		disconnect();
@@ -26,18 +26,18 @@ bool Player::recv_packet()
 
 	process_packet((unsigned char*)recvBuf);
 	printf("[Thread %d] Packet received from Player %s (Type: %d)\n",
-		id, name, (unsigned char)recvBuf[1]);
+		m_id, m_name, (unsigned char)recvBuf[1]);
 
 	return true;
 }
 
 void Player::send_packet(void* packet)
 {
-	int retval = send(socket, (char*)&packet, sizeof(packet), 0);
+	int retval = send(m_socket, (char*)&packet, sizeof(packet), 0);
 
 	if (retval == SOCKET_ERROR)
 	{
-		printf("[Player %d] send error\n", id);
+		printf("[Player %d] send error\n", m_id);
 		return;
 	}
 }
@@ -74,15 +74,91 @@ void Player::process_packet(unsigned char* p)
 
 void Player::disconnect()
 {
-	printf("[Thread %d] Disconnect", id);
+	printf("[Thread %d] Disconnect", m_id);
 
 	EnterCriticalSection(&g_CS);
 
 	// broadcast another users
-	closesocket(socket);
-	g_users[id].socket = INVALID_SOCKET;
-	strcpy_s(g_users[id].name, "0");
-	g_users[id].id = -1;
+	closesocket(m_socket);
+	g_users[m_id].m_socket = INVALID_SOCKET;
+	g_users[m_id].m_id = -1;
 
 	LeaveCriticalSection(&g_CS);
+}
+
+void Player::SetSocket(SOCKET socket)
+{
+	m_socket = socket;
+}
+
+void Player::SetId(short id)
+{
+	m_id = id;
+}
+
+void Player::SetName(char* name)
+{
+	m_name = new char[NAME_SIZE + 1];
+	strncpy(m_name, name, NAME_SIZE); 
+	m_name[NAME_SIZE] = '\0';     
+}
+
+void Player::SetX(float x)
+{
+	m_x = x;
+}
+
+void Player::SetY(float y)
+{
+	m_y = y;
+}
+
+void Player::SetZ(float z)
+{
+	m_z = z;
+}
+
+void Player::SetIsReady(bool ready)
+{
+	isReady = ready;
+}
+
+void Player::SetOnline(bool online)
+{
+	isOnline = online;
+}
+
+int Player::GetID() const
+{
+	return m_id;
+}
+
+char* Player::GetName() const
+{
+	return m_name;
+}
+
+float Player::GetX() const
+{
+	return m_x;
+}
+
+float Player::GetY() const
+{
+	return m_y;
+}
+
+float Player::GetZ() const
+{
+	return m_z;
+}
+
+bool Player::GetReady() const
+{
+	return isReady;
+}
+
+bool Player::GetOnline() const
+{
+	return isOnline;
 }
