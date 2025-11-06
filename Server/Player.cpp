@@ -12,15 +12,10 @@ Player::~Player()
 	m_name = nullptr;
 }
 
-void Player::send_packet(void* packet)
+void Player::send_packet(char* packet, int size)
 {
-	int retval = send(m_socket, (char*)&packet, sizeof(packet), 0);
-
-	if (retval == SOCKET_ERROR)
-	{
-		printf("[Player %d] send error\n", m_id);
-		return;
-	}
+	send(m_socket, (char*)&size, sizeof(int), 0);
+	send(m_socket, packet, size, 0);
 }
 
 void Player::process_packet(char* p)
@@ -33,6 +28,15 @@ void Player::process_packet(char* p)
 		SetName(login_packet->name);
 		std::cout << "[Player : " << m_name << "]" << std::endl;
 		std::cout << "[id : " << m_id << "]" << std::endl;
+
+		S2C_PlayerInfo_Packet* info_packet = new S2C_PlayerInfo_Packet;
+		info_packet->size = sizeof(S2C_PlayerInfo_Packet);
+		info_packet->type = S2C_PLAYER_INFO;
+		info_packet->id = (char)m_id;
+
+		send_packet(reinterpret_cast<char*>(info_packet), sizeof(S2C_PlayerInfo_Packet));
+
+		delete info_packet;
 	}
 	break;
 	case C2S_IS_READY:
