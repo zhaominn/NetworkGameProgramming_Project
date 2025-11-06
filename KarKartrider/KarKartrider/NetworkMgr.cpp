@@ -1,4 +1,4 @@
-#include "Pch.h"
+ï»¿#include "Pch.h"
 #include "NetworkMgr.h"
 
 std::thread m_recvThread;
@@ -6,33 +6,33 @@ std::atomic<bool> m_running{ false };
 
 NetworkMgr::NetworkMgr()
 {
-	m_sock = -1;	// < 0 ÀÌ¸é ÃÊ±âÈ­°¡ ¾ÈµÈ°ÅÀÓ
+	m_sock = -1;	// < 0 ì´ë©´ ì´ˆê¸°í™”ê°€ ì•ˆëœê±°ìž„
 }
 
 NetworkMgr::~NetworkMgr()
 {
-	// ¼ÒÄÏ ´Ý±â
+	// ì†Œì¼“ ë‹«ê¸°
 	closesocket(m_sock);
 
-	// À©¼Ó Á¾·á
+	// ìœˆì† ì¢…ë£Œ
 	WSACleanup();
 }
 
 bool NetworkMgr::Init()
 {
-	// À©¼Ó ÃÊ±âÈ­
+	// ìœˆì† ì´ˆê¸°í™”
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return false;
 
-	// ¼ÒÄÏ »ý¼º
+	// ì†Œì¼“ ìƒì„±
 	m_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (m_sock == INVALID_SOCKET) {
 		std::cout << "socket error" << std::endl;
 	}
 
 	char SERVERIP[30]{};
-	std::cout << "ip ÁÖ¼Ò¸¦ ÀÔ·ÂÇÏ¼¼¿ä" << std::endl;
+	std::cout << "ip ì£¼ì†Œë¥¼ ìž…ë ¥í•˜ì„¸ìš”" << std::endl;
 	std::cin >> SERVERIP;
 
 	// connect()
@@ -53,7 +53,7 @@ bool NetworkMgr::Init()
 
 void NetworkMgr::SendPacket(char* packet, int size)
 {
-	send(m_sock, (char*)&size, sizeof(int), 0); 
+	send(m_sock, (char*)&size, sizeof(int), 0);
 	send(m_sock, packet, size, 0);
 }
 
@@ -62,21 +62,21 @@ void NetworkMgr::ProcessPacket(char* buf)
 	unsigned char type = buf[1];
 	switch (type) {
 	case S2C_PLAYER_INFO: {
-		std::cout << "ÆÐÅ¶ ¹Þ±â ¼º°ø!" << std::endl;
+		std::cout << "íŒ¨í‚· ë°›ê¸° ì„±ê³µ!" << std::endl;
 	}
-		break;
+						break;
 	case S2C_MOVE: {
 
-		// ¼­¹ö¿¡¼­ º¸³½ MOVE ÆÐÅ¶ Ã³¸®
+		// ì„œë²„ì—ì„œ ë³´ë‚¸ MOVE íŒ¨í‚· ì²˜ë¦¬
 	}
-		break;
+				 break;
 	case S2C_LOGIN_FAIL: {
 
-		// ¼­¹ö¿¡¼­ º¸³½ ·Î±×ÀÎ ÆÐÅ¶
+		// ì„œë²„ì—ì„œ ë³´ë‚¸ ë¡œê·¸ì¸ íŒ¨í‚·
 	}
-		break;
+					   break;
 	default:
-		std::cout << "Ã£À» ¼ö ¾ø´Â ÆÐÅ¶ : " << (int)type << std::endl;
+		std::cout << "ì°¾ì„ ìˆ˜ ì—†ëŠ” íŒ¨í‚· : " << (int)type << std::endl;
 		break;
 	}
 }
