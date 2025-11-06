@@ -2,6 +2,7 @@
 #include "LoginMode.h"
 #include "Light.h"
 #include "SelectMapMode.h"
+#include "NetGlobal.h"
 
 LoginMode::LoginMode()
 {
@@ -27,6 +28,14 @@ void LoginMode::keyboard(unsigned char key, int x, int y)
 	// Enter 키 처리
 	if (key == '\r') {
 		std::cout << "입력 완료: " << inputText << std::endl;
+
+		C2S_Login_Packet* packet = new C2S_Login_Packet;
+		packet->size = sizeof(C2S_Login_Packet);
+		packet->type = C2S_LOGIN;
+		strncpy(packet->name, inputText.c_str(), NAME_SIZE);
+		std::cout << packet->name << std::endl;
+		networkmgr.SendPacket(reinterpret_cast<char*>(packet), packet->size);
+		delete packet;
 
 		SelectMapMode* selectMapMode = new SelectMapMode();
 		//selectMapMode->goSelectMode = [this]() { goSelectMode(); };
