@@ -9,6 +9,7 @@
 #include "NetworkMgr.h"
 #include "protocol.h"
 #include "LoginMode.h"
+#include "NetGlobal.h"
 
 using namespace std;
 
@@ -16,18 +17,6 @@ void InitBuffer();
 void initPhysics();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
-
-struct PlayerKart {
-	int id;
-	char name[NAME_SIZE];
-	float x, y, z;
-	int booster_cnt;
-	float speed;
-};
-
-NetworkMgr networkmgr;
-std::array<PlayerKart, MAX_USER> g_players;
-CRITICAL_SECTION CS;
 
 DWORD WINAPI RecvThread(LPVOID lpParam)
 {

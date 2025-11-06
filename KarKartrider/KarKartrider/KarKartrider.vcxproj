@@ -183,6 +183,7 @@
     <ClInclude Include="Mode.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModeManager.h" />
+    <ClInclude Include="NetGlobal.h" />
     <ClInclude Include="NetworkMgr.h" />
     <ClInclude Include="Pch.h" />
     <ClInclude Include="protocol.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="Mode.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModeManager.cpp" />
+    <ClCompile Include="NetGlobal.cpp" />
     <ClCompile Include="NetworkMgr.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
