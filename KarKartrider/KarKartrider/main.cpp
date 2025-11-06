@@ -34,13 +34,11 @@ DWORD WINAPI RecvThread(LPVOID lpParam)
 	while (true)
 	{
 		std::cout << "recv" << std::endl;
-		int len = 0;
 		char buf[BUF_SIZE];
 
-		recv(networkmgr.GetSocket(), (char*)&len, sizeof(int), MSG_WAITALL);
-		recv(networkmgr.GetSocket(), buf, len, MSG_WAITALL);
+		recv(networkmgr.GetSocket(), buf, BUF_SIZE, 0);
 
-		networkmgr.ProcessPacket(buf, len);
+		networkmgr.ProcessPacket(buf);
 	}
 	return 0;
 }
@@ -53,7 +51,7 @@ int main(int argc, char** argv) {
 	}
 
 	char name[NAME_SIZE];
-	cout << "ÀÌ¸§À» ÀÔ·ÂÇÏ¼¼¿ä : ";
+	cout << "ì´ë¦„ì„ ìž…ë ¥í•˜ì„¸ìš” : ";
 	cin >> name;
 
 	C2S_Login_Packet* packet = new C2S_Login_Packet;
