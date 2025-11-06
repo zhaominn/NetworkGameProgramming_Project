@@ -27,6 +27,11 @@ unsigned int __stdcall ClientThread(void* pArguments)
 	return 0;
 }
 
+DWORD WINAPI UpdatePositon(LPVOID lpParam)
+{
+
+}
+
 int main()
 {
 	InitializeCriticalSection(&g_CS);
