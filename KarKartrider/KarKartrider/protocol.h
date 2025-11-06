@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // global definition
 constexpr short NAME_SIZE = 256;

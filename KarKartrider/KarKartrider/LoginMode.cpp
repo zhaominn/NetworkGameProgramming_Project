@@ -148,9 +148,9 @@ void LoginMode::keyboard(unsigned char key, int x, int y)
 		C2S_Login_Packet* packet = new C2S_Login_Packet;
 		packet->size = sizeof(C2S_Login_Packet);
 		packet->type = C2S_LOGIN;
-		strncpy(packet->name, inputText.c_str(), NAME_SIZE);
-		std::cout << packet->name << std::endl;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), packet->size);
+        strncpy(packet->name, inputText.c_str(), NAME_SIZE - 1);
+        packet->name[NAME_SIZE - 1] = '\0';
+        networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Login_Packet));
 		delete packet;
 
 		SelectMapMode* selectMapMode = new SelectMapMode();

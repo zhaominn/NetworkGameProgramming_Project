@@ -5,7 +5,7 @@
 #include <process.h> // _beginthreadex
 
 std::array<Player, MAX_USER> g_users;
-int g_ClientNum;
+int g_usersNum;
 bool g_AllPlayerLogin = false;
 bool g_GameStart = false;
 bool g_GameEnd = false;
@@ -15,20 +15,35 @@ CRITICAL_SECTION g_CS;
 CRITICAL_SECTION g_CS_Send;
 float g_ElapsedTime;
 
-DWORD WINAPI ClientThread(void* pArguments)
+DWORD WINAPI ClientThread(LPVOID socket)
 {
-	int player_id = *(int*)pArguments;
-	free(pArguments);
+	Player* player = reinterpret_cast<Player*>(socket);
+	SOCKET client_socket = player->GetSocket();
+
+	int retval;
+	int len;
+	char buf[BUF_SIZE];
 
 	printf("[Player %d] ClientThread Start.\n",
-		g_users[player_id].m_id);
+		g_users[player->GetID()].m_id);
 
 	while (true) {
-		if (false == g_users[player_id].recv_packet())
+		retval = recv(client_socket, (char*)&len, sizeof(int), MSG_WAITALL);
+		if (retval <= 0) {
+			printf("[Player %d] disconnected (len recv fail)\n", player->GetID());
 			break;
+		}
+
+		retval = recv(client_socket, buf, len, MSG_WAITALL);
+		if (retval <= 0) {
+			printf("[Player %d] disconnected (data recv fail)\n", player->GetID());
+			break;
+		}
+
+		player->process_packet(buf);
 	}
 
-	printf("[Thread %d] Thread End.\n", player_id);
+	printf("[Thread %d] Thread End.\n", player->GetID());
 	return 0;
 }
 
@@ -96,23 +111,32 @@ int main()
 	}
 
 	struct sockaddr_in clientaddr;
-	int addrlen = sizeof(clientaddr);
+	int addrlen{};
 	HANDLE hThread;
 
 	// Login
+	int new_player_id = -1;
 	while (!g_AllPlayerLogin) {
-		SOCKET client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
-		if (client_sock == INVALID_SOCKET) {
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (g_users[i].m_id == -1) {
+				new_player_id = i;
+				break;
+			}
+		}
+
+		addrlen = sizeof clientaddr;
+		g_users[new_player_id].SetSocket(accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen));
+		if (g_users[new_player_id].GetSocket() == INVALID_SOCKET) {
 			std::cout << "accept error" << std::endl;
 			continue;
 		}
 
-		static char recvBuf[BUF_SIZE];
-		int32_t len = recv(client_sock, recvBuf, BUF_SIZE, 0);
+	/*	static char recvBuf[BUF_SIZE];
+		int32_t len = recv(g_users[new_player_id].GetSocket(), recvBuf, BUF_SIZE, 0);
 
 		if (len <= 0) {
 			printf("login packet receive fail. close socket.\n");
-			closesocket(client_sock);
+			closesocket(g_users[new_player_id].GetSocket());
 			continue;
 		}
 
@@ -123,20 +147,13 @@ int main()
 			S2C_Login_Fail_Packet fail_packet;
 			fail_packet.size = sizeof(S2C_Login_Fail_Packet);
 			fail_packet.type = S2C_LOGIN_FAIL;
-			send(client_sock, (char*)&fail_packet, fail_packet.size, 0);
+			send(g_users[new_player_id].GetSocket(), (char*)&fail_packet, fail_packet.size, 0);
 
-			closesocket(client_sock);
+			closesocket(g_users[new_player_id].GetSocket());
 			continue;
 		}
 
-		int new_player_id = -1;
 		EnterCriticalSection(&g_CS);
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_users[i].m_id == -1) {
-				new_player_id = i;
-				break;
-			}
-		}
 
 		if (new_player_id == -1) {
 			LeaveCriticalSection(&g_CS);
@@ -149,13 +166,10 @@ int main()
 
 			closesocket(client_sock);
 			continue;
-		}
+		}*/
 
-		g_users[new_player_id].m_id = new_player_id;
-		g_users[new_player_id].m_socket = client_sock;
-		g_users[new_player_id].m_x = 0;
-		g_users[new_player_id].m_y = 0;
-		g_users[new_player_id].m_z = 0;
+		g_users[new_player_id].SetId(new_player_id);
+		g_usersNum++;
 
 	/*	C2S_Login_Packet* login_packet = (C2S_Login_Packet*)recvBuf;
 		g_users[new_player_id].SetName(login_packet->name);
@@ -166,30 +180,30 @@ int main()
 			inet_ntoa(clientaddr.sin_addr),
 			ntohs(clientaddr.sin_port));*/
 
-		LeaveCriticalSection(&g_CS);
+		//LeaveCriticalSection(&g_CS);
 
-		S2C_PlayerInfo_Packet info_packet;
-		info_packet.size = sizeof(S2C_PlayerInfo_Packet);
-		info_packet.type = S2C_PLAYER_INFO;
-		info_packet.id = (char)new_player_id;
+		//S2C_PlayerInfo_Packet info_packet;
+		//info_packet.size = sizeof(S2C_PlayerInfo_Packet);
+		//info_packet.type = S2C_PLAYER_INFO;
+		//info_packet.id = (char)new_player_id;
 
-		int send_result = send(client_sock, (char*)&info_packet, info_packet.size, 0);
+		//int send_result = send(client_sock, (char*)&info_packet, info_packet.size, 0);
 
-		if (send_result == SOCKET_ERROR) {
-			printf("Player info packet send error: %d\n", WSAGetLastError());
-			EnterCriticalSection(&g_CS);
-			g_users[new_player_id].m_id = -1;
-			g_users[new_player_id].m_socket = INVALID_SOCKET;
-			LeaveCriticalSection(&g_CS);
-			closesocket(client_sock);
-			continue;
-		}
+		//if (send_result == SOCKET_ERROR) {
+		//	printf("Player info packet send error: %d\n", WSAGetLastError());
+		//	EnterCriticalSection(&g_CS);
+		//	g_users[new_player_id].m_id = -1;
+		//	g_users[new_player_id].m_socket = INVALID_SOCKET;
+		//	LeaveCriticalSection(&g_CS);
+		//	closesocket(client_sock);
+		//	continue;
+		//}
 
 		// create thread
-		int* pPlayerID = (int*)malloc(sizeof(int));
-		*pPlayerID = new_player_id;
+		//int* pPlayerID = (int*)malloc(sizeof(int));
+		//*pPlayerID = new_player_id;
 
-		hThread = CreateThread(NULL, 0, &ClientThread, pPlayerID, 0, NULL);
+		hThread = CreateThread(NULL, 0, &ClientThread, (LPVOID)&g_users[new_player_id], 0, NULL);
 
 		if (hThread != NULL) {
 			CloseHandle(hThread);

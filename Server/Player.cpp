@@ -8,12 +8,13 @@ extern std::array<Player, MAX_USER> g_users;
 
 Player::~Player()
 {
-	delete m_name;
+	delete[] m_name;
+	m_name = nullptr;
 }
 
 bool Player::recv_packet()
 {
-	static char recvBuf[BUF_SIZE];
+	char recvBuf[BUF_SIZE];
 	int32_t len;
 
 	len = recv(m_socket, recvBuf, BUF_SIZE, 0);
@@ -24,7 +25,7 @@ bool Player::recv_packet()
 		return false;
 	}
 
-	process_packet((unsigned char*)recvBuf);
+	process_packet(recvBuf);
 	printf("[Thread %d] Packet received from Player %s (Type: %d)\n",
 		m_id, m_name, (unsigned char)recvBuf[1]);
 
@@ -42,7 +43,7 @@ void Player::send_packet(void* packet)
 	}
 }
 
-void Player::process_packet(unsigned char* p)
+void Player::process_packet(char* p)
 {
 	const unsigned char packet_type = p[1];
 	switch (packet_type) {
@@ -50,8 +51,8 @@ void Player::process_packet(unsigned char* p)
 	{
 		C2S_Login_Packet* login_packet = reinterpret_cast<C2S_Login_Packet*>(p);
 		SetName(login_packet->name);
-		std::cout << "login" << GetName() << std::endl;
-		std::cout << "id" << GetID() << std::endl;
+		std::cout << "[Player : " << m_name << "]" << std::endl;
+		std::cout << "[id : " << m_id << "]" << std::endl;
 	}
 	break;
 	case C2S_IS_READY:
@@ -104,7 +105,7 @@ void Player::SetId(short id)
 	m_id = id;
 }
 
-void Player::SetName(char* name)
+void Player::SetName(const char* name)
 {
 	m_name = new char[NAME_SIZE + 1];
 	strncpy(m_name, name, NAME_SIZE);

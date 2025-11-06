@@ -25,12 +25,12 @@ public:
 
 	bool recv_packet();
 	void send_packet(void* packet);
-	void process_packet(unsigned char* p);
+	void process_packet(char* p);
 	void disconnect();
 
 	void SetSocket(SOCKET socket);
 	void SetId(short id);
-	void SetName(char* name);
+	void SetName(const char* name);
 	void SetX(float x);
 	void SetY(float y);
 	void SetZ(float z);
