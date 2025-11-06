@@ -5,13 +5,17 @@
 #include <process.h> // _beginthreadex
 
 std::array<Player, MAX_USER> g_users;
+int g_ClientNum;
+bool g_AllPlayerLogin = false;
+bool g_GameStart = false;
+bool g_GameEnd = false;
 enum game_state { READY, INGAME, END };
 
 CRITICAL_SECTION g_CS;
 CRITICAL_SECTION g_CS_Send;
 float g_ElapsedTime;
 
-unsigned int __stdcall ClientThread(void* pArguments)
+DWORD WINAPI ClientThread(void* pArguments)
 {
 	int player_id = *(int*)pArguments;
 	free(pArguments);
@@ -34,6 +38,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 	scpacket.size = sizeof(S2C_Move_Packet);
 	scpacket.type = S2C_MOVE;
 
+	std::cout << "update" << std::endl;
 
 	// Collect the state of all players and send it to every player
 	while (true)
@@ -94,7 +99,8 @@ int main()
 	int addrlen = sizeof(clientaddr);
 	HANDLE hThread;
 
-	while (1) {
+	// Login
+	while (!g_AllPlayerLogin) {
 		SOCKET client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
 		if (client_sock == INVALID_SOCKET) {
 			std::cout << "accept error" << std::endl;
@@ -183,7 +189,7 @@ int main()
 		int* pPlayerID = (int*)malloc(sizeof(int));
 		*pPlayerID = new_player_id;
 
-		hThread = (HANDLE)_beginthreadex(NULL, 0, &ClientThread, pPlayerID, 0, NULL);
+		hThread = CreateThread(NULL, 0, &ClientThread, pPlayerID, 0, NULL);
 
 		if (hThread != NULL) {
 			CloseHandle(hThread);
