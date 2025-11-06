@@ -49,18 +49,22 @@ void Player::process_packet(unsigned char* p)
 	case C2S_IS_READY:
 	{
 
+		break;
 	}
 	case C2S_MOVE:
 	{
 
+		break;
 	}
 	case C2S_BOOSTER:
 	{
 
+		break;
 	}
 	case C2S_LOGOUT:
 	{
 
+		break;
 	}
 	default:
 		std::cout << "Error Invalid Packet Type\n";
@@ -70,14 +74,15 @@ void Player::process_packet(unsigned char* p)
 
 void Player::disconnect()
 {
-	// broadcast another users
-	closesocket(socket);
-
 	printf("[Thread %d] Disconnect", id);
 
 	EnterCriticalSection(&g_CS);
-	g_users[id].id = -1;
+
+	// broadcast another users
+	closesocket(socket);
 	g_users[id].socket = INVALID_SOCKET;
 	strcpy_s(g_users[id].name, "0");
+	g_users[id].id = -1;
+
 	LeaveCriticalSection(&g_CS);
 }

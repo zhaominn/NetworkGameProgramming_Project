@@ -36,5 +36,7 @@ public:
 private:
     std::string inputText;
 
+    bool isRunning;
+
 };
 

@@ -9,6 +9,7 @@
 #include "NetworkMgr.h"
 #include "protocol.h"
 #include "LoginMode.h"
+#include "NetGlobal.h"
 
 using namespace std;
 
@@ -17,25 +18,14 @@ void initPhysics();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 
-struct PlayerKart {
-	int id;
-	char name[NAME_SIZE];
-	float x, y, z;
-	int booster_cnt;
-	float speed;
-};
-
-NetworkMgr networkmgr;
-std::array<PlayerKart, MAX_USER> g_players;
-CRITICAL_SECTION CS;
-
 DWORD WINAPI RecvThread(LPVOID lpParam)
 {
 	while (true)
 	{
 		std::cout << "recv" << std::endl;
+		int len = 0;
 		char buf[BUF_SIZE];
-		
+
 		recv(networkmgr.GetSocket(), buf, BUF_SIZE, 0);
 
 		networkmgr.ProcessPacket(buf);
@@ -49,18 +39,6 @@ int main(int argc, char** argv) {
 		std::cout << "Init Socket error " << std::endl;
 		return 0;
 	}
-
-	char name[NAME_SIZE];
-	cout << "이름을 입력하세요 : ";
-	cin >> name;
-
-	C2S_Login_Packet* packet = new C2S_Login_Packet;
-	packet->size = sizeof(C2S_Login_Packet);
-	packet->type = C2S_LOGIN;
-	strncpy(packet->name, name, NAME_SIZE);
-	std::cout << packet->name << std::endl;
-	networkmgr.SendPacket(reinterpret_cast<char*>(packet), packet->size);
-	delete packet;
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -84,11 +62,11 @@ int main(int argc, char** argv) {
 
 	initPhysics(); 
 
-	LogoMode* logoMode = new LogoMode();
-	MM.SetMode(logoMode);
+	/*LogoMode* logoMode = new LogoMode();
+	MM.SetMode(logoMode);*/
 
-	//LoginMode* loginMode = new LoginMode(); 
-	//MM.SetMode(loginMode);
+	LoginMode* loginMode = new LoginMode(); 
+	MM.SetMode(loginMode);
 
 	/*debug_model(models.back());
 	debug_materials(models.back()->materials);*/
