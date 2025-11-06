@@ -23,7 +23,6 @@ public:
 	Player() : m_id(-1), m_name(), m_x(0), m_y(0), m_z(0), isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {};
 	~Player();
 
-	bool recv_packet();
 	void send_packet(void* packet);
 	void process_packet(char* p);
 	void disconnect();

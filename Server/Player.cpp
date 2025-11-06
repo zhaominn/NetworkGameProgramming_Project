@@ -12,26 +12,6 @@ Player::~Player()
 	m_name = nullptr;
 }
 
-bool Player::recv_packet()
-{
-	char recvBuf[BUF_SIZE];
-	int32_t len;
-
-	len = recv(m_socket, recvBuf, BUF_SIZE, 0);
-
-	if (len <= 0) {
-		disconnect();
-
-		return false;
-	}
-
-	process_packet(recvBuf);
-	printf("[Thread %d] Packet received from Player %s (Type: %d)\n",
-		m_id, m_name, (unsigned char)recvBuf[1]);
-
-	return true;
-}
-
 void Player::send_packet(void* packet)
 {
 	int retval = send(m_socket, (char*)&packet, sizeof(packet), 0);
