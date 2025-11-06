@@ -37,10 +37,9 @@ DWORD WINAPI RecvThread(LPVOID lpParam)
 		int len = 0;
 		char buf[BUF_SIZE];
 
-		recv(networkmgr.GetSocket(), (char*)&len, sizeof(int), MSG_WAITALL);
-		recv(networkmgr.GetSocket(), buf, len, MSG_WAITALL);
+		recv(networkmgr.GetSocket(), buf, BUF_SIZE, 0);
 
-		networkmgr.ProcessPacket(buf, len);
+		networkmgr.ProcessPacket(buf);
 	}
 	return 0;
 }

@@ -57,9 +57,9 @@ void NetworkMgr::SendPacket(char* packet, int size)
 	send(m_sock, packet, size, 0);
 }
 
-void NetworkMgr::ProcessPacket(char* buf, int len)
+void NetworkMgr::ProcessPacket(char* buf)
 {
-	unsigned char type = buf[0];
+	unsigned char type = buf[1];
 	switch (type) {
 	case S2C_PLAYER_INFO: {
 		std::cout << "패킷 받기 성공!" << std::endl;

@@ -31,6 +31,6 @@ public:
 	void SendPacket(char* packet, int size);
 
 public:
-	void ProcessPacket(char* buf, int len);
+	void ProcessPacket(char* buf);
 };
 
