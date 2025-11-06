@@ -62,7 +62,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 	unsigned char type = buf[1];
 	switch (type) {
 	case S2C_PLAYER_INFO: {
-		std::cout << "패킷 받기 성공!" << std::endl;
+		std::cout << "로그인 성공!" << std::endl;
 	}
 						break;
 	case S2C_MOVE: {
@@ -73,6 +73,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_LOGIN_FAIL: {
 
 		// 서버에서 보낸 로그인 패킷
+		std::cout << "로그인 실패!" << std::endl;
 	}
 					   break;
 	default:

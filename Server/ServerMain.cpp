@@ -131,77 +131,8 @@ int main()
 			continue;
 		}
 
-	/*	static char recvBuf[BUF_SIZE];
-		int32_t len = recv(g_users[new_player_id].GetSocket(), recvBuf, BUF_SIZE, 0);
-
-		if (len <= 0) {
-			printf("login packet receive fail. close socket.\n");
-			closesocket(g_users[new_player_id].GetSocket());
-			continue;
-		}
-
-		unsigned char packet_type = recvBuf[1];
-
-		if (packet_type != C2S_LOGIN) {
-
-			S2C_Login_Fail_Packet fail_packet;
-			fail_packet.size = sizeof(S2C_Login_Fail_Packet);
-			fail_packet.type = S2C_LOGIN_FAIL;
-			send(g_users[new_player_id].GetSocket(), (char*)&fail_packet, fail_packet.size, 0);
-
-			closesocket(g_users[new_player_id].GetSocket());
-			continue;
-		}
-
-		EnterCriticalSection(&g_CS);
-
-		if (new_player_id == -1) {
-			LeaveCriticalSection(&g_CS);
-			printf("Max User.\n");
-
-			S2C_Login_Fail_Packet fail_packet;
-			fail_packet.size = sizeof(S2C_Login_Fail_Packet);
-			fail_packet.type = S2C_LOGIN_FAIL;
-			send(client_sock, (char*)&fail_packet, fail_packet.size, 0);
-
-			closesocket(client_sock);
-			continue;
-		}*/
-
 		g_users[new_player_id].SetId(new_player_id);
 		g_usersNum++;
-
-	/*	C2S_Login_Packet* login_packet = (C2S_Login_Packet*)recvBuf;
-		g_users[new_player_id].SetName(login_packet->name);
-
-		printf("\n[Main] Enter Client %s (ID: %d, %s:%d)\n",
-			g_users[new_player_id].GetName(),
-			new_player_id,
-			inet_ntoa(clientaddr.sin_addr),
-			ntohs(clientaddr.sin_port));*/
-
-		//LeaveCriticalSection(&g_CS);
-
-		//S2C_PlayerInfo_Packet info_packet;
-		//info_packet.size = sizeof(S2C_PlayerInfo_Packet);
-		//info_packet.type = S2C_PLAYER_INFO;
-		//info_packet.id = (char)new_player_id;
-
-		//int send_result = send(client_sock, (char*)&info_packet, info_packet.size, 0);
-
-		//if (send_result == SOCKET_ERROR) {
-		//	printf("Player info packet send error: %d\n", WSAGetLastError());
-		//	EnterCriticalSection(&g_CS);
-		//	g_users[new_player_id].m_id = -1;
-		//	g_users[new_player_id].m_socket = INVALID_SOCKET;
-		//	LeaveCriticalSection(&g_CS);
-		//	closesocket(client_sock);
-		//	continue;
-		//}
-
-		// create thread
-		//int* pPlayerID = (int*)malloc(sizeof(int));
-		//*pPlayerID = new_player_id;
 
 		hThread = CreateThread(NULL, 0, &ClientThread, (LPVOID)&g_users[new_player_id], 0, NULL);
 

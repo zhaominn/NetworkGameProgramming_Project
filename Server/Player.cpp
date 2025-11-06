@@ -25,6 +25,18 @@ void Player::process_packet(char* p)
 	case C2S_LOGIN:
 	{
 		C2S_Login_Packet* login_packet = reinterpret_cast<C2S_Login_Packet*>(p);
+
+		// if login fail
+		if (strlen(login_packet->name) == 0) {
+			printf("[Login Fail] empty name\n");
+			S2C_Login_Fail_Packet fail_packet;
+			fail_packet.size = sizeof(S2C_Login_Fail_Packet);
+			fail_packet.type = S2C_LOGIN_FAIL;
+			send_packet(reinterpret_cast<char*>(&fail_packet), sizeof(fail_packet));
+			disconnect();
+		}
+
+		// success
 		SetName(login_packet->name);
 		std::cout << "[Player : " << m_name << "]" << std::endl;
 		std::cout << "[id : " << m_id << "]" << std::endl;
