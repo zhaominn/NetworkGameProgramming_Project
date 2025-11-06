@@ -35,7 +35,7 @@ DWORD WINAPI RecvThread(LPVOID lpParam)
 	{
 		std::cout << "recv" << std::endl;
 		char buf[BUF_SIZE];
-
+		
 		recv(networkmgr.GetSocket(), buf, BUF_SIZE, 0);
 
 		networkmgr.ProcessPacket(buf);
