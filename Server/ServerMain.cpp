@@ -20,27 +20,12 @@ DWORD WINAPI ClientThread(LPVOID socket)
 	Player* player = reinterpret_cast<Player*>(socket);
 	SOCKET client_socket = player->GetSocket();
 
-	int retval;
-	int len;
-	char buf[BUF_SIZE];
 
 	printf("[Player %d] ClientThread Start.\n",
 		g_users[player->GetID()].m_id);
 
 	while (true) {
-		retval = recv(client_socket, (char*)&len, sizeof(int), MSG_WAITALL);
-		if (retval <= 0) {
-			printf("[Player %d] disconnected (len recv fail)\n", player->GetID());
-			break;
-		}
-
-		retval = recv(client_socket, buf, len, MSG_WAITALL);
-		if (retval <= 0) {
-			printf("[Player %d] disconnected (data recv fail)\n", player->GetID());
-			break;
-		}
-
-		player->process_packet(buf);
+		player->recv_packet();
 	}
 
 	printf("[Thread %d] Thread End.\n", player->GetID());
@@ -100,7 +85,7 @@ int main()
 	if (listen(listen_sock, SOMAXCONN) == SOCKET_ERROR)
 		std::cout << "listen error" << std::endl;
 
-	HANDLE SendThread;
+	/*HANDLE SendThread;
 	SendThread = CreateThread(NULL, 0, UpdatePositon, 0, 0, 0);
 	if (SendThread == NULL) {
 		std::cout << "closesocket()" << std::endl;
@@ -108,7 +93,7 @@ int main()
 	}
 	else {
 		CloseHandle(SendThread);
-	}
+	}*/
 
 	struct sockaddr_in clientaddr;
 	int addrlen{};

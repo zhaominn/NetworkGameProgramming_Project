@@ -12,6 +12,26 @@ Player::~Player()
 	m_name = nullptr;
 }
 
+void Player::recv_packet()
+{
+	int len;
+	char buf[BUF_SIZE];
+
+	int retval = recv(m_socket, (char*)&len, sizeof(int), MSG_WAITALL);
+	if (retval <= 0) {
+		printf("[Player %d] disconnected (len recv fail)\n", m_id);
+		disconnect();
+	}
+
+	retval = recv(m_socket, buf, len, MSG_WAITALL);
+	if (retval <= 0) {
+		printf("[Player %d] disconnected (data recv fail)\n", GetID());
+		disconnect();
+	}
+
+	process_packet(buf);
+}
+
 void Player::send_packet(char* packet, int size)
 {
 	send(m_socket, (char*)&size, sizeof(int), 0);
