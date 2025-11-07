@@ -1,7 +1,8 @@
-#include "Pch.h"
+﻿#include "Pch.h"
 #include "SelectMapMode.h"
 #include "Map1_Mode.h"
 #include "Map2_Mode.h"
+#include "NetGlobal.h"
 
 bool isAnimating = false;
 float animationSpeed = 0.05f;
@@ -21,7 +22,6 @@ void SelectMap_timer(int value) {
 	glutTimerFunc(16, SelectMap_timer, 0);
 }
 
-// --- SelectMapMode 멤버 함수 구현 ---
 void SelectMapMode::goSelectMode() {
 	SelectMapMode* selectMode = new SelectMapMode();
 	MM.SetMode(selectMode);
@@ -40,16 +40,22 @@ void SelectMapMode::keyboard(unsigned char key, int x, int y) {
 	switch (key) {
 	case '\r': {
 		isSoundRunning = false;
+		MAP_TYPE myMap;
 		if (map_num == 1) {
 			Map1_Mode* map1Mode = new Map1_Mode();
 			map1Mode->goSelectMode = [this]() { goSelectMode(); };
 			MM.SetMode(map1Mode);
+			myMap = STRAIGHT;
 		}
 		else if (map_num == 2) {
 			Map2_Mode* map2Mode = new Map2_Mode();
 			map2Mode->goSelectMode = [this]() { goSelectMode(); };
 			MM.SetMode(map2Mode);
+			myMap = RECTANGLE;
 		}
+
+		networkmgr.SendSelectMapPacket(myMap);
+
 		break;
 	}
 	default: break;
@@ -138,7 +144,6 @@ void SelectMapMode::draw_bb()
 
 void SelectMapMode::finish()
 {
-	// ������ ���� ���� ó��
 	if (soundThread.joinable()) {
 		isSoundRunning = false; 
 		soundThread.join();     

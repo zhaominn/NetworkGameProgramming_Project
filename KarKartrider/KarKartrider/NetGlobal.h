@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "protocol.h"
 #include "NetworkMgr.h"
 
@@ -13,3 +13,4 @@ struct PlayerKart {
 extern NetworkMgr networkmgr;
 extern std::array<PlayerKart, MAX_USER> g_players;
 extern CRITICAL_SECTION CS;
+

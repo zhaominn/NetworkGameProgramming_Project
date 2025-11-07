@@ -131,9 +131,6 @@
     <ClInclude Include="Model.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Mode.h">
-      <Filter>헤더 파일\Mode</Filter>
-    </ClInclude>
     <ClInclude Include="ModeManager.h">
       <Filter>헤더 파일\Mode</Filter>
     </ClInclude>
@@ -193,6 +190,9 @@
     </ClInclude>
     <ClInclude Include="NetGlobal.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode.h">
+      <Filter>헤더 파일\Shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

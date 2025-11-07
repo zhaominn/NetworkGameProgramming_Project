@@ -18,6 +18,7 @@ class NetworkMgr
 {
 private:
 	SOCKET m_sock;
+	char m_id;
 
 public:
 	NetworkMgr();
@@ -29,6 +30,7 @@ public:
 
 public:
 	void SendPacket(char* packet, int size);
+	void SendSelectMapPacket(MAP_TYPE map);
 
 public:
 	void ProcessPacket(char* buf);

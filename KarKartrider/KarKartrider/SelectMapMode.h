@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 #include <thread>
@@ -8,7 +8,7 @@
 #include "KeyBoard.h"
 #include "LoadSound.h"
 
-// 전역 변수 선언 (링커 충돌 방지)
+// ?꾩뿭 蹂???좎뼵 (留곸빱 異⑸룎 諛⑹?)
 extern bool isAnimating;
 extern float animationSpeed;
 extern glm::vec3 cameraPosMapMode;

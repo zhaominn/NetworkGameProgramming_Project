@@ -57,12 +57,23 @@ void NetworkMgr::SendPacket(char* packet, int size)
 	send(m_sock, packet, size, 0);
 }
 
+void NetworkMgr::SendSelectMapPacket(MAP_TYPE map)
+{
+	C2S_Enter_Room_Packet* enter_room_packet = new C2S_Enter_Room_Packet;
+	enter_room_packet->size = sizeof(C2S_Enter_Room_Packet);
+	enter_room_packet->type = C2S_ENTER_ROOM;
+	enter_room_packet->map = map;
+	SendPacket(reinterpret_cast<char*>(enter_room_packet), sizeof(enter_room_packet));
+}
+
 void NetworkMgr::ProcessPacket(char* buf)
 {
 	unsigned char type = buf[1];
 	switch (type) {
 	case S2C_PLAYER_INFO: {
 		std::cout << "로그인 성공!" << std::endl;
+		S2C_PlayerInfo_Packet* playerinfo_packet = reinterpret_cast<S2C_PlayerInfo_Packet*>(buf);
+		m_id = playerinfo_packet->id;
 	}
 						break;
 	case S2C_MOVE: {
