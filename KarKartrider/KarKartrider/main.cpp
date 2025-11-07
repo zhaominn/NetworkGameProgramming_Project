@@ -1,4 +1,4 @@
-#include "Pch.h"
+﻿#include "Pch.h"
 #include "DefaultModel.h"
 #include "KeyBoard.h"
 #include "Light.h"
@@ -26,7 +26,13 @@ DWORD WINAPI RecvThread(LPVOID lpParam)
 		int len = 0;
 		char buf[BUF_SIZE];
 
-		recv(networkmgr.GetSocket(), buf, BUF_SIZE, 0);
+		int retval = recv(networkmgr.GetSocket(), (char*)&len, sizeof(int), 0);
+		if (retval <= 0)
+			cout << "error" << endl;
+
+		retval = recv(networkmgr.GetSocket(), buf, len, 0);
+		if (retval <= 0)
+			cout << "error" << endl;
 
 		networkmgr.ProcessPacket(buf);
 	}
@@ -42,10 +48,10 @@ int main(int argc, char** argv) {
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	int screenWidth = glutGet(GLUT_SCREEN_WIDTH);  
-	int screenHeight = glutGet(GLUT_SCREEN_HEIGHT); 
+	int screenWidth = glutGet(GLUT_SCREEN_WIDTH);
+	int screenHeight = glutGet(GLUT_SCREEN_HEIGHT);
 	glutInitWindowPosition(location_x, location_y);
-	glutInitWindowSize(window_width, window_height); 
+	glutInitWindowSize(window_width, window_height);
 	glutCreateWindow("KarKartrider");
 	//glutFullScreen(); 
 
@@ -60,12 +66,12 @@ int main(int argc, char** argv) {
 	make_shaderProgram();
 	make_shaderProgram_ui();
 
-	initPhysics(); 
+	initPhysics();
 
 	/*LogoMode* logoMode = new LogoMode();
 	MM.SetMode(logoMode);*/
 
-	LoginMode* loginMode = new LoginMode(); 
+	LoginMode* loginMode = new LoginMode();
 	MM.SetMode(loginMode);
 
 	/*debug_model(models.back());
@@ -115,7 +121,7 @@ void InitBuffer() {
 		model->initBuffer();
 	}
 
-	for (const auto& model : road1) { 
+	for (const auto& model : road1) {
 		model->initBuffer();
 	}
 
@@ -127,7 +133,7 @@ void InitBuffer() {
 		model->initBuffer();
 	}
 
-	for (const auto& model : countDown) { 
+	for (const auto& model : countDown) {
 		model->initBuffer();
 	}
 
