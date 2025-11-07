@@ -99,16 +99,19 @@ void Player::process_packet(char* p)
 
 void Player::disconnect()
 {
-	printf("[Thread %d] Disconnect", m_id);
+	if (m_id != -1)
+	{
+		printf("[Thread %d] Disconnect", m_id);
 
-	EnterCriticalSection(&g_CS);
+		EnterCriticalSection(&g_CS);
 
-	// broadcast another users
-	closesocket(m_socket);
-	g_users[m_id].m_socket = INVALID_SOCKET;
-	g_users[m_id].m_id = -1;
+		// broadcast another users
+		closesocket(m_socket);
+		g_users[m_id].m_socket = INVALID_SOCKET;
+		g_users[m_id].m_id = -1;
 
-	LeaveCriticalSection(&g_CS);
+		LeaveCriticalSection(&g_CS);
+	}
 }
 
 void Player::SetSocket(SOCKET socket)
