@@ -66,6 +66,16 @@ void NetworkMgr::SendSelectMapPacket(MAP_TYPE map)
 	SendPacket(reinterpret_cast<char*>(enter_room_packet), sizeof(enter_room_packet));
 }
 
+void NetworkMgr::SendLoginPacket(std::string name)
+{
+	C2S_Login_Packet* login_packet = new C2S_Login_Packet;
+	login_packet->size = sizeof(C2S_Login_Packet);
+	login_packet->type = C2S_LOGIN;
+	strncpy(login_packet->name, name.c_str(), NAME_SIZE - 1);
+	login_packet->name[NAME_SIZE - 1] = '\0';
+	SendPacket(reinterpret_cast<char*>(login_packet), sizeof(C2S_Login_Packet));
+}
+
 void NetworkMgr::ProcessPacket(char* buf)
 {
 	unsigned char type = buf[1];

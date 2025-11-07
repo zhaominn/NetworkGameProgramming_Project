@@ -145,13 +145,7 @@ void LoginMode::keyboard(unsigned char key, int x, int y)
 	if (key == '\r') {
 		std::cout << "입력 완료: " << inputText << std::endl;
 
-		C2S_Login_Packet* packet = new C2S_Login_Packet;
-		packet->size = sizeof(C2S_Login_Packet);
-		packet->type = C2S_LOGIN;
-        strncpy(packet->name, inputText.c_str(), NAME_SIZE - 1);
-        packet->name[NAME_SIZE - 1] = '\0';
-        networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Login_Packet));
-		delete packet;
+        networkmgr.SendLoginPacket(inputText);
 
 		SelectMapMode* selectMapMode = new SelectMapMode();
 		//selectMapMode->goSelectMode = [this]() { goSelectMode(); };
