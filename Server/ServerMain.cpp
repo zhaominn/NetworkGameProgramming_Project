@@ -139,6 +139,8 @@ int main()
 		if (hThread != NULL) {
 			CloseHandle(hThread);
 		}
+		
+		if (g_usersNum == 3) g_AllPlayerLogin = true;
 	}
 
 	closesocket(listen_sock);
