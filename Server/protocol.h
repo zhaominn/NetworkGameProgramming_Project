@@ -64,12 +64,6 @@ struct S2C_Ready_Packet
 	bool is_ready;
 };
 
-struct S2C_Enter_Rooom
-{
-	unsigned char size;
-	char type;
-	MAP_TYPE map;
-};
 
 struct S2C_Booster_Packet
 {
@@ -149,7 +143,7 @@ struct C2S_Enter_Room_Packet
 {
 	unsigned char size;
 	char type;
-	int room_key;
+	MAP_TYPE map;
 };
 
 struct C2S_Move_Packet
