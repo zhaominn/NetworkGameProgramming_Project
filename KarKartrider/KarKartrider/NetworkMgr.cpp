@@ -57,7 +57,7 @@ void NetworkMgr::SendPacket(char* packet, int size)
 	send(m_sock, packet, size, 0);
 }
 
-void NetworkMgr::SendSelectMapPacket(MAP_TYPE map)
+void NetworkMgr::SendEnterRoomPacket(MAP_TYPE map)
 {
 	C2S_Enter_Room_Packet* enter_room_packet = new C2S_Enter_Room_Packet;
 	enter_room_packet->size = sizeof(C2S_Enter_Room_Packet);

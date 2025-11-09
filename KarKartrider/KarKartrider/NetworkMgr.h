@@ -31,7 +31,7 @@ public:
 public:
 	void SendPacket(char* packet, int size);
 
-	void SendSelectMapPacket(MAP_TYPE map);
+	void SendEnterRoomPacket(MAP_TYPE map);
 	void SendLoginPacket(std::string name);
 
 public:
