@@ -54,7 +54,7 @@ void SelectMapMode::keyboard(unsigned char key, int x, int y) {
 			myMap = RECTANGLE;
 		}
 
-		networkmgr.SendSelectMapPacket(myMap);
+		networkmgr.SendEnterRoomPacket(myMap);
 
 		break;
 	}

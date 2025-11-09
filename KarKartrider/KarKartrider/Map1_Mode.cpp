@@ -1,4 +1,4 @@
-#include "Pch.h"
+﻿#include "Pch.h"
 #include "RoadModel.h"
 #include "KartModel.h"
 #include "LoadProgress.h"
@@ -328,76 +328,68 @@ void Map1_Mode::checkCollisionKart() {
 	for (auto& kart : karts) {
 		if (kart->name != "car") continue;
 
-		//
 		kart->rigidBody->setGravity(btVector3(0.0f, 0.0f, 0.0f));
 
 		for (const auto& barri : road1_barricate) {
-			
 			CustomContactResultCallback resultCallback;
-
-	
 			dynamicsWorld->contactPairTest(kart->rigidBody, barri->rigidBody, resultCallback);
+			if (!resultCallback.hitDetected) continue;
 
-			if (resultCallback.hitDetected) { 
-
-				if (barri->name == "finish") { 
-					cout << "��!!!" << endl;
-					finish_game();
-					continue;
-				}
-
-				if (!isCrashSound) {
-					isCrashSound = true;
-					crashSoundThread = std::thread(&Map1_Mode::crash_sound, this);
-					crashSoundThread.detach(); 
-				}
-
-				
-				btVector3 collisionNormal = resultCallback.collisionNormal;
-				collisionNormal.setY(0.0f); 
-
-				
-				float penetrationDepth = std::abs(resultCallback.penetrationDepth);
-				const float MAX_PENETRATION_DEPTH = 2.0f; 
-				if (penetrationDepth > MAX_PENETRATION_DEPTH) {
-					penetrationDepth = MAX_PENETRATION_DEPTH;
-				}
-
-				
-				float correctionScale = 0.5f; 
-				btVector3 correction = correctionScale * collisionNormal * penetrationDepth;
-
-		
-				glm::vec3 kartVelocity = glm::vec3(-kart->translateMatrix[2]) * kart_speed;
-				float speedFactor = glm::length(kartVelocity); 
-				correction += collisionNormal * speedFactor * 0.2f; 
-
-			
-				btTransform kartTransform;
-				kart->rigidBody->getMotionState()->getWorldTransform(kartTransform);
-				btVector3 kartPos = kartTransform.getOrigin();
-
-				btVector3 newKartPos = kartPos + correction; 
-				newKartPos.setY(2.6f); 
-
-				kartTransform.setOrigin(newKartPos);
-
-				
-				kart->rigidBody->getMotionState()->setWorldTransform(kartTransform);
-				kart->rigidBody->setWorldTransform(kartTransform);
-
-			
-				btScalar transformMatrix[16];
-				kartTransform.getOpenGLMatrix(transformMatrix);
-				kart->translateMatrix = glm::make_mat4(transformMatrix);
-
-				
-				float decelerationFactor = 0.2f; 
-				kart_speed *= 1.0f - decelerationFactor;
-				if (kart_speed < 0.01f) { 
-					kart_speed = 0.0f;
-				}
+			// 결승선
+			if (barri->name == "finish") {
+				std::cout << "결승선 도착!" << std::endl;
+				finish_game();
+				continue;
 			}
+
+			// 사운드
+			if (!isCrashSound) {
+				isCrashSound = true;
+				crashSoundThread = std::thread(&Map1_Mode::crash_sound, this);
+				crashSoundThread.detach();
+			}
+
+			// --- 자연스러운 충돌 처리 ---
+			btVector3 collisionNormal = resultCallback.collisionNormal;
+			collisionNormal.setY(0.0f);
+			collisionNormal.normalize();
+
+			float penetrationDepth = std::abs(resultCallback.penetrationDepth);
+			if (penetrationDepth < 0.05f) continue; // 너무 얕은 충돌 무시
+
+			// 위로 살짝 보정하여 벽 껌딱지 방지
+			btVector3 adjustDir = collisionNormal + btVector3(0.0f, 0.2f, 0.0f);
+			adjustDir.normalize();
+
+			float correctionScale = 0.3f;
+			btVector3 correction = adjustDir * penetrationDepth * correctionScale;
+
+			// transform 반영
+			btTransform kartTransform;
+			kart->rigidBody->getMotionState()->getWorldTransform(kartTransform);
+			btVector3 kartPos = kartTransform.getOrigin();
+			btVector3 newKartPos = kartPos + correction;
+			newKartPos.setY(2.6f);
+			kartTransform.setOrigin(newKartPos);
+			kart->rigidBody->setWorldTransform(kartTransform);
+			kart->rigidBody->getMotionState()->setWorldTransform(kartTransform);
+
+			btScalar transformMatrix[16];
+			kartTransform.getOpenGLMatrix(transformMatrix);
+			kart->translateMatrix = glm::make_mat4(transformMatrix);
+
+			// --- 감속 처리 ---
+			glm::vec3 forwardDir = glm::normalize(glm::vec3(-kart->translateMatrix[2]));
+			glm::vec3 normalDir = glm::vec3(collisionNormal.getX(), 0.0f, collisionNormal.getZ());
+			float impact = glm::dot(forwardDir, normalDir);
+			impact = glm::clamp(impact, 0.0f, 1.0f);
+
+			float decelerationFactor = 0.25f * impact + 0.1f;
+			kart_speed *= 1.0f - decelerationFactor;
+
+			// 완전 멈추지 않게 최소 움직임 유지 (벽에서 빠져나오기 쉽게)
+			if (kart_speed < 0.05f)
+				kart_speed = 0.05f;
 		}
 	}
 }
