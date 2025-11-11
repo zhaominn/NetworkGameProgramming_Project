@@ -46,6 +46,8 @@ public:
 	bool GetReady() const;
 	bool GetOnline() const;
 
+	void send_Game_Start_Packet();
+
 
 };
 

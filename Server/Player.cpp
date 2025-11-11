@@ -190,3 +190,13 @@ bool Player::GetOnline() const
 {
 	return isOnline;
 }
+
+void Player::send_Game_Start_Packet()
+{
+	S2C_GameStart_Packet* game_start = new S2C_GameStart_Packet;
+	game_start->type = S2C_GAME_START;
+
+	send_packet(reinterpret_cast<char*>(game_start), sizeof(S2C_GameStart_Packet));
+
+	delete game_start;
+}
