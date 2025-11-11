@@ -84,8 +84,13 @@ void NetworkMgr::ProcessPacket(char* buf)
 		std::cout << "로그인 성공!" << std::endl;
 		S2C_PlayerInfo_Packet* playerinfo_packet = reinterpret_cast<S2C_PlayerInfo_Packet*>(buf);
 		m_id = playerinfo_packet->id;
+		delete playerinfo_packet;
 	}
 						break;
+	case S2C_GAME_START: {
+
+	}
+					   break;
 	case S2C_MOVE: {
 
 		// 서버에서 보낸 MOVE 패킷 처리
