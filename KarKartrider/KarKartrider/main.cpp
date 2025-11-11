@@ -23,14 +23,14 @@ DWORD WINAPI RecvThread(LPVOID lpParam)
 	while (true)
 	{
 		std::cout << "recv" << std::endl;
-		int len = 0;
+		int size = 0;
 		char buf[BUF_SIZE];
 
-		int retval = recv(networkmgr.GetSocket(), (char*)&len, sizeof(int), 0);
+		int retval = recv(networkmgr.GetSocket(), (char*)&size, sizeof(int), 0);
 		if (retval <= 0)
 			cout << "error" << endl;
 
-		retval = recv(networkmgr.GetSocket(), buf, len, 0);
+		retval = recv(networkmgr.GetSocket(), buf, size, 0);
 		if (retval <= 0)
 			cout << "error" << endl;
 

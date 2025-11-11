@@ -64,6 +64,7 @@ void NetworkMgr::SendEnterRoomPacket(MAP_TYPE map)
 	enter_room_packet->type = C2S_ENTER_ROOM;
 	enter_room_packet->map = map;
 	SendPacket(reinterpret_cast<char*>(enter_room_packet), sizeof(enter_room_packet));
+	delete enter_room_packet;
 }
 
 void NetworkMgr::SendLoginPacket(std::string name)
@@ -74,6 +75,7 @@ void NetworkMgr::SendLoginPacket(std::string name)
 	strncpy(login_packet->name, name.c_str(), NAME_SIZE - 1);
 	login_packet->name[NAME_SIZE - 1] = '\0';
 	SendPacket(reinterpret_cast<char*>(login_packet), sizeof(C2S_Login_Packet));
+	delete login_packet;
 }
 
 void NetworkMgr::ProcessPacket(char* buf)
@@ -82,9 +84,10 @@ void NetworkMgr::ProcessPacket(char* buf)
 	switch (type) {
 	case S2C_PLAYER_INFO: {
 		std::cout << "로그인 성공!" << std::endl;
+
 		S2C_PlayerInfo_Packet* playerinfo_packet = reinterpret_cast<S2C_PlayerInfo_Packet*>(buf);
 		m_id = playerinfo_packet->id;
-		delete playerinfo_packet;
+		//delete playerinfo_packet; -> 할당된 메모리가 아니라서 delete 하면 터짐
 	}
 						break;
 	case S2C_GAME_START: {
