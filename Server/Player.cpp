@@ -58,6 +58,7 @@ void Player::process_packet(char* p)
 
 		// success
 		SetName(login_packet->name);
+		SetOnline(true);
 		std::cout << "[Player : " << m_name << "]" << std::endl;
 		std::cout << "[id : " << m_id << "]" << std::endl;
 
@@ -89,6 +90,11 @@ void Player::process_packet(char* p)
 	case C2S_LOGOUT:
 	{
 
+	}
+	break;
+	case C2S_ENTER_ROOM:
+	{
+		std::cout << "[Player : " << m_name << " enter room]" << std::endl;
 	}
 	break;
 	default:

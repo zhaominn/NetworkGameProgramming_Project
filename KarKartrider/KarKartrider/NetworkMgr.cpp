@@ -63,7 +63,7 @@ void NetworkMgr::SendEnterRoomPacket(MAP_TYPE map)
 	enter_room_packet->size = sizeof(C2S_Enter_Room_Packet);
 	enter_room_packet->type = C2S_ENTER_ROOM;
 	enter_room_packet->map = map;
-	SendPacket(reinterpret_cast<char*>(enter_room_packet), sizeof(enter_room_packet));
+	SendPacket(reinterpret_cast<char*>(enter_room_packet), sizeof(C2S_Enter_Room_Packet));
 	delete enter_room_packet;
 }
 

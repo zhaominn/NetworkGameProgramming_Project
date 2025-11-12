@@ -46,12 +46,14 @@ void SelectMapMode::keyboard(unsigned char key, int x, int y) {
 			map1Mode->goSelectMode = [this]() { goSelectMode(); };
 			MM.SetMode(map1Mode);
 			myMap = STRAIGHT;
+			//delete map1Mode;
 		}
 		else if (map_num == 2) {
 			Map2_Mode* map2Mode = new Map2_Mode();
 			map2Mode->goSelectMode = [this]() { goSelectMode(); };
 			MM.SetMode(map2Mode);
 			myMap = RECTANGLE;
+			//delete map2Mode;
 		}
 
 		networkmgr.SendEnterRoomPacket(myMap);
