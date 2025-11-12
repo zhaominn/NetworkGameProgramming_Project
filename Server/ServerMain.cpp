@@ -7,6 +7,7 @@
 std::array<Player, MAX_USER> g_users;
 int g_usersNum;
 bool g_AllPlayerLogin = false;
+bool g_AllPlayerReady = false;
 bool g_GameStart = false;
 bool g_GameEnd = false;
 enum game_state { READY, INGAME, END };
@@ -100,6 +101,8 @@ int main()
 	HANDLE hThread;
 
 	// Login
+	// ------------------------------------------------------------------------------------------------------
+
 	int new_player_id = -1;
 	while (!g_AllPlayerLogin) {
 		for (int i = 0; i < MAX_USER; ++i) {
@@ -124,8 +127,39 @@ int main()
 		if (hThread != NULL) {
 			CloseHandle(hThread);
 		}
-		
+
 		if (g_usersNum == 3) g_AllPlayerLogin = true;
+	}
+
+	// Lobby
+	// ------------------------------------------------------------------------------------------------------
+	while (!g_AllPlayerReady) {
+
+	}
+
+
+	// in game
+	// ------------------------------------------------------------------------------------------------------
+	while (!g_GameStart) {
+		int readyClient = 0;
+
+		if (g_GameStart) break;
+
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (g_users[i].GetReady()) {
+				readyClient++;
+			}
+		}
+		if (readyClient == MAX_USER) {
+			std::cout << "게임에 입장합니다." << std::endl;
+			for (int i = 0; i < MAX_USER; ++i) {
+				g_users[i].send_Game_Start_Packet();
+			}
+
+			EnterCriticalSection(&g_CS);
+			g_GameStart = true;
+			LeaveCriticalSection(&g_CS);
+		}
 	}
 
 	closesocket(listen_sock);

@@ -89,7 +89,6 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_LOGOUT:
 	{
-
 	}
 	break;
 	case C2S_ENTER_ROOM:
