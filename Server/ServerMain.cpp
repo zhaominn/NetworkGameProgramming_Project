@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "chrono"
 #include <array>
+#include "mutex"
 
 #include <process.h> // _beginthreadex
 
@@ -15,7 +16,8 @@ enum game_state { READY, INGAME, END };
 game_state g_game_state = READY;
 
 CRITICAL_SECTION g_CS;
-CRITICAL_SECTION g_CS_Send;
+std::mutex g_Sendmutex;
+std::mutex g_UserMutex;
 float g_ElapsedTime;
 
 DWORD WINAPI ClientThread(LPVOID socket)
@@ -56,26 +58,29 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_send_time).count();
 
 		if (elapsed_time >= 1000 / 33) {
-			for (int from = 0; from < MAX_USER; ++from) {
+			for (int i = 0; i < MAX_USER; ++i) {
 
-				if (!g_users[from].GetOnline()) {
-					scpacket->id = g_users[from].GetID();
-					scpacket->x = g_users[from].GetX();
-					scpacket->y = g_users[from].GetY();
-					scpacket->z = g_users[from].GetZ();
+				if (g_users[i].GetOnline()) {
+					std::lock_guard<std::mutex> lock1(g_UserMutex);
+					scpacket->id = g_users[i].GetID();
+					scpacket->x = g_users[i].GetX();
+					scpacket->y = g_users[i].GetY();
+					scpacket->z = g_users[i].GetZ();
+
 				}
 
-				for (int to = 0; to < MAX_USER; ++to) {
-					if (!g_users[to].GetOnline()) {
-						EnterCriticalSection(&g_CS_Send);
-						g_users[to].send_packet(reinterpret_cast<char*>(scpacket), sizeof(S2C_Move_Packet));
-						LeaveCriticalSection(&g_CS_Send);
-					}
+				if (g_users[i].GetOnline()) {
+					std::lock_guard<std::mutex> lock2(g_Sendmutex);
+					g_users[i].send_packet(reinterpret_cast<char*>(scpacket), sizeof(S2C_Move_Packet));
 				}
+
+
 			}
 			last_send_time = current_time;
 		}
 	}
+
+	//delete scpacket;
 }
 
 

@@ -113,8 +113,14 @@ void NetworkMgr::ProcessPacket(char* buf)
 	}
 					   break;
 	case S2C_MOVE: {
-		// 서버에서 보낸 MOVE 패킷 처리
+		S2C_Move_Packet* p = reinterpret_cast<S2C_Move_Packet*>(buf);
+		//int id = p->id;
 
+		//// 서버 좌표로 카트 모델 행렬 재구성
+		//glm::mat4 model = glm::mat4(1.0f);
+		//model = glm::translate(model, glm::vec3(p->x, p->y, p->z));
+
+		//karts[id]->translateMatrix = model;
 	}
 				 break;
 	case S2C_LOGIN_FAIL: {

@@ -9,7 +9,6 @@ constexpr float TIME_PER_ACTION = 0.25f;
 constexpr float ACTION_PER_TIME = 1.0f / TIME_PER_ACTION;
 
 constexpr float PLAYER_SPEED = 1.0f;
-
 constexpr float ACCELERATION = 0.004f;
 constexpr float DECELERATION = 0.003f;
 constexpr float LIMIT_SPEED = 1.0;
@@ -104,6 +103,7 @@ struct S2C_Move_Packet
 	unsigned char size;
 	char type;
 	char id;
+	float speed;
 	float x;
 	float y;
 	float z;

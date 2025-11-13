@@ -10,9 +10,6 @@ Player::~Player()
 {
 	delete[] m_name;
 	m_name = nullptr;
-	matrix = glm::mat4(1.0f);
-	translateMatrix = glm::mat4(1.0f);
-	rotateMatrix = glm::mat4(1.0f);
 }
 
 void Player::recv_packet()
@@ -90,10 +87,18 @@ void Player::process_packet(char* p)
 		switch (login_packet->direction) {
 		case UP: {
 			std::cout << "UP" << std::endl;
+			if (m_speed < MAX_SPEED) {
+				m_speed += ACCELERATION;
+				if (m_speed > MAX_SPEED) m_speed = MAX_SPEED;
+			}
 		}
 			   break;
 		case DOWN: {
 			std::cout << "DOWN" << std::endl;
+			if (m_speed > -MAX_SPEED / 2.0f) {
+				m_speed -= ACCELERATION;
+				if (m_speed < -MAX_SPEED / 2.0f) m_speed = -MAX_SPEED / 2.0f;
+			}
 		}
 				 break;
 		case LEFT: {

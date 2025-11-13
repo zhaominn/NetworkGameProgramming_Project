@@ -8,11 +8,6 @@
 #include "protocol.h"
 #include <iostream>
 
-#include <glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 class Player
 {
 public:
@@ -22,9 +17,6 @@ public:
 	float m_speed;
 	bool isReady;
 	bool isOnline;
-	glm::mat4 matrix;
-	glm::mat4 translateMatrix;
-	glm::mat4 rotateMatrix;
 	SOCKET m_socket;
 
 public:

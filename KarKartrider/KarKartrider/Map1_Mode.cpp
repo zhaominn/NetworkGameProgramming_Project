@@ -413,158 +413,158 @@ void Map1_Mode::checkEngineSound() {
 }
 
 void Map1_Mode::timer() {
-	if (!Pause) {
-		if (start_count < 4) {
-			if (start_count >= 0)
-				playCountdown(start_count);
-			++start_count;
-		}
-		else {
+	//if (!Pause) {
+	//	if (start_count < 4) {
+	//		if (start_count >= 0)
+	//			playCountdown(start_count);
+	//		++start_count;
+	//	}
+	//	else {
 
 
-			if (kart_keyState[UP]) {
-				if (kart_speed < MAX_SPEED) {
-					kart_speed += ACCELERATION;
-					if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED;
-				}
-			}
-			else if (kart_keyState[DOWN]) {
-				if (kart_speed > -MAX_SPEED / 2.0f) {
-					kart_speed -= ACCELERATION;
-					if (kart_speed < -MAX_SPEED / 2.0f) kart_speed = -MAX_SPEED / 2.0f;
-				}
-			}
-			else {
+	//		if (kart_keyState[UP]) {
+	//			if (kart_speed < MAX_SPEED) {
+	//				kart_speed += ACCELERATION;
+	//				if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED;
+	//			}
+	//		}
+	//		else if (kart_keyState[DOWN]) {
+	//			if (kart_speed > -MAX_SPEED / 2.0f) {
+	//				kart_speed -= ACCELERATION;
+	//				if (kart_speed < -MAX_SPEED / 2.0f) kart_speed = -MAX_SPEED / 2.0f;
+	//			}
+	//		}
+	//		else {
 
-				if (kart_speed > 0.0f) {
-					kart_speed -= DECELERATION;
-					if (kart_speed < 0.0f) kart_speed = 0.0f;
-				}
-				else if (kart_speed < 0.0f) {
-					kart_speed += DECELERATION;
-					if (kart_speed > 0.0f) kart_speed = 0.0f;
-				}
-			}
-
-
-			if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED;
+	//			if (kart_speed > 0.0f) {
+	//				kart_speed -= DECELERATION;
+	//				if (kart_speed < 0.0f) kart_speed = 0.0f;
+	//			}
+	//			else if (kart_speed < 0.0f) {
+	//				kart_speed += DECELERATION;
+	//				if (kart_speed > 0.0f) kart_speed = 0.0f;
+	//			}
+	//		}
 
 
-			if (kart_speed > 0.0f) {
-				for (const auto& kart : karts) {
-					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
-				}
-			}
-			else if (kart_speed < 0.0f) {
-				for (const auto& kart : karts) {
-					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
-				}
-			}
+	//		if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED;
 
 
-			if (kart_keyState[LEFT]) {
-				if (kart_speed != 0.0f) {
-					for (const auto& kart : karts) {
-						kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
-						kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(TURN_ANGLE), glm::vec3(0.0f, 1.0f, 0.0f));
-						kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
-					}
-				}
-			}
-
-			if (kart_keyState[RIGHT]) {
-				if (kart_speed != 0.0f) {
-					for (const auto& kart : karts) {
-						kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
-						kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(-TURN_ANGLE), glm::vec3(0.0f, 1.0f, 0.0f));
-						kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
-					}
-				}
-			}
+	//		if (kart_speed > 0.0f) {
+	//			for (const auto& kart : karts) {
+	//				kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
+	//			}
+	//		}
+	//		else if (kart_speed < 0.0f) {
+	//			for (const auto& kart : karts) {
+	//				kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
+	//			}
+	//		}
 
 
-			for (const auto& c : character) {
-				c->translateMatrix = karts[0]->translateMatrix;
-			}
+	//		if (kart_keyState[LEFT]) {
+	//			if (kart_speed != 0.0f) {
+	//				for (const auto& kart : karts) {
+	//					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
+	//					kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(TURN_ANGLE), glm::vec3(0.0f, 1.0f, 0.0f));
+	//					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
+	//				}
+	//			}
+	//		}
+
+	//		if (kart_keyState[RIGHT]) {
+	//			if (kart_speed != 0.0f) {
+	//				for (const auto& kart : karts) {
+	//					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
+	//					kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(-TURN_ANGLE), glm::vec3(0.0f, 1.0f, 0.0f));
+	//					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
+	//				}
+	//			}
+	//		}
 
 
-			if (kart_speed != 0.0f) {
-				reducedRotationInfluence = 0.1f + (std::abs(kart_speed) / MAX_SPEED) * 0.4f; // �ӵ� ��� ������
-			}
-			else {
-				reducedRotationInfluence += 0.01f;
-				if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
-			}
+	//		for (const auto& c : character) {
+	//			c->translateMatrix = karts[0]->translateMatrix;
+	//		}
 
 
-			if (!kart_keyState[LEFT] && !kart_keyState[RIGHT]) {
-				if (character_face_rotation > 0.0f) {
-					character_face_rotation -= RETURN_SPEED;
-					if (character_face_rotation < 0.0f) {
-						character_face_rotation = 0.0f;
-					}
-				}
-				else if (character_face_rotation < 0.0f) {
-					character_face_rotation += RETURN_SPEED;
-					if (character_face_rotation > 0.0f) {
-						character_face_rotation = 0.0f;
-					}
-				}
-			}
+	//		if (kart_speed != 0.0f) {
+	//			reducedRotationInfluence = 0.1f + (std::abs(kart_speed) / MAX_SPEED) * 0.4f; // �ӵ� ��� ������
+	//		}
+	//		else {
+	//			reducedRotationInfluence += 0.01f;
+	//			if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
+	//		}
 
-			if (isBoosterActive) {
-				//
-				if (booster_head_tilt < MAX_HEAD_TILT) {
-					booster_head_tilt += TILT_SPEED;
-					if (booster_head_tilt > MAX_HEAD_TILT) {
-						booster_head_tilt = MAX_HEAD_TILT;
-					}
-				}
-			}
-			else {
-				//
-				if (booster_head_tilt > 0.0f) {
-					booster_head_tilt -= TILT_SPEED;
-					if (booster_head_tilt < 0.0f) {
-						booster_head_tilt = 0.0f;
-					}
-				}
-			}
 
-			//
-			for (const auto& c : character) {
-				if (c->name == "character_face") {
-					//
-					glm::mat4 headRotation = glm::rotate(
-						glm::mat4(1.0f),
-						glm::radians(-character_face_rotation),
-						glm::vec3(0.0f, 0.0f, 1.0f)
-					);
+	//		if (!kart_keyState[LEFT] && !kart_keyState[RIGHT]) {
+	//			if (character_face_rotation > 0.0f) {
+	//				character_face_rotation -= RETURN_SPEED;
+	//				if (character_face_rotation < 0.0f) {
+	//					character_face_rotation = 0.0f;
+	//				}
+	//			}
+	//			else if (character_face_rotation < 0.0f) {
+	//				character_face_rotation += RETURN_SPEED;
+	//				if (character_face_rotation > 0.0f) {
+	//					character_face_rotation = 0.0f;
+	//				}
+	//			}
+	//		}
 
-					//
-					headRotation = glm::rotate(
-						headRotation,
-						glm::radians(booster_head_tilt), //
-						glm::vec3(1.0f, 0.0f, 0.0f)
-					);
+	//		if (isBoosterActive) {
+	//			//
+	//			if (booster_head_tilt < MAX_HEAD_TILT) {
+	//				booster_head_tilt += TILT_SPEED;
+	//				if (booster_head_tilt > MAX_HEAD_TILT) {
+	//					booster_head_tilt = MAX_HEAD_TILT;
+	//				}
+	//			}
+	//		}
+	//		else {
+	//			//
+	//			if (booster_head_tilt > 0.0f) {
+	//				booster_head_tilt -= TILT_SPEED;
+	//				if (booster_head_tilt < 0.0f) {
+	//					booster_head_tilt = 0.0f;
+	//				}
+	//			}
+	//		}
 
-					c->translateMatrix = karts[0]->translateMatrix * headRotation;
-				}
-				else {
-					c->translateMatrix = karts[0]->translateMatrix;
-				}
-			}
+	//		//
+	//		for (const auto& c : character) {
+	//			if (c->name == "character_face") {
+	//				//
+	//				glm::mat4 headRotation = glm::rotate(
+	//					glm::mat4(1.0f),
+	//					glm::radians(-character_face_rotation),
+	//					glm::vec3(0.0f, 0.0f, 1.0f)
+	//				);
 
-			//
-			setCamera();
-			//
-			float cameraFollowSpeed = 0.1f; //
-			cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
+	//				//
+	//				headRotation = glm::rotate(
+	//					headRotation,
+	//					glm::radians(booster_head_tilt), //
+	//					glm::vec3(1.0f, 0.0f, 0.0f)
+	//				);
 
-			checkCollisionKart();
-			checkEngineSound();
-		}
-	}
+	//				c->translateMatrix = karts[0]->translateMatrix * headRotation;
+	//			}
+	//			else {
+	//				c->translateMatrix = karts[0]->translateMatrix;
+	//			}
+	//		}
+
+	//		//
+	//		setCamera();
+	//		//
+	//		float cameraFollowSpeed = 0.1f; //
+	//		cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
+
+	//		checkCollisionKart();
+	//		checkEngineSound();
+	//	}
+	//}
 
 }
 
@@ -631,7 +631,7 @@ void Map1_Mode::keyboard(unsigned char key, int x, int y) {
 void Map1_Mode::activateBooster() {
 
 
-	if (isBoosterActive) {
+	/*if (isBoosterActive) {
 		std::cout << "Booster is already active!" << std::endl;
 		return;
 	}
@@ -663,7 +663,7 @@ void Map1_Mode::activateBooster() {
 		ACCELERATION = originalAcceleration;
 		isBoosterActive = false;
 		std::cout << "Booster ended. MAX_SPEED and ACCELERATION restored." << std::endl;
-		}).detach();
+		}).detach();*/
 }
 
 void Map1_Mode::specialKey(int key, int x, int y) {

@@ -104,6 +104,7 @@ struct S2C_Move_Packet
 	unsigned char size;
 	char type;
 	char id;
+	float speed;
 	float x;
 	float y;
 	float z;
