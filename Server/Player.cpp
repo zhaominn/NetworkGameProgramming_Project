@@ -74,6 +74,10 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_IS_READY:
 	{
+		C2S_Change_Ready_Packet* change_ready_packet = reinterpret_cast<C2S_Change_Ready_Packet*>(p);
+
+		SetIsReady(change_ready_packet->is_ready);
+		std::cout << "[Player : " << m_name << "]" << " ready status? : " << isReady << std::endl;
 
 	}
 	break;
