@@ -16,9 +16,9 @@ extern CRITICAL_SECTION CS;
 
 extern int g_myid;
 extern bool g_ready;
-extern bool g_gameStart = false;
-extern bool g_GameEnd = false;
-extern bool g_setItem = false;
-extern bool g_loginOk = false;
+extern bool g_gameStart;
+extern bool g_GameEnd;
+extern bool g_setItem;
+extern bool g_loginOk;
 
 

@@ -11,6 +11,8 @@
 #include "LoginMode.h"
 #include "NetGlobal.h"
 
+
+
 using namespace std;
 
 void InitBuffer();

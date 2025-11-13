@@ -11,6 +11,7 @@ bool g_AllPlayerReady = false;
 bool g_GameStart = false;
 bool g_GameEnd = false;
 enum game_state { READY, INGAME, END };
+game_state g_game_state = READY;
 
 CRITICAL_SECTION g_CS;
 CRITICAL_SECTION g_CS_Send;
@@ -20,16 +21,18 @@ DWORD WINAPI ClientThread(LPVOID socket)
 {
 	Player* player = reinterpret_cast<Player*>(socket);
 	SOCKET client_socket = player->GetSocket();
-
+	int my_id = player->GetID();
 
 	printf("[Player %d] ClientThread Start.\n",
 		g_users[player->GetID()].m_id);
 
 	while (true) {
 		player->recv_packet();
+		if (player->GetID() == -1)
+			break;
 	}
 
-	printf("[Thread %d] Thread End.\n", player->GetID());
+	printf("[Thread %d] Thread End.\n", my_id);
 	return 0;
 }
 
@@ -100,65 +103,77 @@ int main()
 	int addrlen{};
 	HANDLE hThread;
 
-	// Login
-	// ------------------------------------------------------------------------------------------------------
+	while (true) {
+		switch (g_game_state) {
+		case READY:
+		{
+			// Login
+			// ------------------------------------------------------------------------------------------------------
 
-	int new_player_id = -1;
-	while (!g_AllPlayerLogin) {
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_users[i].m_id == -1) {
-				new_player_id = i;
+			int new_player_id = -1;
+			while (!g_AllPlayerLogin) {
+				for (int i = 0; i < MAX_USER; ++i) {
+					if (g_users[i].m_id == -1) {
+						new_player_id = i;
+						break;
+					}
+				}
+
+				addrlen = sizeof clientaddr;
+				g_users[new_player_id].SetSocket(accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen));
+				if (g_users[new_player_id].GetSocket() == INVALID_SOCKET) {
+					std::cout << "accept error" << std::endl;
+					continue;
+				}
+
+				g_users[new_player_id].SetId(new_player_id);
+				g_usersNum++;
+
+				hThread = CreateThread(NULL, 0, &ClientThread, (LPVOID)&g_users[new_player_id], 0, NULL);
+
+				if (hThread != NULL) {
+					CloseHandle(hThread);
+				}
+
+				if (g_usersNum == 3)
+				{
+					g_AllPlayerLogin = true; 
+					/*temp*/g_game_state = INGAME;
+				}
+			}
+
+			// Lobby
+			// ------------------------------------------------------------------------------------------------------
+			while (!g_AllPlayerReady) {
 				break;
 			}
 		}
+		break;
+		case INGAME:
+			// in game
+			// ------------------------------------------------------------------------------------------------------
+			while (!g_GameStart) {
+				int readyClient = 0;
 
-		addrlen = sizeof clientaddr;
-		g_users[new_player_id].SetSocket(accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen));
-		if (g_users[new_player_id].GetSocket() == INVALID_SOCKET) {
-			std::cout << "accept error" << std::endl;
-			continue;
-		}
+				if (g_GameStart) break;
 
-		g_users[new_player_id].SetId(new_player_id);
-		g_usersNum++;
+				for (int i = 0; i < MAX_USER; ++i) {
+					if (g_users[i].GetReady()) {
+						readyClient++;
+					}
+				}
+				if (readyClient == MAX_USER) {
+					std::cout << "게임에 입장합니다." << std::endl;
+					for (int i = 0; i < MAX_USER; ++i) {
+						g_users[i].send_Game_Start_Packet();
+					}
 
-		hThread = CreateThread(NULL, 0, &ClientThread, (LPVOID)&g_users[new_player_id], 0, NULL);
-
-		if (hThread != NULL) {
-			CloseHandle(hThread);
-		}
-
-		if (g_usersNum == 3) g_AllPlayerLogin = true;
-	}
-
-	// Lobby
-	// ------------------------------------------------------------------------------------------------------
-	while (!g_AllPlayerReady) {
-
-	}
-
-
-	// in game
-	// ------------------------------------------------------------------------------------------------------
-	while (!g_GameStart) {
-		int readyClient = 0;
-
-		if (g_GameStart) break;
-
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_users[i].GetReady()) {
-				readyClient++;
+					EnterCriticalSection(&g_CS);
+					g_GameStart = true;
+					LeaveCriticalSection(&g_CS);
+				}
 			}
-		}
-		if (readyClient == MAX_USER) {
-			std::cout << "게임에 입장합니다." << std::endl;
-			for (int i = 0; i < MAX_USER; ++i) {
-				g_users[i].send_Game_Start_Packet();
-			}
-
-			EnterCriticalSection(&g_CS);
-			g_GameStart = true;
-			LeaveCriticalSection(&g_CS);
+			break;
 		}
 	}
 

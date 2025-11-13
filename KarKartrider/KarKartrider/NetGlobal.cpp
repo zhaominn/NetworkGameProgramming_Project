@@ -1,6 +1,13 @@
-#include "Pch.h"
+﻿#include "Pch.h"
 #include "NetGlobal.h"
 
 NetworkMgr networkmgr;
 std::array<PlayerKart, MAX_USER> g_players;
 CRITICAL_SECTION CS;
+
+int g_myid;
+bool g_ready;
+bool g_gameStart = false;
+bool g_GameEnd = false;
+bool g_setItem = false;
+bool g_loginOk = false;

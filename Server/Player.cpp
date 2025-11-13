@@ -94,6 +94,8 @@ void Player::process_packet(char* p)
 	case C2S_ENTER_ROOM:
 	{
 		std::cout << "[Player : " << m_name << " enter room]" << std::endl;
+		// Temp
+		SetIsReady(true);
 	}
 	break;
 	default:

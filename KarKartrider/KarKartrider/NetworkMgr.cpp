@@ -91,7 +91,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 	}
 						break;
 	case S2C_GAME_START: {
-
+		std::cout << "Game Start" << std::endl;
 	}
 					   break;
 	case S2C_MOVE: {
