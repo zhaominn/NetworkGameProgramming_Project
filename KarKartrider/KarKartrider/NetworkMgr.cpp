@@ -1,5 +1,8 @@
 ﻿#include "Pch.h"
 #include "NetworkMgr.h"
+#include "root.h"
+#include "Map1_Mode.h"
+#include "Map2_Mode.h"
 
 std::thread m_recvThread;
 std::atomic<bool> m_running{ false };
@@ -103,7 +106,9 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_GAME_START: {
 		std::cout << "Game Start@@@@@@@@@@@@@@@@@@@@" << std::endl;
 
-
+		Map1_Mode* map1Mode = new Map1_Mode();
+		//map1Mode->goSelectMode = [this]() { goSelectMode(); };
+		MM.SetMode(map1Mode);
 
 	}
 					   break;
