@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <glew.h>
 #include <freeglut.h>
 #include "Mode.h" 

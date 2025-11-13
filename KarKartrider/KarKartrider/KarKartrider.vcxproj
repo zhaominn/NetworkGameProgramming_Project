@@ -189,6 +189,7 @@
     <ClInclude Include="Pch.h" />
     <ClInclude Include="protocol.h" />
     <ClInclude Include="RoadModel.h" />
+    <ClInclude Include="RoomMode.h" />
     <ClInclude Include="root.h" />
     <ClInclude Include="SelectMapMode.h" />
     <ClInclude Include="shaderMaker.h" />
@@ -229,6 +230,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RoadModel.cpp" />
+    <ClCompile Include="RoomMode.cpp" />
     <ClCompile Include="root.cpp" />
     <ClCompile Include="SelectMapMode.cpp" />
     <ClCompile Include="shaderMaker.cpp" />
