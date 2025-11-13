@@ -631,39 +631,39 @@ void Map1_Mode::keyboard(unsigned char key, int x, int y) {
 void Map1_Mode::activateBooster() {
 
 
-	/*if (isBoosterActive) {
-		std::cout << "Booster is already active!" << std::endl;
-		return;
-	}
+	//if (isBoosterActive) {
+	//	std::cout << "Booster is already active!" << std::endl;
+	//	return;
+	//}
 
 
-	isBoosterActive = true;
+	//isBoosterActive = true;
 
-	std::cout << "Booster activated! Remaining boosters: " << booster_cnt << std::endl;
-
-
-	float originalMaxSpeed = MAX_SPEED;
-	float originalAcceleration = ACCELERATION;
+	//std::cout << "Booster activated! Remaining boosters: " << booster_cnt << std::endl;
 
 
-	MAX_SPEED = BOOSTER_SPEED;
-	ACCELERATION *= 1.05f;
+	//float originalMaxSpeed = MAX_SPEED;
+	//float originalAcceleration = ACCELERATION;
 
 
-	if (!isBoosterSound) {
-		isBoosterSound = true;
-		boosterSoundThread = std::thread(&Map1_Mode::booster_sound, this);
-		boosterSoundThread.detach();
-	}
+	//MAX_SPEED = BOOSTER_SPEED;
+	//ACCELERATION *= 1.05f;
 
 
-	std::thread([this, originalMaxSpeed, originalAcceleration]() {
-		std::this_thread::sleep_for(std::chrono::duration<double>(4.4));
-		MAX_SPEED = originalMaxSpeed;
-		ACCELERATION = originalAcceleration;
-		isBoosterActive = false;
-		std::cout << "Booster ended. MAX_SPEED and ACCELERATION restored." << std::endl;
-		}).detach();*/
+	//if (!isBoosterSound) {
+	//	isBoosterSound = true;
+	//	boosterSoundThread = std::thread(&Map1_Mode::booster_sound, this);
+	//	boosterSoundThread.detach();
+	//}
+
+
+	//std::thread([this, originalMaxSpeed, originalAcceleration]() {
+	//	std::this_thread::sleep_for(std::chrono::duration<double>(4.4));
+	//	MAX_SPEED = originalMaxSpeed;
+	//	ACCELERATION = originalAcceleration;
+	//	isBoosterActive = false;
+	//	std::cout << "Booster ended. MAX_SPEED and ACCELERATION restored." << std::endl;
+	//	}).detach();
 }
 
 void Map1_Mode::specialKey(int key, int x, int y) {

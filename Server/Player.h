@@ -15,12 +15,14 @@ public:
 	char* m_name;
 	float m_x, m_y, m_z;
 	float m_speed;
+	float m_yaw;
 	bool isReady;
 	bool isOnline;
 	SOCKET m_socket;
 
 public:
-	Player() : m_id(-1), m_name(), m_x(0), m_y(0), m_z(0), isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {};
+	Player() : m_id(-1), m_name(), m_x(0), m_y(0), m_z(0), m_yaw(0), m_speed(0),
+		isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {};
 	~Player();
 
 	void recv_packet();
@@ -34,6 +36,8 @@ public:
 	void SetX(float x);
 	void SetY(float y);
 	void SetZ(float z);
+	void SetYaw(float yaw);
+	void SetSpeed(float speed);
 	void SetIsReady(bool ready);
 	void SetOnline(bool online);
 
@@ -43,6 +47,8 @@ public:
 	float GetX() const;
 	float GetY() const;
 	float GetZ() const;
+	float GetYaw() const;
+	float GetSpeed() const;
 	bool GetReady() const;
 	bool GetOnline() const;
 

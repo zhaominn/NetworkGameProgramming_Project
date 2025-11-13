@@ -59,13 +59,24 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 		if (elapsed_time >= 1000 / 33) {
 			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_users[i].m_speed != 0)
+				{
+					float rad = g_users[i].m_yaw * (3.141592f / 180.0f);
+					float dx = -sinf(rad) * g_users[i].m_speed;
+					float dz = -cosf(rad) * g_users[i].m_speed;
+
+					g_users[i].m_x += dx;
+					g_users[i].m_z += dz;
+				}
 
 				if (g_users[i].GetOnline()) {
 					std::lock_guard<std::mutex> lock1(g_UserMutex);
 					scpacket->id = g_users[i].GetID();
+					scpacket->speed = g_users[i].GetSpeed();
 					scpacket->x = g_users[i].GetX();
 					scpacket->y = g_users[i].GetY();
-					scpacket->z = g_users[i].GetZ();
+					scpacket->z = g_users[i].GetYaw();
+					scpacket->yaw = g_users[i].GetZ();
 
 				}
 

@@ -14,6 +14,8 @@ constexpr float DECELERATION = 0.003f;
 constexpr float LIMIT_SPEED = 1.0;
 constexpr float BOOSTER_SPEED = 2.0;
 constexpr float MAX_SPEED = 1.0;
+constexpr float TURN_ANGLE = 1.0;
+
 
 constexpr unsigned short WINDOW_WIDTH = 980;
 constexpr unsigned short WINDOW_HEIGHT = 780;
@@ -107,6 +109,7 @@ struct S2C_Move_Packet
 	float x;
 	float y;
 	float z;
+	float yaw;
 	//btRigidBody rigidBody;
 };
 

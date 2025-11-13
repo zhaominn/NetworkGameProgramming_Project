@@ -103,10 +103,14 @@ void Player::process_packet(char* p)
 				 break;
 		case LEFT: {
 			std::cout << "LEFT" << std::endl;
+			if (m_speed != 0)
+				m_yaw += TURN_ANGLE;  
 		}
 				 break;
 		case RIGHT: {
 			std::cout << "RIGHT" << std::endl;
+			if (m_speed != 0)
+				m_yaw -= TURN_ANGLE;  
 
 		}
 				  break;
@@ -182,6 +186,16 @@ void Player::SetZ(float z)
 	m_z = z;
 }
 
+void Player::SetYaw(float yaw)
+{
+	m_yaw = yaw;
+}
+
+void Player::SetSpeed(float speed)
+{
+	m_speed = speed;
+}
+
 void Player::SetIsReady(bool ready)
 {
 	isReady = ready;
@@ -215,6 +229,16 @@ float Player::GetY() const
 float Player::GetZ() const
 {
 	return m_z;
+}
+
+float Player::GetYaw() const
+{
+	return m_yaw;
+}
+
+float Player::GetSpeed() const
+{
+	return m_speed;
 }
 
 bool Player::GetReady() const

@@ -42,7 +42,6 @@ public:
 
 	float yaw = -90.0f; 
 	float pitch = 0.0f; 
-	float TURN_ANGLE = 1.0f; 
 
 	bool isBackgroundSound = false;
 	std::thread backgroundSoundThread;

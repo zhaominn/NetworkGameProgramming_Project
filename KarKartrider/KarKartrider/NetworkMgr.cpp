@@ -114,13 +114,12 @@ void NetworkMgr::ProcessPacket(char* buf)
 					   break;
 	case S2C_MOVE: {
 		S2C_Move_Packet* p = reinterpret_cast<S2C_Move_Packet*>(buf);
-		//int id = p->id;
-
-		//// 서버 좌표로 카트 모델 행렬 재구성
-		//glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::translate(model, glm::vec3(p->x, p->y, p->z));
-
-		//karts[id]->translateMatrix = model;
+		int id = p->id;
+		karts[id]->translateMatrix = glm::translate(karts[id]->translateMatrix, glm::vec3(0.0, 0.0, -p->speed));
+		character[id]->translateMatrix = glm::translate(karts[id]->translateMatrix, glm::vec3(0.0, 0.0, -p->speed));
+		for (const auto& c : character) {
+			c->translateMatrix = glm::translate(karts[id]->translateMatrix, glm::vec3(0.0, 0.0, -p->speed));
+		}
 	}
 				 break;
 	case S2C_LOGIN_FAIL: {
