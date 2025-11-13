@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 //#include "Mode.h"
 #include "Mode.h"
@@ -11,6 +11,10 @@ public:
 	ModeManager() : mode(nullptr) {}
 	~ModeManager(){}
 	void SetMode(Mode* m);
+
+	Mode* GetMode() {
+		return mode;
+	}
 
 	void draw_model();
 

@@ -3,6 +3,7 @@
 #include "Map1_Mode.h"
 #include "Map2_Mode.h"
 #include "NetGlobal.h"
+#include "RoomMode.h"
 
 bool isAnimating = false;
 float animationSpeed = 0.05f;
@@ -42,17 +43,21 @@ void SelectMapMode::keyboard(unsigned char key, int x, int y) {
 		isSoundRunning = false;
 		MAP_TYPE myMap;
 		if (map_num == 1) {
-			Map1_Mode* map1Mode = new Map1_Mode();
+			/*Map1_Mode* map1Mode = new Map1_Mode();
 			map1Mode->goSelectMode = [this]() { goSelectMode(); };
-			MM.SetMode(map1Mode);
+			MM.SetMode(map1Mode);*/
 			myMap = STRAIGHT;
 		}
 		else if (map_num == 2) {
-			Map2_Mode* map2Mode = new Map2_Mode();
+			/*Map2_Mode* map2Mode = new Map2_Mode();
 			map2Mode->goSelectMode = [this]() { goSelectMode(); };
-			MM.SetMode(map2Mode);
+			MM.SetMode(map2Mode);*/
 			myMap = RECTANGLE;
 		}
+
+		RoomMode* roomMode = new RoomMode();
+		MM.SetMode(roomMode);
+
 
 		networkmgr.SendEnterRoomPacket(myMap);
 

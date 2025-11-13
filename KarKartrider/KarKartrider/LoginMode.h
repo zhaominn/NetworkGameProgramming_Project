@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Mode.h" 
 #include "root.h"
 
@@ -11,8 +11,8 @@ public:
     glm::vec3 cameraDirection = glm::vec3(0.0, 0.0, -1.0);
     glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0);
 
-    glm::mat4 projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f); // 2D Åõ¿µ
-    glm::mat4 view = glm::mat4(1.0f); // Ä«¸Ş¶ó º¯È¯ ¾øÀ½
+    glm::mat4 projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f); // 2D íˆ¬ì˜
+    glm::mat4 view = glm::mat4(1.0f); // ì¹´ë©”ë¼ ë³€í™˜ ì—†ìŒ
 
     LoginMode();
     ~LoginMode();

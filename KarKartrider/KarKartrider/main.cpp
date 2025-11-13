@@ -10,6 +10,7 @@
 #include "protocol.h"
 #include "LoginMode.h"
 #include "NetGlobal.h"
+#include "RoomMode.h"
 
 
 
@@ -86,7 +87,7 @@ int main(int argc, char** argv) {
 	//drawScene(); 
 
 	glutDisplayFunc(drawScene);
-	glutIdleFunc(drawScene);
+	//glutIdleFunc(drawScene);
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(keyDown);
 	glutKeyboardUpFunc(keyUp);
@@ -107,14 +108,27 @@ int main(int argc, char** argv) {
 }
 
 GLvoid drawScene() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	MM.draw_model();
-	MM.draw_bb();
-	glutSwapBuffers();
-	GLenum err;
-	while ((err = glGetError()) != GL_NO_ERROR) {
-		cout << "OpenGL error: " << err << endl;
+
+	// RoomMode인지 체크
+	if (dynamic_cast<RoomMode*>(MM.GetMode()) != nullptr)
+	{
+		// RoomMode는 배경을 하얀색으로 클리어
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		MM.draw_model();   // <<--- RoomMode의 text 렌더링
+
+		glutSwapBuffers();
+		return;  // 3D 렌더링 차단!
 	}
+
+	// ====== 여기부터는 3D 게임 화면 ======
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	MM.draw_model();  // 3D 모델 + 카메라 + 맵 + 플레이어 등
+	MM.draw_bb();
+
+	glutSwapBuffers();
 }
 
 void InitBuffer() {
