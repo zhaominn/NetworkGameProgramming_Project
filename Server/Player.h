@@ -1,13 +1,17 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS 
-//
+
 #include <WS2tcpip.h>
 #include <MSWSock.h>
 #pragma comment (lib,"WS2_32.LIB")
 #pragma comment (lib, "MSWSock.LIB")
 #include "protocol.h"
 #include <iostream>
-//
+
+#include <glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class Player
 {
@@ -15,8 +19,12 @@ public:
 	int m_id;
 	char* m_name;
 	float m_x, m_y, m_z;
+	float m_speed;
 	bool isReady;
 	bool isOnline;
+	glm::mat4 matrix;
+	glm::mat4 translateMatrix;
+	glm::mat4 rotateMatrix;
 	SOCKET m_socket;
 
 public:

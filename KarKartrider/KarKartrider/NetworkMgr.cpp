@@ -113,8 +113,8 @@ void NetworkMgr::ProcessPacket(char* buf)
 	}
 					   break;
 	case S2C_MOVE: {
-
 		// 서버에서 보낸 MOVE 패킷 처리
+
 	}
 				 break;
 	case S2C_LOGIN_FAIL: {

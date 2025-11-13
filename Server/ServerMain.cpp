@@ -1,5 +1,6 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // inet_ntoa
 #include "Player.h"
+#include "chrono"
 #include <array>
 
 #include <process.h> // _beginthreadex
@@ -38,35 +39,45 @@ DWORD WINAPI ClientThread(LPVOID socket)
 
 DWORD WINAPI UpdatePositon(LPVOID lpParam)
 {
-	S2C_Move_Packet scpacket;
-	scpacket.size = sizeof(S2C_Move_Packet);
-	scpacket.type = S2C_MOVE;
-
-	std::cout << "update" << std::endl;
+	S2C_Move_Packet* scpacket = new S2C_Move_Packet;
+	scpacket->size = sizeof(S2C_Move_Packet);
+	scpacket->type = S2C_MOVE;
 
 	// Collect the state of all players and send it to every player
+	std::chrono::steady_clock::time_point last_send_time = std::chrono::steady_clock::now();
 	while (true)
 	{
-		for (int from = 0; from < MAX_USER; ++from) {
-			if (!g_users[from].GetOnline()) continue;
-
-			scpacket.id = g_users[from].GetID();
-			scpacket.x = g_users[from].GetX();
-			scpacket.y = g_users[from].GetY();
-			scpacket.z = g_users[from].GetZ();
-
-			for (int to = 0; to < MAX_USER; ++to) {
-				if (!g_users[to].GetOnline()) continue;
-
-				EnterCriticalSection(&g_CS_Send);
-				send(g_users[to].GetSocket(), (char*)&scpacket, scpacket.size, 0);
-				LeaveCriticalSection(&g_CS_Send);
-			}
+		if (!g_GameStart) {
+			Sleep(1);
+			continue;
 		}
 
-	}
+		auto current_time = std::chrono::steady_clock::now();
+		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_send_time).count();
 
+		if (elapsed_time >= 1000 / 33) {
+			for (int from = 0; from < MAX_USER; ++from) {
+
+				if (!g_users[from].GetOnline()) {
+					scpacket->id = g_users[from].GetID();
+					scpacket->x = g_users[from].GetX();
+					scpacket->y = g_users[from].GetY();
+					scpacket->z = g_users[from].GetZ();
+				}
+
+				for (int to = 0; to < MAX_USER; ++to) {
+					if (!g_users[to].GetOnline()) {
+						EnterCriticalSection(&g_CS_Send);
+						g_users[to].send_packet(reinterpret_cast<char*>(scpacket), sizeof(S2C_Move_Packet));
+						LeaveCriticalSection(&g_CS_Send);
+					}
+				}
+			}
+			last_send_time = current_time;
+		}
+	}
 }
+
 
 int main()
 {
@@ -89,7 +100,7 @@ int main()
 	if (listen(listen_sock, SOMAXCONN) == SOCKET_ERROR)
 		std::cout << "listen error" << std::endl;
 
-	/*HANDLE SendThread;
+	HANDLE SendThread;
 	SendThread = CreateThread(NULL, 0, UpdatePositon, 0, 0, 0);
 	if (SendThread == NULL) {
 		std::cout << "closesocket()" << std::endl;
@@ -97,7 +108,7 @@ int main()
 	}
 	else {
 		CloseHandle(SendThread);
-	}*/
+	}
 
 	struct sockaddr_in clientaddr;
 	int addrlen{};
@@ -137,7 +148,7 @@ int main()
 
 				if (g_usersNum == 1)
 				{
-					g_AllPlayerLogin = true; 
+					g_AllPlayerLogin = true;
 					/*temp*/g_game_state = INGAME;
 				}
 			}

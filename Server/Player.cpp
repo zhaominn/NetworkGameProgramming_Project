@@ -10,6 +10,9 @@ Player::~Player()
 {
 	delete[] m_name;
 	m_name = nullptr;
+	matrix = glm::mat4(1.0f);
+	translateMatrix = glm::mat4(1.0f);
+	rotateMatrix = glm::mat4(1.0f);
 }
 
 void Player::recv_packet()
@@ -83,7 +86,26 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_MOVE:
 	{
+		C2S_Move_Packet* login_packet = reinterpret_cast<C2S_Move_Packet*>(p);
+		switch (login_packet->direction) {
+		case UP: {
+			std::cout << "UP" << std::endl;
+		}
+			   break;
+		case DOWN: {
+			std::cout << "DOWN" << std::endl;
+		}
+				 break;
+		case LEFT: {
+			std::cout << "LEFT" << std::endl;
+		}
+				 break;
+		case RIGHT: {
+			std::cout << "RIGHT" << std::endl;
 
+		}
+				  break;
+		}
 	}
 	break;
 	case C2S_BOOSTER:

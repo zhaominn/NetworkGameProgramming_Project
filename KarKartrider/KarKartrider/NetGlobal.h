@@ -3,11 +3,13 @@
 #include "NetworkMgr.h"
 
 struct PlayerKart {
-	int id;
-	char name[NAME_SIZE];
-	float x, y, z;
-	int booster_cnt;
-	float speed;
+	int m_id;
+	char* m_name;
+	float m_x, m_y, m_z;
+	float m_speed;
+	bool isReady;
+	bool isOnline;
+	SOCKET m_socket;
 };
 
 extern NetworkMgr networkmgr;

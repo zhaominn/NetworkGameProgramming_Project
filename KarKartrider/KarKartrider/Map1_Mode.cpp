@@ -10,7 +10,7 @@
 
 Map1_Mode::Map1_Mode()
 {
-	Mode::currentInstance = this; 
+	Mode::currentInstance = this;
 	isCountNSound = true;
 	isCountGoSound = true;
 
@@ -20,19 +20,19 @@ Map1_Mode::Map1_Mode()
 void Map1_Mode::startBoosterRegen()
 {
 	while (isBoosterRegenActive) {
-		
-		if (booster_cnt < MAX_BOOSTER_CNT) {
-			std::this_thread::sleep_for(std::chrono::seconds(6)); 
 
-			
+		if (booster_cnt < MAX_BOOSTER_CNT) {
+			std::this_thread::sleep_for(std::chrono::seconds(6));
+
+
 			if (booster_cnt < MAX_BOOSTER_CNT) {
 				++booster_cnt;
 				std::cout << "Booster regenerated! Current boosters: " << booster_cnt << std::endl;
 			}
 		}
 		else {
-		
-			std::this_thread::sleep_for(std::chrono::milliseconds(100)); 
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
 	}
 }
@@ -51,31 +51,31 @@ void Map1_Mode::draw_dashBoard()
 	}
 	glUniform1i(isTextureLocation, false);
 
-	glUseProgram(0); 
+	glUseProgram(0);
 }
 
 void Map1_Mode::draw_speed()
 {
-	glUseProgram(shaderProgramID_UI); 
+	glUseProgram(shaderProgramID_UI);
 
-	
+
 	GLint isUILocation = glGetUniformLocation(shaderProgramID_UI, "isTimer");
-	glUniform1i(isUILocation, true); 
+	glUniform1i(isUILocation, true);
 
 	glPushMatrix();
-	glPixelZoom(5.0f, 5.0f);  
+	glPixelZoom(5.0f, 5.0f);
 
 	std::string speedText = std::to_string(static_cast<int>(kart_speed * 100));
 
-	
-	glRasterPos2f(0.0f, -0.97f); 
+
+	glRasterPos2f(0.0f, -0.97f);
 	for (char c : speedText) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
 	}
 
-	glPixelZoom(1.0f, 1.0f);  
+	glPixelZoom(1.0f, 1.0f);
 	glPopMatrix();
-	glUniform1i(isUILocation, false); 
+	glUniform1i(isUILocation, false);
 
 	glUseProgram(0);
 }
@@ -116,7 +116,7 @@ void Map1_Mode::draw_timer() {
 
 
 	std::string timerText = "Time: " + std::to_string(game_timer);
-	glRasterPos2f(-0.95f, 0.9f); 
+	glRasterPos2f(-0.95f, 0.9f);
 	for (char c : timerText) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
 	}
@@ -141,11 +141,11 @@ void Map1_Mode::init()
 
 	Pause = false;
 
-	for (const auto& kart : karts) { 
+	for (const auto& kart : karts) {
 		kart->translateMatrix = glm::mat4(1.0f);
 		kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 2.6, 238.0));
 	}
-	for (const auto& c : character) { 
+	for (const auto& c : character) {
 		c->translateMatrix = karts[0]->translateMatrix;
 	}
 	for (const auto& c : countDown) {
@@ -176,7 +176,7 @@ void Map1_Mode::playCountdown(int count) {
 
 		countNSoundThread = std::thread(&Map1_Mode::count_n, this);
 
-		countNSoundThread.join(); 
+		countNSoundThread.join();
 	}
 	else if (count == 3) {
 		if (countGoSoundThread.joinable()) {
@@ -215,7 +215,7 @@ void Map1_Mode::setCamera()
 {
 	glm::vec3 carPosition = glm::vec3(karts[0]->translateMatrix[3]);
 
-	
+
 	glm::mat3 carRotationMatrix = glm::mat3(karts[0]->translateMatrix);
 
 
@@ -234,17 +234,17 @@ void Map1_Mode::setCamera()
 
 	cameraTargetPos = carPosition + rotatedOffset;
 
-	
-	float cameraFollowSpeed = 0.1f; 
+
+	float cameraFollowSpeed = 0.1f;
 	cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
 
-	
-	cameraDirection = carPosition; 
+
+	cameraDirection = carPosition;
 }
 
 void Map1_Mode::goSelectMode_() {
 	Pause = true;
-	if (goSelectMode) { 
+	if (goSelectMode) {
 		isBackgroundSound = false;
 		isMotorSound = false;
 		if (motorSoundThread.joinable()) {
@@ -253,7 +253,7 @@ void Map1_Mode::goSelectMode_() {
 		goSelectMode();
 	}
 
-	isBoosterRegenActive = false; 
+	isBoosterRegenActive = false;
 	if (boosterRegenThread.joinable()) {
 		boosterRegenThread.join();
 	}
@@ -261,22 +261,22 @@ void Map1_Mode::goSelectMode_() {
 
 void Map1_Mode::finish_game() {
 	isBackgroundSound = false;
-	if (isWinSound) return; 
+	if (isWinSound) return;
 	isWinSound = true;
-	isGameOver = true; 
+	isGameOver = true;
 
-	
+
 	winSoundThread = std::thread([this]() {
-		win_sound();  
-		isWinSound = false; 
+		win_sound();
+		isWinSound = false;
 		});
 
 	winSoundThread.detach();
 
 
 	std::thread([this]() {
-		std::this_thread::sleep_for(std::chrono::seconds(9)); 
-		goSelectMode_(); 
+		std::this_thread::sleep_for(std::chrono::seconds(9));
+		goSelectMode_();
 		}).detach();
 }
 
@@ -296,14 +296,14 @@ void Map1_Mode::draw_finish_time() {
 	}
 	glUniform1i(isTimerLocation, false);
 
-	glUseProgram(0); 
+	glUseProgram(0);
 }
 
 void Map1_Mode::lose_game() {
-	if (isGameOver) return; 
+	if (isGameOver) return;
 
-	isGameOver = true; 
-	isBackgroundSound = false; 
+	isGameOver = true;
+	isBackgroundSound = false;
 
 	std::cout << "Game Over! Time is up!" << std::endl;
 
@@ -312,14 +312,14 @@ void Map1_Mode::lose_game() {
 		isLoseSound = true;
 		loseSoundThread = std::thread([this]() {
 			lose_sound();
-			isLoseSound = false; 
+			isLoseSound = false;
 			});
 		loseSoundThread.detach();
 
-		
+
 		std::thread([this]() {
-			std::this_thread::sleep_for(std::chrono::seconds(9)); 
-			goSelectMode_(); 
+			std::this_thread::sleep_for(std::chrono::seconds(9));
+			goSelectMode_();
 			}).detach();
 	}
 }
@@ -397,16 +397,16 @@ void Map1_Mode::checkCollisionKart() {
 
 void Map1_Mode::checkEngineSound() {
 	if (kart_speed != 0.0f) {
-		if (!isMotorSound) { 
+		if (!isMotorSound) {
 			isMotorSound = true;
 			motorSoundThread = std::thread(&Map1_Mode::engine_sound, this);
 		}
 	}
-	else { 
+	else {
 		if (isMotorSound) {
 			isMotorSound = false;
 			if (motorSoundThread.joinable()) {
-				motorSoundThread.detach(); 
+				motorSoundThread.detach();
 			}
 		}
 	}
@@ -421,7 +421,7 @@ void Map1_Mode::timer() {
 		}
 		else {
 
-			
+
 			if (kart_keyState[UP]) {
 				if (kart_speed < MAX_SPEED) {
 					kart_speed += ACCELERATION;
@@ -429,28 +429,28 @@ void Map1_Mode::timer() {
 				}
 			}
 			else if (kart_keyState[DOWN]) {
-				if (kart_speed > -MAX_SPEED / 2.0f) { 
+				if (kart_speed > -MAX_SPEED / 2.0f) {
 					kart_speed -= ACCELERATION;
-					if (kart_speed < -MAX_SPEED / 2.0f) kart_speed = -MAX_SPEED / 2.0f; 
+					if (kart_speed < -MAX_SPEED / 2.0f) kart_speed = -MAX_SPEED / 2.0f;
 				}
 			}
 			else {
-				
+
 				if (kart_speed > 0.0f) {
-					kart_speed -= DECELERATION; 
-					if (kart_speed < 0.0f) kart_speed = 0.0f; 
+					kart_speed -= DECELERATION;
+					if (kart_speed < 0.0f) kart_speed = 0.0f;
 				}
 				else if (kart_speed < 0.0f) {
-					kart_speed += DECELERATION; 
-					if (kart_speed > 0.0f) kart_speed = 0.0f; 
+					kart_speed += DECELERATION;
+					if (kart_speed > 0.0f) kart_speed = 0.0f;
 				}
 			}
 
-			
+
 			if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED;
 
-			
-			if (kart_speed > 0.0f) { 
+
+			if (kart_speed > 0.0f) {
 				for (const auto& kart : karts) {
 					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
 				}
@@ -461,7 +461,7 @@ void Map1_Mode::timer() {
 				}
 			}
 
-	
+
 			if (kart_keyState[LEFT]) {
 				if (kart_speed != 0.0f) {
 					for (const auto& kart : karts) {
@@ -482,21 +482,21 @@ void Map1_Mode::timer() {
 				}
 			}
 
-		
-			for (const auto& c : character) { 
+
+			for (const auto& c : character) {
 				c->translateMatrix = karts[0]->translateMatrix;
 			}
 
-			
+
 			if (kart_speed != 0.0f) {
 				reducedRotationInfluence = 0.1f + (std::abs(kart_speed) / MAX_SPEED) * 0.4f; // �ӵ� ��� ������
 			}
 			else {
-				reducedRotationInfluence += 0.01f; 
+				reducedRotationInfluence += 0.01f;
 				if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
 			}
 
-			
+
 			if (!kart_keyState[LEFT] && !kart_keyState[RIGHT]) {
 				if (character_face_rotation > 0.0f) {
 					character_face_rotation -= RETURN_SPEED;
@@ -568,7 +568,7 @@ void Map1_Mode::timer() {
 
 }
 
-void Map1_Mode::mouseClick(int button, int state, int x, int y)  {
+void Map1_Mode::mouseClick(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		if (x <= 470 && x >= 400 && y <= 410 && y >= 360) { //
 			Pause = true;
@@ -587,7 +587,7 @@ void Map1_Mode::mouseClick(int button, int state, int x, int y)  {
 	}
 }
 
-void Map1_Mode::keyboard(unsigned char key, int x, int y)  {
+void Map1_Mode::keyboard(unsigned char key, int x, int y) {
 	if (key == 27) { //esc
 		if (Pause) {
 			//glutTimerFunc(16, timerHelper, 0); //
@@ -610,14 +610,14 @@ void Map1_Mode::keyboard(unsigned char key, int x, int y)  {
 			modelMatrix[0] = glm::vec4(rotationMatrix[0], 0.0f);
 			modelMatrix[1] = glm::vec4(rotationMatrix[1], 0.0f);
 			modelMatrix[2] = glm::vec4(rotationMatrix[2], 0.0f);
-			modelMatrix[3] = glm::vec4(cameraPos, 1.0f);         
+			modelMatrix[3] = glm::vec4(cameraPos, 1.0f);
 			pause[0]->translateMatrix = modelMatrix;
 			pause[0]->translateMatrix = glm::translate(pause[0]->translateMatrix, glm::vec3(0.0, 0.0, -2.0));
 
 
 			isMotorSound = false;
 			if (motorSoundThread.joinable()) {
-				motorSoundThread.detach(); 
+				motorSoundThread.detach();
 			}
 		}
 		Pause = !Pause;
@@ -646,8 +646,8 @@ void Map1_Mode::activateBooster() {
 	float originalAcceleration = ACCELERATION;
 
 
-	MAX_SPEED = BOOSTER_SPEED;          
-	ACCELERATION *= 1.05f;                
+	MAX_SPEED = BOOSTER_SPEED;
+	ACCELERATION *= 1.05f;
 
 
 	if (!isBoosterSound) {
@@ -658,59 +658,79 @@ void Map1_Mode::activateBooster() {
 
 
 	std::thread([this, originalMaxSpeed, originalAcceleration]() {
-		std::this_thread::sleep_for(std::chrono::duration<double>(4.4)); 
-		MAX_SPEED = originalMaxSpeed;        
-		ACCELERATION = originalAcceleration; 
-		isBoosterActive = false;             
+		std::this_thread::sleep_for(std::chrono::duration<double>(4.4));
+		MAX_SPEED = originalMaxSpeed;
+		ACCELERATION = originalAcceleration;
+		isBoosterActive = false;
 		std::cout << "Booster ended. MAX_SPEED and ACCELERATION restored." << std::endl;
 		}).detach();
 }
 
-void Map1_Mode::specialKey(int key, int x, int y)  {
+void Map1_Mode::specialKey(int key, int x, int y) {
 
 
 	switch (key) {
-	case GLUT_KEY_UP:
+	case GLUT_KEY_UP: {
 		C2S_Move_Packet* packet = new C2S_Move_Packet;
 		packet->type = C2S_MOVE;
 		packet->direction = KEY_TYPE::UP;
 		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
 		delete packet;
-
 		//kart_keyState[UP] = true;
-		break;
-	case GLUT_KEY_DOWN:
+	}
+					break;
+	case GLUT_KEY_DOWN: {
+		C2S_Move_Packet* packet = new C2S_Move_Packet;
+		packet->type = C2S_MOVE;
+		packet->direction = KEY_TYPE::DOWN;
+		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
+		delete packet;
 		//kart_keyState[DOWN] = true;
-		break;
-	case GLUT_KEY_LEFT:
+	}
+					  break;
+	case GLUT_KEY_LEFT: {
+		C2S_Move_Packet* packet = new C2S_Move_Packet;
+		packet->type = C2S_MOVE;
+		packet->direction = KEY_TYPE::LEFT;
+		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
+		delete packet;
+
 		//kart_keyState[LEFT] = true;
-		
+
 		if (character_face_rotation > -MAX_FACE_ROTATION) {
 			character_face_rotation -= ROTATION_SPEED;
 		}
-		break;
-	case GLUT_KEY_RIGHT:
+	}
+					  break;
+	case GLUT_KEY_RIGHT: {
+		C2S_Move_Packet* packet = new C2S_Move_Packet;
+		packet->type = C2S_MOVE;
+		packet->direction = KEY_TYPE::RIGHT;
+		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
+		delete packet;
+
 		//kart_keyState[RIGHT] = true;
-	
+
 		if (character_face_rotation < MAX_FACE_ROTATION) {
 			character_face_rotation += ROTATION_SPEED;
 		}
 		break;
+	}
 	}
 
 	int modifiers = glutGetModifiers();
 
 	// Ctrl
 	if (modifiers & GLUT_ACTIVE_CTRL) {
-		
+
 		if (isBoosterActive) {
 			std::cout << "Booster is already active!" << std::endl;
 			return;
 		}
 
-		if (booster_cnt > 0) { 
-			booster_cnt--; 
-			activateBooster(); 
+		if (booster_cnt > 0) {
+			booster_cnt--;
+			activateBooster();
 		}
 		else {
 			std::cout << "No boosters left!" << std::endl;
@@ -719,7 +739,7 @@ void Map1_Mode::specialKey(int key, int x, int y)  {
 
 }
 
-void Map1_Mode::specialKeyUp(int key, int x, int y)  {
+void Map1_Mode::specialKeyUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
 		kart_keyState[UP] = false;
@@ -736,7 +756,7 @@ void Map1_Mode::specialKeyUp(int key, int x, int y)  {
 	}
 }
 
-void Map1_Mode::draw_model()  {
+void Map1_Mode::draw_model() {
 
 	glClearColor(1.0, 1.0, 1.0, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -769,18 +789,18 @@ void Map1_Mode::draw_model()  {
 
 	glEnable(GL_DEPTH_TEST);
 
-	for (const auto& kart : karts) { 
+	for (const auto& kart : karts) {
 		kart->draw(shaderProgramID, isKeyPressed_s);
 	}
-	for (const auto& road : road1) { 
+	for (const auto& road : road1) {
 		road->draw(shaderProgramID, isKeyPressed_s);
 	}
-	for (const auto& c : character) { 
+	for (const auto& c : character) {
 		if (c->name == "booster" && !isBoosterActive)
 			continue;
 		c->draw(shaderProgramID, isKeyPressed_s);
 	}
-	for (const auto& barricate : road1_barricate) { 
+	for (const auto& barricate : road1_barricate) {
 		barricate->draw(shaderProgramID, isKeyPressed_s);
 	}
 
@@ -805,7 +825,7 @@ void Map1_Mode::draw_model()  {
 
 }
 
-void Map1_Mode::draw_bb()  {
+void Map1_Mode::draw_bb() {
 	if (!bb_status)
 		return;
 	for (const auto& model : karts) { // �� bb draw
@@ -816,7 +836,7 @@ void Map1_Mode::draw_bb()  {
 	}
 }
 
-void Map1_Mode::finish()  {
+void Map1_Mode::finish() {
 
 }
 
@@ -833,7 +853,7 @@ void Map1_Mode::updatePhysics(float deltaTime) {
 	checkCollisionKart();
 }
 
- void Map1_Mode::timerHelper(int value) {
+void Map1_Mode::timerHelper(int value) {
 	if (Map1_Mode* instance = dynamic_cast<Map1_Mode*>(Mode::currentInstance)) {
 		const float deltaTime = 1.0f / 60.0f; // 60FPS ����, �� �������� �ð�
 

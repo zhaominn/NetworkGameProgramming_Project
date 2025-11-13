@@ -6,6 +6,7 @@
 #include <unordered_map> 
 #include <functional> 
 #include "NetGlobal.h"
+#include "protocol.h"
 
 
 class Map1_Mode : public Mode {
@@ -18,11 +19,7 @@ public:
 	GLfloat kart_speed = 0.0f;
 
 	enum Move { NONE_M, UP, DOWN, LEFT, RIGHT, CTRL };
-	float ACCELERATION = 0.004f;
-	float DECELERATION = 0.003f;
-	float LIMIT_SPEED = 1.0;
-	float BOOSTER_SPEED = 2.0;
-	float MAX_SPEED = 1.0;
+
 
 	int start_count;
 

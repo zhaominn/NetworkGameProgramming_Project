@@ -9,7 +9,12 @@ constexpr float TIME_PER_ACTION = 0.25f;
 constexpr float ACTION_PER_TIME = 1.0f / TIME_PER_ACTION;
 
 constexpr float PLAYER_SPEED = 1.0f;
-constexpr float BOOSTER_SPEED = 2.0f;
+
+constexpr float ACCELERATION = 0.004f;
+constexpr float DECELERATION = 0.003f;
+constexpr float LIMIT_SPEED = 1.0;
+constexpr float BOOSTER_SPEED = 2.0;
+constexpr float MAX_SPEED = 1.0;
 
 constexpr unsigned short WINDOW_WIDTH = 980;
 constexpr unsigned short WINDOW_HEIGHT = 780;
@@ -93,7 +98,7 @@ struct S2C_GameStart_Packet
 	char type;
 };
 
-class btRigidBody {}; // 나중에 수정..
+//class btRigidBody {}; // 나중에 수정..
 struct S2C_Move_Packet
 {
 	unsigned char size;
@@ -102,7 +107,7 @@ struct S2C_Move_Packet
 	float x;
 	float y;
 	float z;
-	btRigidBody rigidBody;
+	//btRigidBody rigidBody;
 };
 
 struct S2C_Finish_Packet
@@ -152,7 +157,7 @@ struct C2S_Move_Packet
 	unsigned char size;
 	char type;
 	KEY_TYPE direction;
-	btRigidBody rigidBody;
+	//btRigidBody rigidBody;
 };
 
 #pragma pack (pop)
