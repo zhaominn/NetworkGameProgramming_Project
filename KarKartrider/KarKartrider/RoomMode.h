@@ -25,5 +25,7 @@ public:
 
 private:
 
+    bool ready_status{ false };
+
 };
 
