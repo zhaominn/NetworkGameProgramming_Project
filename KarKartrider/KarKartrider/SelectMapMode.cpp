@@ -52,7 +52,6 @@ void SelectMapMode::keyboard(unsigned char key, int x, int y) {
 		RoomMode* roomMode = new RoomMode();
 		MM.SetMode(roomMode);
 
-
 		networkmgr.SendEnterRoomPacket(myMap);
 
 		break;

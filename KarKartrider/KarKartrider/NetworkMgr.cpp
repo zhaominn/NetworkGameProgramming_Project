@@ -78,6 +78,16 @@ void NetworkMgr::SendLoginPacket(std::string name)
 	delete login_packet;
 }
 
+void NetworkMgr::SendChangeReadyPacket(bool status)
+{
+	C2S_Change_Ready_Packet* change_ready_packet = new C2S_Change_Ready_Packet;
+	change_ready_packet->size = sizeof(C2S_Change_Ready_Packet);
+	change_ready_packet->type = C2S_IS_READY;
+	change_ready_packet->is_ready = status;
+	SendPacket(reinterpret_cast<char*>(change_ready_packet), sizeof(C2S_Change_Ready_Packet));
+	delete change_ready_packet;
+}
+
 void NetworkMgr::ProcessPacket(char* buf)
 {
 	unsigned char type = buf[1];
@@ -91,7 +101,10 @@ void NetworkMgr::ProcessPacket(char* buf)
 	}
 						break;
 	case S2C_GAME_START: {
-		std::cout << "Game Start" << std::endl;
+		std::cout << "Game Start@@@@@@@@@@@@@@@@@@@@" << std::endl;
+
+
+
 	}
 					   break;
 	case S2C_MOVE: {

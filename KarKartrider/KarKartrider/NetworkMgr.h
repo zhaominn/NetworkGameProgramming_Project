@@ -34,6 +34,8 @@ public:
 	void SendEnterRoomPacket(MAP_TYPE map);
 	void SendLoginPacket(std::string name);
 
+	void SendChangeReadyPacket(bool status);
+
 public:
 	void ProcessPacket(char* buf);
 };
