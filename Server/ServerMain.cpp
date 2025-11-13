@@ -135,7 +135,7 @@ int main()
 					CloseHandle(hThread);
 				}
 
-				if (g_usersNum == 3)
+				if (g_usersNum == 1)
 				{
 					g_AllPlayerLogin = true; 
 					/*temp*/g_game_state = INGAME;
@@ -162,7 +162,7 @@ int main()
 						readyClient++;
 					}
 				}
-				if (readyClient == MAX_USER) {
+				if (readyClient == 1) {
 					std::cout << "게임에 입장합니다." << std::endl;
 					for (int i = 0; i < MAX_USER; ++i) {
 						g_users[i].send_Game_Start_Packet();
@@ -174,6 +174,8 @@ int main()
 				}
 			}
 			break;
+
+
 		}
 	}
 

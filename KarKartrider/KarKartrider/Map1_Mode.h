@@ -4,7 +4,8 @@
 #include <glm/glm/gtc/quaternion.hpp>
 #include <glm/glm/gtx/quaternion.hpp>
 #include <unordered_map> 
-#include <functional>  
+#include <functional> 
+#include "NetGlobal.h"
 
 
 class Map1_Mode : public Mode {

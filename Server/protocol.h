@@ -39,6 +39,7 @@ constexpr char S2C_LOGOUT = 15;
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
 enum DATA_TYPE { ACCEPT, SEND, RECV };
+enum KEY_TYPE { UP, DOWN, LEFT, RIGHT };
 
 #pragma pack (push, 1)
 
@@ -150,9 +151,7 @@ struct C2S_Move_Packet
 {
 	unsigned char size;
 	char type;
-	float x;
-	float y;
-	float z;
+	KEY_TYPE direction;
 	btRigidBody rigidBody;
 };
 

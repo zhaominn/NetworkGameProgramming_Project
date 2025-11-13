@@ -671,20 +671,26 @@ void Map1_Mode::specialKey(int key, int x, int y)  {
 
 	switch (key) {
 	case GLUT_KEY_UP:
-		kart_keyState[UP] = true;
+		C2S_Move_Packet* packet = new C2S_Move_Packet;
+		packet->type = C2S_MOVE;
+		packet->direction = KEY_TYPE::UP;
+		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
+		delete packet;
+
+		//kart_keyState[UP] = true;
 		break;
 	case GLUT_KEY_DOWN:
-		kart_keyState[DOWN] = true;
+		//kart_keyState[DOWN] = true;
 		break;
 	case GLUT_KEY_LEFT:
-		kart_keyState[LEFT] = true;
+		//kart_keyState[LEFT] = true;
 		
 		if (character_face_rotation > -MAX_FACE_ROTATION) {
 			character_face_rotation -= ROTATION_SPEED;
 		}
 		break;
 	case GLUT_KEY_RIGHT:
-		kart_keyState[RIGHT] = true;
+		//kart_keyState[RIGHT] = true;
 	
 		if (character_face_rotation < MAX_FACE_ROTATION) {
 			character_face_rotation += ROTATION_SPEED;
