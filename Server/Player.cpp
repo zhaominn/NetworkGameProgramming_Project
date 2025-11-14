@@ -104,13 +104,13 @@ void Player::process_packet(char* p)
 		case LEFT: {
 			std::cout << "LEFT" << std::endl;
 			if (m_speed != 0)
-				m_yaw += TURN_ANGLE;  
+				m_yaw += TURN_ANGLE;
 		}
 				 break;
 		case RIGHT: {
 			std::cout << "RIGHT" << std::endl;
 			if (m_speed != 0)
-				m_yaw -= TURN_ANGLE;  
+				m_yaw -= TURN_ANGLE;
 
 		}
 				  break;
@@ -129,6 +129,18 @@ void Player::process_packet(char* p)
 	case C2S_ENTER_ROOM:
 	{
 		std::cout << "[Player : " << m_name << " enter room]" << std::endl;
+
+		// TEMP
+		bool entered = false;
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			if (g_room[i].inRoomPlayers[m_id]->GetID() != -1)
+				entered = true;
+		}
+		if (!entered)
+			g_room[0].roomManagerID = m_id;
+
+		g_room[0].inRoomPlayers[m_id] = this;
 	}
 	break;
 	default:

@@ -15,6 +15,7 @@ class Room
 public:
 	MAP_TYPE mapType;
 	Player* inRoomPlayers[MAX_USER];
+	char roomManagerID;
 };
 
-Room g_room[MAX_USER];
+Room g_room[2];
