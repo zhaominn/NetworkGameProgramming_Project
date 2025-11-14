@@ -1,11 +1,5 @@
 #include "Player.h"
 
-#include <string.h>
-#include <array>
-#include <windows.h>
-extern CRITICAL_SECTION g_CS;
-extern std::array<Player, MAX_USER> g_users;
-
 Player::~Player()
 {
 	delete[] m_name;

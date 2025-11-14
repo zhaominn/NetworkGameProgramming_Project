@@ -1,24 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // inet_ntoa
 #include "Player.h"
-#include "chrono"
-#include <array>
-#include "mutex"
-
-#include <process.h> // _beginthreadex
-
-std::array<Player, MAX_USER> g_users;
-int g_usersNum;
-bool g_AllPlayerLogin = false;
-bool g_AllPlayerReady = false;
-bool g_GameStart = false;
-bool g_GameEnd = false;
-enum game_state { READY, INGAME, END };
-game_state g_game_state = READY;
-
-CRITICAL_SECTION g_CS;
-std::mutex g_Sendmutex;
-std::mutex g_UserMutex;
-float g_ElapsedTime;
 
 DWORD WINAPI ClientThread(LPVOID socket)
 {

@@ -46,6 +46,7 @@ constexpr char S2C_LOGOUT = 15;
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
 enum DATA_TYPE { ACCEPT, SEND, RECV };
 enum KEY_TYPE { UP, DOWN, LEFT, RIGHT };
+enum GAME_STATE { READY, INGAME, END };
 
 #pragma pack (push, 1)
 
