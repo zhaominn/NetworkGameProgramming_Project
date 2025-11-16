@@ -126,10 +126,13 @@ void Player::process_packet(char* p)
 
 		// TEMP
 		bool entered = false;
-		for (int i = 0; i < MAX_USER; ++i)
+		for (int i = 0; i < 2; ++i)
 		{
-			if (g_room[i].inRoomPlayers[m_id]->GetID() != -1)
+			Player* roomPlayer = g_room[i].inRoomPlayers[m_id];
+			if (roomPlayer != nullptr && roomPlayer->GetID() != -1) {
 				entered = true;
+				break;
+			}
 		}
 		if (!entered)
 			g_room[0].roomManagerID = m_id;
