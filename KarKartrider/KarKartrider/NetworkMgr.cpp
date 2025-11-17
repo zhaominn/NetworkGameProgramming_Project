@@ -14,8 +14,7 @@ NetworkMgr::NetworkMgr()
 
 NetworkMgr::~NetworkMgr()
 {
-	// 소켓 닫기
-	closesocket(m_sock);
+	StopRunning();
 
 	// 윈속 종료
 	WSACleanup();
@@ -52,6 +51,34 @@ bool NetworkMgr::Init()
 
 	std::cout << "success to connect! (server: " << SERVERIP << ")" << std::endl;
 	return true;
+}
+
+ModeType NetworkMgr::GetCurrentModeType() const
+{
+	if (m_currentMode) {
+		return m_currentMode->GetModeType();
+	}
+	return ModeType::NONE;
+}
+
+void NetworkMgr::StartRunning()
+{
+	m_running = true;
+}
+
+void NetworkMgr::StopRunning()
+{
+	m_running = false;
+
+	if (m_sock != INVALID_SOCKET) {
+		closesocket(m_sock);
+		m_sock = INVALID_SOCKET;
+	}
+}
+
+bool NetworkMgr::IsRunning() const
+{
+	return m_running;
 }
 
 void NetworkMgr::SendPacket(char* packet, int size)

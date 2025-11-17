@@ -20,22 +20,50 @@ GLvoid Reshape(int w, int h);
 
 DWORD WINAPI RecvThread(LPVOID lpParam)
 {
-	while (true)
+	while (networkmgr.IsRunning())
 	{
-		std::cout << "recv" << std::endl;
 		int size = 0;
 		char buf[BUF_SIZE];
 
 		int retval = recv(networkmgr.GetSocket(), (char*)&size, sizeof(int), 0);
-		if (retval <= 0)
-			cout << "error" << endl;
 
-		retval = recv(networkmgr.GetSocket(), buf, size, 0);
-		if (retval <= 0)
-			cout << "error" << endl;
+		if (retval <= 0) {
+			cout << "서버 연결 끊김 (헤더 수신 실패)" << endl;
+			networkmgr.StopRunning();
+			break;
+		}
+
+		if (size <= 0 || size > BUF_SIZE) {
+			cout << "비정상적인 패킷 크기 수신: " << size << endl;
+			networkmgr.StopRunning();
+			break;
+		}
+
+		int received_total = 0;
+		while (received_total < size)
+		{
+			retval = recv(networkmgr.GetSocket(),
+				buf + received_total,
+				size - received_total,
+				0);
+
+			if (retval <= 0) {
+				cout << "서버 연결 끊김 (본문 수신 실패)" << endl;
+				networkmgr.StopRunning();
+				break;
+			}
+
+			received_total += retval;
+		}
+
+		if (!networkmgr.IsRunning()) {
+			break;
+		}
 
 		networkmgr.ProcessPacket(buf);
 	}
+
+	cout << "수신 스레드 종료." << endl;
 	return 0;
 }
 
@@ -92,12 +120,21 @@ int main(int argc, char** argv) {
 	glutSpecialUpFunc(specialKeyUp);
 	glutMouseFunc(mouseClick);
 
+	networkmgr.StartRunning();
+
 	HANDLE hThread = CreateThread(NULL, 0, RecvThread, 0, 0, 0);
 	if (hThread == NULL) {
-		closesocket(networkmgr.GetSocket());
+		//closesocket(networkmgr.GetSocket()); // StopRunning이 대신 처리함
+		networkmgr.StopRunning(); // 실패 시 플래그 원복 및 소켓 정리
 	}
 
 	glutMainLoop();
+
+	networkmgr.StopRunning();
+	if (hThread != NULL) {
+		WaitForSingleObject(hThread, INFINITE); // 스레드 종료 대기
+		CloseHandle(hThread);
+	}
 
 	DeleteCriticalSection(&CS);
 
@@ -105,10 +142,17 @@ int main(int argc, char** argv) {
 }
 
 GLvoid drawScene() {
+	if (!networkmgr.IsRunning()) {
+		cout << "네트워크 연결 끊김" << endl;
+		glutLeaveMainLoop();
+		return;
+	}
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	MM.draw_model();
 	MM.draw_bb();
+
 	glutSwapBuffers();
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR) {

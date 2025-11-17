@@ -23,6 +23,10 @@ public:
 
     void finish() override;
 
+    virtual ModeType GetModeType() const override {
+        return ModeType::ROOM;
+    }
+
 private:
 
     bool ready_status{ false };

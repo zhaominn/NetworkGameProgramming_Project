@@ -19,6 +19,8 @@ class NetworkMgr
 private:
 	SOCKET m_sock;
 	char m_id;
+	bool m_running;
+	Mode* m_currentMode;
 
 public:
 	NetworkMgr();
@@ -27,6 +29,13 @@ public:
 	bool Init();
 
 	SOCKET GetSocket() { return m_sock; }
+
+	ModeType GetCurrentModeType() const;
+
+public:
+	void StartRunning();
+	void StopRunning();
+	bool IsRunning() const;
 
 public:
 	void SendPacket(char* packet, int size);

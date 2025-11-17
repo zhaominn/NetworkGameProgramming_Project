@@ -27,8 +27,10 @@ public:
 
     void draw_bb() override {}
 
-    void finish() override {
+    void finish() override {}
 
+    virtual ModeType GetModeType() const override {
+        return ModeType::LOGO;
     }
 
 private:

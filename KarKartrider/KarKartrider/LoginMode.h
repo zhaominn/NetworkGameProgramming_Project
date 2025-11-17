@@ -33,6 +33,10 @@ public:
 
     void finish() override;
 
+    virtual ModeType GetModeType() const override {
+        return ModeType::LOGIN;
+    }
+
 private:
     std::string inputText;
 

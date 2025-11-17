@@ -1,4 +1,13 @@
-#pragma once
+﻿#pragma once
+
+enum class ModeType {
+	NONE,
+	LOGO,
+	LOGIN,
+	SELECT_MAP,
+	ROOM,
+	INGAME,
+};
 
 class Mode {
 public:
@@ -12,6 +21,8 @@ public:
 	virtual void draw_model() = 0;
 	virtual void draw_bb() = 0;
 	virtual void finish() = 0;
+
+	virtual ModeType GetModeType() const = 0;
 
 	virtual ~Mode() {}
 };

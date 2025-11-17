@@ -47,6 +47,9 @@ public:
     void draw_bb() override;
     void finish() override;
 
+    virtual ModeType GetModeType() const override {
+        return ModeType::SELECT_MAP;
+    }
 private:
     void runSound();
     void clickSound();

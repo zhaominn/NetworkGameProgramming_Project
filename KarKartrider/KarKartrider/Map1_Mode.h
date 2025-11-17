@@ -132,6 +132,10 @@ public:
 	void draw_bb() override;
 
 	void finish() override;
+
+	virtual ModeType GetModeType() const override {
+		return ModeType::INGAME;
+	}
 private:
 
 	void updatePhysics(float deltaTime);

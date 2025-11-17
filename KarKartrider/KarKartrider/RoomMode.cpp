@@ -20,7 +20,7 @@ void RoomMode::mouseClick(int button, int state, int x, int y)
 
 void RoomMode::keyboard(unsigned char key, int x, int y)
 {
-	if (key == 'r') {
+	if (key == 'r'|| key == 'R') {
 		ready_status = !ready_status;
 		networkmgr.SendChangeReadyPacket(ready_status);
 	}
