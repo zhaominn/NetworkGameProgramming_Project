@@ -422,150 +422,121 @@ void Map1_Mode::timer() {
 	//	else {
 
 
-	//		if (kart_keyState[UP]) {
-	//			if (kart_speed < MAX_SPEED) {
-	//				kart_speed += ACCELERATION;
-	//				if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED;
-	//			}
-	//		}
-	//		else if (kart_keyState[DOWN]) {
-	//			if (kart_speed > -MAX_SPEED / 2.0f) {
-	//				kart_speed -= ACCELERATION;
-	//				if (kart_speed < -MAX_SPEED / 2.0f) kart_speed = -MAX_SPEED / 2.0f;
-	//			}
-	//		}
-	//		else {
-
-	//			if (kart_speed > 0.0f) {
-	//				kart_speed -= DECELERATION;
-	//				if (kart_speed < 0.0f) kart_speed = 0.0f;
-	//			}
-	//			else if (kart_speed < 0.0f) {
-	//				kart_speed += DECELERATION;
-	//				if (kart_speed > 0.0f) kart_speed = 0.0f;
-	//			}
-	//		}
+	if (g_players[g_myid].m_speed > 0.0f) {
+		for (const auto& kart : karts) {
+			kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -g_players[g_myid].m_speed));
+		}
+	}
+	else if (g_players[g_myid].m_speed < 0.0f) {
+		for (const auto& kart : karts) {
+			kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -g_players[g_myid].m_speed));
+		}
+	}
 
 
-	//		if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED;
+	/*if (kart_keyState[LEFT]) {
+		if (kart_speed != 0.0f) {
+			for (const auto& kart : karts) {
+				kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
+				kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(TURN_ANGLE), glm::vec3(0.0f, 1.0f, 0.0f));
+				kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
+			}
+		}
+	}
+
+	if (kart_keyState[RIGHT]) {
+		if (kart_speed != 0.0f) {
+			for (const auto& kart : karts) {
+				kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
+				kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(-TURN_ANGLE), glm::vec3(0.0f, 1.0f, 0.0f));
+				kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
+			}
+		}
+	}*/
 
 
-	//		if (kart_speed > 0.0f) {
-	//			for (const auto& kart : karts) {
-	//				kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
-	//			}
-	//		}
-	//		else if (kart_speed < 0.0f) {
-	//			for (const auto& kart : karts) {
-	//				kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
-	//			}
-	//		}
+	for (const auto& c : character) {
+		c->translateMatrix = karts[0]->translateMatrix;
+	}
 
 
-	//		if (kart_keyState[LEFT]) {
-	//			if (kart_speed != 0.0f) {
-	//				for (const auto& kart : karts) {
-	//					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
-	//					kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(TURN_ANGLE), glm::vec3(0.0f, 1.0f, 0.0f));
-	//					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
-	//				}
-	//			}
-	//		}
-
-	//		if (kart_keyState[RIGHT]) {
-	//			if (kart_speed != 0.0f) {
-	//				for (const auto& kart : karts) {
-	//					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
-	//					kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(-TURN_ANGLE), glm::vec3(0.0f, 1.0f, 0.0f));
-	//					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
-	//				}
-	//			}
-	//		}
+	if (g_players[g_myid].m_speed != 0.0f) {
+		reducedRotationInfluence = 0.1f + (std::abs(g_players[g_myid].m_speed) / MAX_SPEED) * 0.4f; // �ӵ� ��� ������
+	}
+	else {
+		reducedRotationInfluence += 0.01f;
+		if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
+	}
 
 
-	//		for (const auto& c : character) {
-	//			c->translateMatrix = karts[0]->translateMatrix;
-	//		}
+	if (!kart_keyState[LEFT] && !kart_keyState[RIGHT]) {
+		if (character_face_rotation > 0.0f) {
+			character_face_rotation -= RETURN_SPEED;
+			if (character_face_rotation < 0.0f) {
+				character_face_rotation = 0.0f;
+			}
+		}
+		else if (character_face_rotation < 0.0f) {
+			character_face_rotation += RETURN_SPEED;
+			if (character_face_rotation > 0.0f) {
+				character_face_rotation = 0.0f;
+			}
+		}
+	}
 
+	if (isBoosterActive) {
+		//
+		if (booster_head_tilt < MAX_HEAD_TILT) {
+			booster_head_tilt += TILT_SPEED;
+			if (booster_head_tilt > MAX_HEAD_TILT) {
+				booster_head_tilt = MAX_HEAD_TILT;
+			}
+		}
+	}
+	else {
+		//
+		if (booster_head_tilt > 0.0f) {
+			booster_head_tilt -= TILT_SPEED;
+			if (booster_head_tilt < 0.0f) {
+				booster_head_tilt = 0.0f;
+			}
+		}
+	}
 
-	//		if (kart_speed != 0.0f) {
-	//			reducedRotationInfluence = 0.1f + (std::abs(kart_speed) / MAX_SPEED) * 0.4f; // �ӵ� ��� ������
-	//		}
-	//		else {
-	//			reducedRotationInfluence += 0.01f;
-	//			if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
-	//		}
+	//
+	for (const auto& c : character) {
+		if (c->name == "character_face") {
+			//
+			glm::mat4 headRotation = glm::rotate(
+				glm::mat4(1.0f),
+				glm::radians(-character_face_rotation),
+				glm::vec3(0.0f, 0.0f, 1.0f)
+			);
 
+			//
+			headRotation = glm::rotate(
+				headRotation,
+				glm::radians(booster_head_tilt), //
+				glm::vec3(1.0f, 0.0f, 0.0f)
+			);
 
-	//		if (!kart_keyState[LEFT] && !kart_keyState[RIGHT]) {
-	//			if (character_face_rotation > 0.0f) {
-	//				character_face_rotation -= RETURN_SPEED;
-	//				if (character_face_rotation < 0.0f) {
-	//					character_face_rotation = 0.0f;
-	//				}
-	//			}
-	//			else if (character_face_rotation < 0.0f) {
-	//				character_face_rotation += RETURN_SPEED;
-	//				if (character_face_rotation > 0.0f) {
-	//					character_face_rotation = 0.0f;
-	//				}
-	//			}
-	//		}
+			c->translateMatrix = karts[0]->translateMatrix * headRotation;
+		}
+		else {
+			c->translateMatrix = karts[0]->translateMatrix;
+		}
+	}
 
-	//		if (isBoosterActive) {
-	//			//
-	//			if (booster_head_tilt < MAX_HEAD_TILT) {
-	//				booster_head_tilt += TILT_SPEED;
-	//				if (booster_head_tilt > MAX_HEAD_TILT) {
-	//					booster_head_tilt = MAX_HEAD_TILT;
-	//				}
-	//			}
-	//		}
-	//		else {
-	//			//
-	//			if (booster_head_tilt > 0.0f) {
-	//				booster_head_tilt -= TILT_SPEED;
-	//				if (booster_head_tilt < 0.0f) {
-	//					booster_head_tilt = 0.0f;
-	//				}
-	//			}
-	//		}
+	//
+	setCamera();
+	//
+	float cameraFollowSpeed = 0.1f; //
+	cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
 
-	//		//
-	//		for (const auto& c : character) {
-	//			if (c->name == "character_face") {
-	//				//
-	//				glm::mat4 headRotation = glm::rotate(
-	//					glm::mat4(1.0f),
-	//					glm::radians(-character_face_rotation),
-	//					glm::vec3(0.0f, 0.0f, 1.0f)
-	//				);
-
-	//				//
-	//				headRotation = glm::rotate(
-	//					headRotation,
-	//					glm::radians(booster_head_tilt), //
-	//					glm::vec3(1.0f, 0.0f, 0.0f)
-	//				);
-
-	//				c->translateMatrix = karts[0]->translateMatrix * headRotation;
-	//			}
-	//			else {
-	//				c->translateMatrix = karts[0]->translateMatrix;
-	//			}
-	//		}
-
-	//		//
-	//		setCamera();
-	//		//
-	//		float cameraFollowSpeed = 0.1f; //
-	//		cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
-
-	//		checkCollisionKart();
-	//		checkEngineSound();
-	//	}
+	checkCollisionKart();
+	checkEngineSound();
 	//}
-
+		//}
 }
 
 void Map1_Mode::mouseClick(int button, int state, int x, int y) {
@@ -673,29 +644,25 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 	case GLUT_KEY_UP: {
 		C2S_Move_Packet* packet = new C2S_Move_Packet;
 		packet->type = C2S_MOVE;
-		packet->direction = KEY_TYPE::UP;
+		packet->key_type = KEY_TYPE::UP;
 		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
 		delete packet;
-		//kart_keyState[UP] = true;
 	}
 					break;
 	case GLUT_KEY_DOWN: {
 		C2S_Move_Packet* packet = new C2S_Move_Packet;
 		packet->type = C2S_MOVE;
-		packet->direction = KEY_TYPE::DOWN;
+		packet->key_type = KEY_TYPE::DOWN;
 		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
 		delete packet;
-		//kart_keyState[DOWN] = true;
 	}
 					  break;
 	case GLUT_KEY_LEFT: {
 		C2S_Move_Packet* packet = new C2S_Move_Packet;
 		packet->type = C2S_MOVE;
-		packet->direction = KEY_TYPE::LEFT;
+		packet->key_type = KEY_TYPE::LEFT;
 		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
 		delete packet;
-
-		//kart_keyState[LEFT] = true;
 
 		if (character_face_rotation > -MAX_FACE_ROTATION) {
 			character_face_rotation -= ROTATION_SPEED;
@@ -705,11 +672,9 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 	case GLUT_KEY_RIGHT: {
 		C2S_Move_Packet* packet = new C2S_Move_Packet;
 		packet->type = C2S_MOVE;
-		packet->direction = KEY_TYPE::RIGHT;
+		packet->key_type = KEY_TYPE::RIGHT;
 		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
 		delete packet;
-
-		//kart_keyState[RIGHT] = true;
 
 		if (character_face_rotation < MAX_FACE_ROTATION) {
 			character_face_rotation += ROTATION_SPEED;
@@ -742,18 +707,19 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 void Map1_Mode::specialKeyUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
-		kart_keyState[UP] = false;
-		break;
 	case GLUT_KEY_DOWN:
-		kart_keyState[DOWN] = false;
-		break;
 	case GLUT_KEY_LEFT:
-		kart_keyState[LEFT] = false;
-		break;
 	case GLUT_KEY_RIGHT:
-		kart_keyState[RIGHT] = false;
-		break;
+	{
+		C2S_Move_Packet* packet = new C2S_Move_Packet;
+		packet->type = C2S_MOVE;
+		packet->key_type = KEY_TYPE::RELEASED;
+		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
+		delete packet;
 	}
+	break;
+	}
+
 }
 
 void Map1_Mode::draw_model() {

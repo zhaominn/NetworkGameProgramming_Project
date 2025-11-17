@@ -97,38 +97,8 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_MOVE:
 	{
-		C2S_Move_Packet* login_packet = reinterpret_cast<C2S_Move_Packet*>(p);
-		switch (login_packet->direction) {
-		case UP: {
-			std::cout << "UP" << std::endl;
-			if (m_speed < MAX_SPEED) {
-				m_speed += ACCELERATION;
-				if (m_speed > MAX_SPEED) m_speed = MAX_SPEED;
-			}
-		}
-			   break;
-		case DOWN: {
-			std::cout << "DOWN" << std::endl;
-			if (m_speed > -MAX_SPEED / 2.0f) {
-				m_speed -= ACCELERATION;
-				if (m_speed < -MAX_SPEED / 2.0f) m_speed = -MAX_SPEED / 2.0f;
-			}
-		}
-				 break;
-		case LEFT: {
-			std::cout << "LEFT" << std::endl;
-			if (m_speed != 0)
-				m_yaw += TURN_ANGLE;
-		}
-				 break;
-		case RIGHT: {
-			std::cout << "RIGHT" << std::endl;
-			if (m_speed != 0)
-				m_yaw -= TURN_ANGLE;
-
-		}
-				  break;
-		}
+		C2S_Move_Packet* move_packet = reinterpret_cast<C2S_Move_Packet*>(p);
+		SetKey(move_packet->key_type);
 	}
 	break;
 	case C2S_BOOSTER:
@@ -166,6 +136,7 @@ void Player::process_packet(char* p)
 		std::cout << "Error Invalid Packet Type\n";
 	}
 }
+
 
 void Player::disconnect()
 {
@@ -279,6 +250,11 @@ void Player::SetYaw(float yaw)
 	m_yaw = yaw;
 }
 
+void Player::SetKey(KEY_TYPE key)
+{
+	m_key = key;
+}
+
 void Player::SetSpeed(float speed)
 {
 	m_speed = speed;
@@ -322,6 +298,11 @@ float Player::GetZ() const
 float Player::GetYaw() const
 {
 	return m_yaw;
+}
+
+KEY_TYPE Player::GetKey() const
+{
+	return m_key;
 }
 
 float Player::GetSpeed() const

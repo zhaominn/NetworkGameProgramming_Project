@@ -126,8 +126,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 		std::cout << "로그인 성공!" << std::endl;
 
 		S2C_PlayerInfo_Packet* playerinfo_packet = reinterpret_cast<S2C_PlayerInfo_Packet*>(buf);
-		m_id = playerinfo_packet->id;
-		//delete playerinfo_packet; -> 할당된 메모리가 아니라서 delete 하면 터짐
+		g_myid = playerinfo_packet->id;
 	}
 						break;
 	case S2C_GAME_START: {
@@ -141,12 +140,10 @@ void NetworkMgr::ProcessPacket(char* buf)
 					   break;
 	case S2C_MOVE: {
 		S2C_Move_Packet* p = reinterpret_cast<S2C_Move_Packet*>(buf);
-		int id = p->id;
-		karts[id]->translateMatrix = glm::translate(karts[id]->translateMatrix, glm::vec3(0.0, 0.0, -p->speed));
-		character[id]->translateMatrix = glm::translate(karts[id]->translateMatrix, glm::vec3(0.0, 0.0, -p->speed));
-		for (const auto& c : character) {
-			c->translateMatrix = glm::translate(karts[id]->translateMatrix, glm::vec3(0.0, 0.0, -p->speed));
-		}
+		g_players[p->id].m_speed = p->speed;
+		g_players[p->id].m_x = p->x;
+		g_players[p->id].m_y = p->y;
+		g_players[p->id].m_z = p->z;
 	}
 				 break;
 	case S2C_LOGIN_FAIL: {

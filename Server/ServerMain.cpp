@@ -39,15 +39,45 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 		if (elapsed_time >= 1000 / 33) {
 			for (int i = 0; i < MAX_USER; ++i) {
-				if (g_users[i].m_speed != 0)
-				{
-					float rad = g_users[i].m_yaw * (3.141592f / 180.0f);
-					float dx = -sinf(rad) * g_users[i].m_speed;
-					float dz = -cosf(rad) * g_users[i].m_speed;
 
-					g_users[i].m_x += dx;
-					g_users[i].m_z += dz;
+				float speed = g_users[i].GetSpeed();
+
+				switch (g_users[i].GetKey())
+				{
+				case UP: {
+					speed += ACCELERATION;
+
 				}
+					   break;
+				case DOWN: {
+					speed -= ACCELERATION;
+				}
+						 break;
+				case LEFT: {
+
+				}
+						 break;
+				case  RIGHT: {
+
+				}
+						   break;
+				case RELEASED: {
+					if (speed > 0.0f) {
+						speed -= DECELERATION;
+						if (speed < 0.0f) speed = 0.0f;
+					}
+					else if (speed < 0.0f) {
+						speed += DECELERATION;
+						if (speed > 0.0f) speed = 0.0f;
+					}
+				}
+							 break;
+				}
+
+				if (speed > MAX_SPEED)speed = MAX_SPEED;
+				if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
+
+				g_users[i].SetSpeed(speed);
 
 				if (g_users[i].GetOnline()) {
 					std::lock_guard<std::mutex> lock1(g_UserMutex);
@@ -119,7 +149,7 @@ int main()
 			int new_player_id = -1;
 			while (!g_AllPlayerLogin) {
 				for (int i = 0; i < MAX_USER; ++i) {
-					if (g_users[i].m_id == -1) {
+					if (g_users[i].GetID() == -1) {
 						new_player_id = i;
 						break;
 					}
