@@ -13,16 +13,22 @@ public:
 	bool isOnline;
 	SOCKET m_socket;
 
+
 public:
 	Player() : m_id(-1), m_name(), m_x(0), m_y(0), m_z(0), m_yaw(0), m_speed(0),
 		isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {};
 	~Player();
 
-	void recv_packet();
+	bool recv_packet();
 	void send_packet(char* packet, int len);
 	void process_packet(char* p);
 	void disconnect();
+	void send_Game_Start_Packet();
 
+private:
+	void reset();
+
+public:
 	void SetSocket(SOCKET socket);
 	void SetId(short id);
 	void SetName(const char* name);
@@ -44,9 +50,5 @@ public:
 	float GetSpeed() const;
 	bool GetReady() const;
 	bool GetOnline() const;
-
-	void send_Game_Start_Packet();
-
-
 };
 

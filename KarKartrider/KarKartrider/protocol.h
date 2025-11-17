@@ -9,13 +9,13 @@ constexpr float TIME_PER_ACTION = 0.25f;
 constexpr float ACTION_PER_TIME = 1.0f / TIME_PER_ACTION;
 
 constexpr float PLAYER_SPEED = 1.0f;
+
 constexpr float ACCELERATION = 0.004f;
 constexpr float DECELERATION = 0.003f;
 constexpr float LIMIT_SPEED = 1.0;
 constexpr float BOOSTER_SPEED = 2.0;
 constexpr float MAX_SPEED = 1.0;
 constexpr float TURN_ANGLE = 1.0;
-
 
 constexpr unsigned short WINDOW_WIDTH = 980;
 constexpr unsigned short WINDOW_HEIGHT = 780;
@@ -46,6 +46,7 @@ constexpr char S2C_LOGOUT = 15;
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
 enum DATA_TYPE { ACCEPT, SEND, RECV };
 enum KEY_TYPE { UP, DOWN, LEFT, RIGHT };
+enum GAME_STATE { LOBBY, ROOM, INGAME };
 
 #pragma pack (push, 1)
 

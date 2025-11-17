@@ -4,7 +4,7 @@
 
 Room g_room[2];
 std::array<Player, MAX_USER> g_users;
-GAME_STATE g_game_state{ READY };
+GAME_STATE g_game_state{ LOBBY };
 CRITICAL_SECTION g_CS;
 
 float g_ElapsedTime = 0.0f;

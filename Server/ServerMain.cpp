@@ -6,8 +6,7 @@ DWORD WINAPI ClientThread(LPVOID socket)
 	SOCKET client_socket = player->GetSocket();
 	int my_id = player->GetID();
 
-	printf("[Player %d] ClientThread Start.\n",
-		g_users[player->GetID()].m_id);
+	printf("[Player %d] ClientThread Start.\n", my_id);
 
 	while (true) {
 		player->recv_packet();
@@ -15,6 +14,7 @@ DWORD WINAPI ClientThread(LPVOID socket)
 			break;
 	}
 
+	g_users[my_id].disconnect();
 	printf("[Thread %d] Thread End.\n", my_id);
 	return 0;
 }
@@ -74,7 +74,6 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 	//delete scpacket;
 }
 
-
 int main()
 {
 	InitializeCriticalSection(&g_CS);
@@ -112,7 +111,7 @@ int main()
 
 	while (true) {
 		switch (g_game_state) {
-		case READY:
+		case LOBBY:
 		{
 			// Login
 			// ------------------------------------------------------------------------------------------------------
@@ -181,8 +180,6 @@ int main()
 				}
 			}
 			break;
-
-
 		}
 	}
 

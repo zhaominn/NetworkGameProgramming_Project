@@ -6,28 +6,47 @@ Player::~Player()
 	m_name = nullptr;
 }
 
-void Player::recv_packet()
+bool Player::recv_packet()
 {
+	if (m_socket == INVALID_SOCKET) {
+		return false;
+	}
+
 	int size;
 	char buf[BUF_SIZE];
 
+	// 먼저 길이 수신
 	int retval = recv(m_socket, (char*)&size, sizeof(int), MSG_WAITALL);
 	if (retval <= 0) {
 		printf("[Player %d] disconnected (len recv fail)\n", m_id);
 		disconnect();
+		return false;
 	}
 
-	retval = recv(m_socket, buf, size, MSG_WAITALL);
-	if (retval <= 0) {
-		printf("[Player %d] disconnected (data recv fail)\n", GetID());
+	if (size <= 0 || size > BUF_SIZE) {
+		printf("[Player %d] disconnected (invalid packet size: %d)\n", m_id, size);
 		disconnect();
+		return false;
+	}
+
+	int received_total = 0;
+	while (received_total < size) {
+		retval = recv(m_socket, buf + received_total, size - received_total, 0);
+		if (retval <= 0) {
+			printf("[Player %d] disconnected (data recv fail)\n", m_id);
+			disconnect();
+			return false;
+		}
+		received_total += retval;
 	}
 
 	process_packet(buf);
+	return true;
 }
 
 void Player::send_packet(char* packet, int size)
 {
+	if (m_socket == INVALID_SOCKET) return;
 	send(m_socket, (char*)&size, sizeof(int), 0);
 	send(m_socket, packet, size, 0);
 }
@@ -48,6 +67,7 @@ void Player::process_packet(char* p)
 			fail_packet.type = S2C_LOGIN_FAIL;
 			send_packet(reinterpret_cast<char*>(&fail_packet), sizeof(fail_packet));
 			disconnect();
+			return;
 		}
 
 		// success
@@ -71,7 +91,7 @@ void Player::process_packet(char* p)
 		C2S_Change_Ready_Packet* change_ready_packet = reinterpret_cast<C2S_Change_Ready_Packet*>(p);
 
 		SetIsReady(change_ready_packet->is_ready);
-		std::cout << "[Player : " << m_name << "]" << " ready status? : " << (char)isReady << std::endl;
+		std::cout << "[Player : " << m_name << "]" << " ready status? : " << isReady << std::endl;
 
 	}
 	break;
@@ -118,6 +138,8 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_LOGOUT:
 	{
+		g_game_state = LOBBY;
+		disconnect();
 	}
 	break;
 	case C2S_ENTER_ROOM:
@@ -145,22 +167,75 @@ void Player::process_packet(char* p)
 	}
 }
 
-
 void Player::disconnect()
 {
-	if (m_id != -1)
-	{
-		printf("[Thread %d] Disconnect", m_id);
+	if (m_socket == INVALID_SOCKET && m_id == -1) return;
 
-		EnterCriticalSection(&g_CS);
+	int old_id = m_id;
 
-		// broadcast another users
+	EnterCriticalSection(&g_CS);
+
+	if (m_socket != INVALID_SOCKET) {
+		shutdown(m_socket, SD_BOTH);
 		closesocket(m_socket);
-		g_users[m_id].m_socket = INVALID_SOCKET;
-		g_users[m_id].m_id = -1;
-
-		LeaveCriticalSection(&g_CS);
 	}
+
+	if (old_id >= 0 && old_id < MAX_USER) {
+		g_users[old_id].m_socket = INVALID_SOCKET;
+		g_users[old_id].m_id = -1;
+		g_users[old_id].isOnline = false;
+		for (int r = 0; r < 2; ++r) {
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_room[r].inRoomPlayers[i] == this) {
+					g_room[r].inRoomPlayers[i] = nullptr;
+				}
+			}
+			if (g_room[r].roomManagerID == old_id) g_room[r].roomManagerID = -1;
+		}
+		if (g_usersNum > 0) g_usersNum--;
+		g_AllPlayerLogin = false;
+	}
+
+	LeaveCriticalSection(&g_CS);
+
+	reset();
+
+	// TEMP
+	g_game_state = LOBBY;
+	g_GameStart = false;
+	g_room->reset();
+}
+
+void Player::send_Game_Start_Packet()
+{
+	S2C_GameStart_Packet* game_start = new S2C_GameStart_Packet;
+	game_start->size = sizeof(S2C_GameStart_Packet);
+	game_start->type = S2C_GAME_START;
+
+	send_packet(reinterpret_cast<char*>(game_start), sizeof(S2C_GameStart_Packet));
+
+	delete game_start;
+}
+
+void Player::reset()
+{
+	if (m_name) {
+		delete[] m_name;
+		m_name = nullptr;
+	}
+
+	m_name = new char[1];
+	m_name[0] = '\0';
+
+	m_id = -1;
+	m_x = 0;
+	m_y = 0;
+	m_z = 0;
+	m_yaw = 0;
+	m_speed = 0;
+	isReady = false;
+	isOnline = false;
+	m_socket = INVALID_SOCKET;
 }
 
 void Player::SetSocket(SOCKET socket)
@@ -175,6 +250,10 @@ void Player::SetId(short id)
 
 void Player::SetName(const char* name)
 {
+	if (m_name) {
+		delete[] m_name;
+		m_name = nullptr;
+	}
 	m_name = new char[NAME_SIZE + 1];
 	strncpy(m_name, name, NAME_SIZE);
 	m_name[NAME_SIZE] = '\0';
@@ -258,14 +337,4 @@ bool Player::GetReady() const
 bool Player::GetOnline() const
 {
 	return isOnline;
-}
-
-void Player::send_Game_Start_Packet()
-{
-	S2C_GameStart_Packet* game_start = new S2C_GameStart_Packet;
-	game_start->type = S2C_GAME_START;
-
-	send_packet(reinterpret_cast<char*>(game_start), sizeof(S2C_GameStart_Packet));
-
-	delete game_start;
 }
