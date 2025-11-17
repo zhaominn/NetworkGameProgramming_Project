@@ -439,7 +439,7 @@ void Map1_Mode::timer() {
 	}
 
 	if (g_players[g_myid].m_speed != 0.0f) {
-		reducedRotationInfluence = 0.1f + (std::abs(g_players[g_myid].m_speed) / MAX_SPEED) * 0.4f; // �ӵ� ��� ������
+		reducedRotationInfluence = 0.1f + (std::abs(g_players[g_myid].m_speed) / MAX_SPEED) * 0.4f; 
 	}
 	else {
 		reducedRotationInfluence += 0.01f;

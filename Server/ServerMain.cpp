@@ -139,9 +139,6 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					if (g_users[i].GetOnline()) {
 						scpacket->id = g_users[i].GetID();
 						scpacket->speed = g_users[i].GetSpeed();
-						scpacket->x = g_users[i].GetX();
-						scpacket->y = g_users[i].GetY();
-						scpacket->z = g_users[i].GetZ();
 						scpacket->yaw = g_users[i].GetYaw();
 						scpacket->key = g_users[i].GetKey();
 						scpacket->face_rotation = g_users[i].GetFaceRotation();

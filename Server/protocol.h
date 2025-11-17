@@ -115,9 +115,6 @@ struct S2C_Move_Packet
 	char type;
 	char id;
 	float speed;
-	float x;
-	float y;
-	float z;
 	float yaw;
 	float face_rotation;
 	KEY_TYPE key;

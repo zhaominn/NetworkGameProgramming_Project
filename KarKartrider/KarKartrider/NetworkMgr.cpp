@@ -143,9 +143,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_MOVE: {
 		S2C_Move_Packet* p = reinterpret_cast<S2C_Move_Packet*>(buf);
 		g_players[p->id].m_speed = p->speed;
-		g_players[p->id].m_x = p->x;
-		g_players[p->id].m_y = p->y;
-		g_players[p->id].m_z = p->z;
 		g_players[p->id].m_key = p->key;
 		g_players[p->id].m_yaw = p->yaw;
 		g_players[p->id].m_face_rotation = p->face_rotation;

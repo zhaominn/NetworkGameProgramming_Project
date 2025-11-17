@@ -5,7 +5,6 @@
 struct PlayerKart {
 	int m_id;
 	char* m_name;
-	float m_x, m_y, m_z;
 	float m_yaw;
 	float m_speed;
 	float m_face_rotation;

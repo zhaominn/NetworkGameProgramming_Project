@@ -53,7 +53,7 @@ constexpr char S2C_LOGOUT = 15;
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
 enum DATA_TYPE { ACCEPT, SEND, RECV };
-enum KEY_TYPE { UP, DOWN, LEFT, RIGHT, RELEASED};
+enum KEY_TYPE { UP, DOWN, LEFT, RIGHT, RELEASED };
 enum GAME_STATE { LOBBY, ROOM, INGAME };
 
 #pragma pack (push, 1)
@@ -115,9 +115,6 @@ struct S2C_Move_Packet
 	char type;
 	char id;
 	float speed;
-	float x;
-	float y;
-	float z;
 	float yaw;
 	float face_rotation;
 	KEY_TYPE key;

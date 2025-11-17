@@ -199,11 +199,10 @@ void Player::reset()
 	m_name[0] = '\0';
 
 	m_id = -1;
-	m_x = 0;
-	m_y = 0;
-	m_z = 0;
 	m_yaw = 0;
 	m_speed = 0;
+	m_face_rotation = 0;
+	m_key = RELEASED;
 	isReady = false;
 	isOnline = false;
 	m_socket = INVALID_SOCKET;
@@ -228,21 +227,6 @@ void Player::SetName(const char* name)
 	m_name = new char[NAME_SIZE + 1];
 	strncpy(m_name, name, NAME_SIZE);
 	m_name[NAME_SIZE] = '\0';
-}
-
-void Player::SetX(float x)
-{
-	m_x = x;
-}
-
-void Player::SetY(float y)
-{
-	m_y = y;
-}
-
-void Player::SetZ(float z)
-{
-	m_z = z;
 }
 
 void Player::SetYaw(float yaw)
@@ -284,21 +268,6 @@ int Player::GetID() const
 char* Player::GetName() const
 {
 	return m_name;
-}
-
-float Player::GetX() const
-{
-	return m_x;
-}
-
-float Player::GetY() const
-{
-	return m_y;
-}
-
-float Player::GetZ() const
-{
-	return m_z;
 }
 
 float Player::GetYaw() const
