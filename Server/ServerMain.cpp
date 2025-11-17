@@ -40,56 +40,115 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		if (elapsed_time >= 1000 / 33) {
 			for (int i = 0; i < MAX_USER; ++i) {
 
-				float speed = g_users[i].GetSpeed();
-
-				switch (g_users[i].GetKey())
+				// update
 				{
-				case UP: {
-					speed += ACCELERATION;
-
-				}
-					   break;
-				case DOWN: {
-					speed -= ACCELERATION;
-				}
-						 break;
-				case LEFT: {
-
-				}
-						 break;
-				case  RIGHT: {
-
-				}
-						   break;
-				case RELEASED: {
-					if (speed > 0.0f) {
-						speed -= DECELERATION;
-						if (speed < 0.0f) speed = 0.0f;
-					}
-					else if (speed < 0.0f) {
-						speed += DECELERATION;
-						if (speed > 0.0f) speed = 0.0f;
-					}
-				}
-							 break;
-				}
-
-				if (speed > MAX_SPEED)speed = MAX_SPEED;
-				if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
-
-				g_users[i].SetSpeed(speed);
-
-				if (g_users[i].GetOnline()) {
 					std::lock_guard<std::mutex> lock1(g_UserMutex);
-					scpacket->id = g_users[i].GetID();
-					scpacket->speed = g_users[i].GetSpeed();
-					scpacket->x = g_users[i].GetX();
-					scpacket->y = g_users[i].GetY();
-					scpacket->z = g_users[i].GetYaw();
-					scpacket->yaw = g_users[i].GetZ();
 
+					float speed = g_users[i].GetSpeed();
+					float turnSpeed = 0.0f;
+
+					switch (g_users[i].GetKey())
+					{
+					case UP: {
+						speed += ACCELERATION;
+
+						float f = g_users[i].GetFaceRotation();
+
+						if (f > 0) {
+							f -= RETURN_SPEED;
+							if (f < 0) f = 0;
+						}
+						else if (f < 0) {
+							f += RETURN_SPEED;
+							if (f > 0) f = 0;
+						}
+
+						g_users[i].SetFaceRotation(f);
+					}
+						   break;
+					case DOWN: {
+						speed -= ACCELERATION;
+
+						float f = g_users[i].GetFaceRotation();
+
+						if (f > 0) {
+							f -= RETURN_SPEED;
+							if (f < 0) f = 0;
+						}
+						else if (f < 0) {
+							f += RETURN_SPEED;
+							if (f > 0) f = 0;
+						}
+
+						g_users[i].SetFaceRotation(f);
+					}
+							 break;
+					case LEFT: {
+						turnSpeed = TURN_ANGLE;
+						float f = g_users[i].GetFaceRotation();
+						f -= RETURN_SPEED;  
+						g_users[i].SetFaceRotation(f);
+					}
+							 break;
+					case  RIGHT: {
+						turnSpeed = -TURN_ANGLE;
+						float f = g_users[i].GetFaceRotation();
+						f += RETURN_SPEED;   
+						g_users[i].SetFaceRotation(f);
+					}
+							   break;
+					case RELEASED: {
+						if (speed > 0.0f) {
+							speed -= DECELERATION;
+							if (speed < 0.0f) speed = 0.0f;
+						}
+						else if (speed < 0.0f) {
+							speed += DECELERATION;
+							if (speed > 0.0f) speed = 0.0f;
+						}
+
+						turnSpeed = 0.0f;
+
+						float f = g_users[i].GetFaceRotation();
+
+						if (f > 0) {
+							f -= RETURN_SPEED;
+							if (f < 0) f = 0;
+						}
+						else if (f < 0) {
+							f += RETURN_SPEED;
+							if (f > 0) f = 0;
+						}
+
+						g_users[i].SetFaceRotation(f);
+					}
+								 break;
+					}
+
+					if (speed > MAX_SPEED)speed = MAX_SPEED;
+					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
+
+					g_users[i].SetSpeed(speed);
+					g_users[i].SetYaw(turnSpeed);
+
+					float f = g_users[i].GetFaceRotation();
+					if (f > MAX_FACE_ROTATION) f = MAX_FACE_ROTATION;
+					if (f < -MAX_FACE_ROTATION) f = -MAX_FACE_ROTATION;
+					g_users[i].SetFaceRotation(f);
+
+					if (g_users[i].GetOnline()) {
+						scpacket->id = g_users[i].GetID();
+						scpacket->speed = g_users[i].GetSpeed();
+						scpacket->x = g_users[i].GetX();
+						scpacket->y = g_users[i].GetY();
+						scpacket->z = g_users[i].GetZ();
+						scpacket->yaw = g_users[i].GetYaw();
+						scpacket->key = g_users[i].GetKey();
+						scpacket->face_rotation = g_users[i].GetFaceRotation();
+					}
 				}
 
+				// send
 				if (g_users[i].GetOnline()) {
 					std::lock_guard<std::mutex> lock2(g_Sendmutex);
 					g_users[i].send_packet(reinterpret_cast<char*>(scpacket), sizeof(S2C_Move_Packet));
@@ -100,8 +159,6 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 			last_send_time = current_time;
 		}
 	}
-
-	//delete scpacket;
 }
 
 int main()

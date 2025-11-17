@@ -17,6 +17,14 @@ constexpr float BOOSTER_SPEED = 2.0;
 constexpr float MAX_SPEED = 1.0;
 constexpr float TURN_ANGLE = 1.0;
 
+constexpr float MAX_FACE_ROTATION = 25.0f;
+constexpr float ROTATION_SPEED = 5.0f;
+constexpr float RETURN_SPEED = 2.0f;
+
+constexpr float booster_head_tilt = 0.0f;
+constexpr float MAX_HEAD_TILT = 20.0f;
+constexpr float TILT_SPEED = 2.0f;
+
 constexpr unsigned short WINDOW_WIDTH = 980;
 constexpr unsigned short WINDOW_HEIGHT = 780;
 
@@ -111,6 +119,8 @@ struct S2C_Move_Packet
 	float y;
 	float z;
 	float yaw;
+	float face_rotation;
+	KEY_TYPE key;
 	//btRigidBody rigidBody;
 };
 

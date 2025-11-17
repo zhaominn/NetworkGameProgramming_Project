@@ -70,14 +70,6 @@ public:
 	int game_timer = 30;
 
 
-	float character_face_rotation = 0.0f; 
-	const float MAX_FACE_ROTATION = 25.0f;
-	const float ROTATION_SPEED = 5.0f;     
-	const float RETURN_SPEED = 2.0f;       
-
-	float booster_head_tilt = 0.0f; 
-	const float MAX_HEAD_TILT = 20.0f; 
-	const float TILT_SPEED = 2.0f;   
 
 	Map1_Mode();
 	~Map1_Mode() {

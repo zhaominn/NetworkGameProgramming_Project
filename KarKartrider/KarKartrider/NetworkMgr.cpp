@@ -127,6 +127,8 @@ void NetworkMgr::ProcessPacket(char* buf)
 
 		S2C_PlayerInfo_Packet* playerinfo_packet = reinterpret_cast<S2C_PlayerInfo_Packet*>(buf);
 		g_myid = playerinfo_packet->id;
+		g_players[g_myid].m_id = g_myid;
+		g_players[g_myid].m_key = RELEASED;
 	}
 						break;
 	case S2C_GAME_START: {
@@ -144,6 +146,9 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_players[p->id].m_x = p->x;
 		g_players[p->id].m_y = p->y;
 		g_players[p->id].m_z = p->z;
+		g_players[p->id].m_key = p->key;
+		g_players[p->id].m_yaw = p->yaw;
+		g_players[p->id].m_face_rotation = p->face_rotation;
 	}
 				 break;
 	case S2C_LOGIN_FAIL: {

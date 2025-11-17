@@ -260,6 +260,12 @@ void Player::SetSpeed(float speed)
 	m_speed = speed;
 }
 
+void Player::SetFaceRotation(float f_rotation)
+{
+	m_face_rotation = f_rotation;
+}
+
+
 void Player::SetIsReady(bool ready)
 {
 	isReady = ready;
@@ -308,6 +314,11 @@ KEY_TYPE Player::GetKey() const
 float Player::GetSpeed() const
 {
 	return m_speed;
+}
+
+float Player::GetFaceRotation() const
+{
+	return m_face_rotation;
 }
 
 bool Player::GetReady() const

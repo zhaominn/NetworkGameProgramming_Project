@@ -9,6 +9,7 @@ private:
 	float m_x, m_y, m_z;
 	float m_speed;
 	float m_yaw;
+	float m_face_rotation;
 	KEY_TYPE m_key;
 	bool isReady;
 	bool isOnline;
@@ -16,8 +17,8 @@ private:
 
 
 public:
-	Player() : m_id(-1), m_name(), m_x(0), m_y(0), m_z(0), m_yaw(0), m_speed(0), m_key(RELEASED),
-		isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {};
+	Player() : m_id(-1), m_name(), m_x(0), m_y(0), m_z(0), m_yaw(0), m_speed(0), m_face_rotation(0),
+		m_key(RELEASED), isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {};
 	~Player();
 
 	bool recv_packet();
@@ -39,6 +40,7 @@ public:
 	void SetYaw(float yaw);
 	void SetKey(KEY_TYPE key);
 	void SetSpeed(float speed);
+	void SetFaceRotation(float f_rotation);
 	void SetIsReady(bool ready);
 	void SetOnline(bool online);
 
@@ -51,6 +53,7 @@ public:
 	float GetYaw() const;
 	KEY_TYPE GetKey() const;
 	float GetSpeed() const;
+	float GetFaceRotation() const;
 	bool GetReady() const;
 	bool GetOnline() const;
 };
