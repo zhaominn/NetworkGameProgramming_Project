@@ -54,13 +54,141 @@ bool PlayerCollisionCheck(int myId)
 	return false; // 충돌 없음
 }
 
+//DWORD WINAPI UpdatePositon(LPVOID lpParam)
+//{
+//	S2C_Move_Packet scpacket{};
+//	scpacket.size = sizeof(S2C_Move_Packet);
+//	scpacket.type = S2C_MOVE;
+//
+//	auto last_send_time = std::chrono::steady_clock::now();
+//
+//	while (true)
+//	{
+//		if (!g_GameStart) {
+//			Sleep(1);
+//			continue;
+//		}
+//
+//		auto now = std::chrono::steady_clock::now();
+//		auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_send_time).count();
+//
+//		// 약 33fps 주기
+//		if (elapsed_ms >= (1000 / 33))
+//		{
+//			float deltaTime = elapsed_ms / 1000.0f;
+//			last_send_time = now;
+//
+//			for (int i = 0; i < MAX_USER; i++)
+//			{
+//				if (!g_users[i].GetOnline())
+//					continue;
+//
+//				{
+//					std::lock_guard<std::mutex> lock(g_UserMutex);
+//
+//					Player& pl = g_users[i];
+//
+//					// ----------- 1) 입력 기반 속도/회전 갱신 ----------------
+//					float speed = pl.GetSpeed();
+//					float yaw = pl.GetYaw();      // 도 단위
+//					float turn = 0.0f;             // yaw 변화량 (도/s)
+//
+//					// 전진/후진 입력
+//					if (pl.m_up)
+//						speed += ACCELERATION * deltaTime;
+//					if (pl.m_down)
+//						speed -= ACCELERATION * deltaTime;
+//
+//					// 회전 입력
+//					if (pl.m_left)
+//						turn += TURN_ANGLE;
+//					if (pl.m_right)
+//						turn -= TURN_ANGLE;
+//
+//					// 감속 처리
+//					if (!pl.m_up && !pl.m_down)
+//					{
+//						if (speed > 0.0f) {
+//							speed -= DECELERATION * deltaTime;
+//							if (speed < 0.0f) speed = 0.0f;
+//						}
+//						else if (speed < 0.0f) {
+//							speed += DECELERATION * deltaTime;
+//							if (speed > 0.0f) speed = 0.0f;
+//						}
+//					}
+//
+//					// 속도 제한
+//					if (speed > MAX_SPEED) speed = MAX_SPEED;
+//					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
+//
+//					// yaw 회전 적용
+//					yaw += turn * deltaTime;
+//
+//					// yaw 정규화
+//					if (yaw > 180.f)  yaw -= 360.f;
+//					if (yaw < -180.f) yaw += 360.f;
+//
+//					pl.SetSpeed(speed);
+//					pl.SetYaw(yaw);
+//
+//					// ----------- 2) XYZ 위치 갱신 ----------------
+//
+//					float oldX = pl.m_posX;
+//					float oldZ = pl.m_posZ;
+//
+//					// yaw → 라디안
+//					float yawRad = yaw * (3.141592f / 180.0f);
+//
+//					// 네 클라 모델 기준: 카트의 전진 방향은 -Z
+//					float dirX = -sinf(yawRad);
+//					float dirZ = -cosf(yawRad);
+//
+//					pl.m_posX += dirX * speed * deltaTime;
+//					pl.m_posZ += dirZ * speed * deltaTime;
+//					// pl.m_posY 서버에서는 고정 유지 (필요하면 수정)
+//
+//					// ----------- 3) 플레이어 간 충돌 처리 -------------
+//					if (PlayerCollisionCheck(i))
+//					{
+//						// 충돌 발생 → 롤백
+//						pl.m_posX = oldX;
+//						pl.m_posZ = oldZ;
+//
+//						// 충돌 시 감속 효과 (원하면)
+//						pl.SetSpeed(speed * 0.5f);
+//					}
+//
+//					// ----------- 4) 패킷 구성 -------------------------
+//					scpacket.id = pl.GetID();
+//					scpacket.speed = pl.GetSpeed();
+//					scpacket.yaw = pl.GetYaw();
+//					scpacket.key = pl.GetKey();
+//					scpacket.face_rotation = pl.GetFaceRotation();
+//
+//					scpacket.x = pl.m_posX;
+//					scpacket.y = pl.m_posY;
+//					scpacket.z = pl.m_posZ;
+//				}
+//
+//				// ----------- 5) 패킷 전송 -------------------------
+//				{
+//					std::lock_guard<std::mutex> lock(g_Sendmutex);
+//					g_users[i].send_packet(reinterpret_cast<char*>(&scpacket), sizeof(scpacket));
+//				}
+//			}
+//		}
+//	}
+//}
+
+
 DWORD WINAPI UpdatePositon(LPVOID lpParam)
 {
 	S2C_Move_Packet scpacket{};
 	scpacket.size = sizeof(S2C_Move_Packet);
 	scpacket.type = S2C_MOVE;
 
-	auto last_send_time = std::chrono::steady_clock::now();
+	auto last = std::chrono::steady_clock::now();
 
 	while (true)
 	{
@@ -70,99 +198,45 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		}
 
 		auto now = std::chrono::steady_clock::now();
-		auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_send_time).count();
+		auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count();
 
-		// 약 33fps 주기
-		if (elapsed_ms >= (1000 / 33))
+		if (ms >= 1000 / 33)
 		{
-			float deltaTime = elapsed_ms / 1000.0f;
-			last_send_time = now;
+			float dt = ms / 1000.0f;
+			last = now;
 
 			for (int i = 0; i < MAX_USER; i++)
 			{
-				if (!g_users[i].GetOnline())
-					continue;
+				if (!g_users[i].GetOnline()) continue;
 
 				{
 					std::lock_guard<std::mutex> lock(g_UserMutex);
 
 					Player& pl = g_users[i];
 
-					// ----------- 1) 입력 기반 속도/회전 갱신 ----------------
+					// ===== 1) X축으로만 이동하는 테스트 =====
 					float speed = pl.GetSpeed();
-					float yaw = pl.GetYaw();      // 도 단위
-					float turn = 0.0f;             // yaw 변화량 (도/s)
 
-					// 전진/후진 입력
 					if (pl.m_up)
-						speed += ACCELERATION * deltaTime;
-					if (pl.m_down)
-						speed -= ACCELERATION * deltaTime;
-
-					// 회전 입력
-					if (pl.m_left)
-						turn += TURN_ANGLE;
-					if (pl.m_right)
-						turn -= TURN_ANGLE;
-
-					// 감속 처리
-					if (!pl.m_up && !pl.m_down)
-					{
-						if (speed > 0.0f) {
-							speed -= DECELERATION * deltaTime;
-							if (speed < 0.0f) speed = 0.0f;
-						}
-						else if (speed < 0.0f) {
-							speed += DECELERATION * deltaTime;
-							if (speed > 0.0f) speed = 0.0f;
-						}
-					}
-
-					// 속도 제한
-					if (speed > MAX_SPEED) speed = MAX_SPEED;
-					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
-
-					// yaw 회전 적용
-					yaw += turn * deltaTime;
-
-					// yaw 정규화
-					if (yaw > 180.f)  yaw -= 360.f;
-					if (yaw < -180.f) yaw += 360.f;
+						speed += ACCELERATION;   // 누르면 가속
+					else
+						speed *= 0.90f;          // 안 누르면 자동 감속
 
 					pl.SetSpeed(speed);
-					pl.SetYaw(yaw);
-
-					// ----------- 2) XYZ 위치 갱신 ----------------
 
 					float oldX = pl.m_posX;
-					float oldZ = pl.m_posZ;
 
-					// yaw → 라디안
-					float yawRad = yaw * (3.141592f / 180.0f);
+					// ===== 2) X축으로만 이동! =====
+					pl.m_posX += speed * dt;
 
-					// 네 클라 모델 기준: 카트의 전진 방향은 -Z
-					float dirX = -sinf(yawRad);
-					float dirZ = -cosf(yawRad);
-
-					pl.m_posX += dirX * speed * deltaTime;
-					pl.m_posZ += dirZ * speed * deltaTime;
-					// pl.m_posY 서버에서는 고정 유지 (필요하면 수정)
-
-					// ----------- 3) 플레이어 간 충돌 처리 -------------
+					// ===== 3) 충돌 체크 (옵션) =====
 					if (PlayerCollisionCheck(i))
-					{
-						// 충돌 발생 → 롤백
 						pl.m_posX = oldX;
-						pl.m_posZ = oldZ;
 
-						// 충돌 시 감속 효과 (원하면)
-						pl.SetSpeed(speed * 0.5f);
-					}
-
-					// ----------- 4) 패킷 구성 -------------------------
+					// ===== 4) 패킷 채우기 =====
 					scpacket.id = pl.GetID();
 					scpacket.speed = pl.GetSpeed();
-					scpacket.yaw = pl.GetYaw();
+					scpacket.yaw = 0; // 테스트라서 회전 X
 					scpacket.key = pl.GetKey();
 					scpacket.face_rotation = pl.GetFaceRotation();
 
@@ -171,7 +245,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					scpacket.z = pl.m_posZ;
 				}
 
-				// ----------- 5) 패킷 전송 -------------------------
+				// ===== 5) 패킷 전송 =====
 				{
 					std::lock_guard<std::mutex> lock(g_Sendmutex);
 					g_users[i].send_packet(reinterpret_cast<char*>(&scpacket), sizeof(scpacket));
@@ -180,6 +254,8 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		}
 	}
 }
+
+
 
 int main()
 {
