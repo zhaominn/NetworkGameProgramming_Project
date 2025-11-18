@@ -424,6 +424,8 @@ void Map1_Mode::timer() {
 	//	}
 	//	else {
 
+	std::cout << g_players[g_myid].x << std::endl;
+
 	for (const auto& kart : karts) {
 		//move
 		kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -g_players[g_myid].m_speed));

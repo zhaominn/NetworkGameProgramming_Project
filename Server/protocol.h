@@ -121,6 +121,11 @@ struct S2C_Move_Packet
 	float yaw;
 	float face_rotation;
 	KEY_TYPE key;
+
+	float x;
+	float y;
+	float z;
+
 	//btRigidBody rigidBody;
 };
 

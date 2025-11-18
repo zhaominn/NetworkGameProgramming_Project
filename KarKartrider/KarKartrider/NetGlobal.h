@@ -12,6 +12,10 @@ struct PlayerKart {
 	bool isOnline;
 	KEY_TYPE m_key;
 	SOCKET m_socket;
+
+	float x;
+	float y;
+	float z;
 };
 
 extern NetworkMgr networkmgr;

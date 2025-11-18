@@ -209,6 +209,11 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 						scpacket->yaw = g_users[i].GetYaw();
 						scpacket->key = g_users[i].GetKey();
 						scpacket->face_rotation = g_users[i].GetFaceRotation();
+
+						// kart position
+						scpacket->x = g_users[i].m_posX;
+						scpacket->y = g_users[i].m_posY;
+						scpacket->z = g_users[i].m_posZ;
 					}
 				}
 
@@ -292,7 +297,7 @@ int main()
 					CloseHandle(hThread);
 				}
 
-				if (g_usersNum == MAX_USER)
+				if (g_usersNum == 1)
 				{
 					g_AllPlayerLogin = true;
 					/*temp*/g_game_state = INGAME;
@@ -319,7 +324,7 @@ int main()
 						readyClient++;
 					}
 				}
-				if (readyClient == MAX_USER) {
+				if (readyClient == 1) {
 					std::cout << "게임에 입장합니다." << std::endl;
 					for (int i = 0; i < MAX_USER; ++i) {
 						g_users[i].send_Game_Start_Packet();
