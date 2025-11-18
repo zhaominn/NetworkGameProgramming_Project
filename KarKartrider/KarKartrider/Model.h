@@ -102,4 +102,12 @@ public:
     virtual void initBuffer() = 0;
 
     virtual ~Model() = default; 
+
+    glm::vec3 getPosition() const {
+        return glm::vec3(translateMatrix[3]);
+    }
+
+    void setPosition(const glm::vec3& pos) {
+        translateMatrix[3] = glm::vec4(pos, 1.0f);
+    }
 };

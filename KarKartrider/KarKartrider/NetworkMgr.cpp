@@ -93,6 +93,7 @@ void NetworkMgr::SendEnterRoomPacket(MAP_TYPE map)
 	enter_room_packet->size = sizeof(C2S_Enter_Room_Packet);
 	enter_room_packet->type = C2S_ENTER_ROOM;
 	enter_room_packet->map = map;
+
 	SendPacket(reinterpret_cast<char*>(enter_room_packet), sizeof(C2S_Enter_Room_Packet));
 	delete enter_room_packet;
 }
@@ -114,6 +115,12 @@ void NetworkMgr::SendChangeReadyPacket(bool status)
 	change_ready_packet->size = sizeof(C2S_Change_Ready_Packet);
 	change_ready_packet->type = C2S_IS_READY;
 	change_ready_packet->is_ready = status;
+
+	glm::vec3 pos = glm::vec3(0.0, 2.6, 238.0);
+	change_ready_packet->x = pos.x;
+	change_ready_packet->y = pos.y;
+	change_ready_packet->z = pos.z;
+
 	SendPacket(reinterpret_cast<char*>(change_ready_packet), sizeof(C2S_Change_Ready_Packet));
 	delete change_ready_packet;
 }

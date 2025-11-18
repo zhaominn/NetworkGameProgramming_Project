@@ -460,85 +460,87 @@ void Map1_Mode::checkEngineSound() {
 
 void Map1_Mode::timer() {
 
-	std::cout << "Server Z = " << g_players[g_myid].z << std::endl;
+	float x = g_players[g_myid].x;
+	float y = g_players[g_myid].y;
+	float z = g_players[g_myid].z;
+	float yaw = g_players[g_myid].m_yaw;
 
-	int id = g_myid;
-
-	// -------------------------
-	// 1) 서버에서 받은 XZ 사용
-	// -------------------------
-	glm::vec3 serverXZ(
-		g_players[id].x,
-		0.0f,             // Y는 아직 unknown, 각 부품마다 유지됨
-		g_players[id].z
-	);
-
-	// -------------------------
-	// 2) 모든 부품(karts)을 동일한 서버 위치로 동기화
-	// -------------------------
-	for (auto& kart : karts)
-	{
-		float currentY = kart->translateMatrix[3].y;  // 부품 고유 Y 유지
-
-		glm::vec3 finalPos(
-			serverXZ.x,
-			currentY,      // 높이는 유지
-			serverXZ.z
-		);
-
-		kart->translateMatrix = glm::mat4(1.0f);
-		kart->translateMatrix = glm::translate(kart->translateMatrix, finalPos);
+	for (const auto& kart : karts) {
+		//move
+		kart->setPosition(glm::vec3(x, y, z));
 	}
 
-	// -------------------------
-	// 3) 모든 부품 yaw 회전 적용
-	// -------------------------
-	for (auto& kart : karts)
-	{
-		kart->translateMatrix = glm::rotate(
-			kart->translateMatrix,
-			glm::radians(g_players[id].m_yaw),
-			glm::vec3(0.0f, 1.0f, 0.0f)
-		);
+	for (const auto& kart : karts) {
+		// rotate
+		kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
+		kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(g_players[g_myid].m_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+		kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
 	}
 
-	// -------------------------
-	// 4) 얼굴 회전/기타 부품 처리
-	// -------------------------
-	for (auto& c : character)
-	{
-		if (c->name == "character_face")
-		{
-			glm::mat4 headRot = glm::rotate(
+	for (const auto& c : character) {
+		c->translateMatrix = karts[0]->translateMatrix;
+	}
+
+	if (g_players[g_myid].m_speed != 0.0f) {
+		reducedRotationInfluence = 0.1f + (std::abs(g_players[g_myid].m_speed) / MAX_SPEED) * 0.4f; 
+	}
+	else {
+		reducedRotationInfluence += 0.01f;
+		if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
+	}
+
+	//if (isBoosterActive) {
+	//	//
+	//	if (booster_head_tilt < MAX_HEAD_TILT) {
+	//		booster_head_tilt += TILT_SPEED;
+	//		if (booster_head_tilt > MAX_HEAD_TILT) {
+	//			booster_head_tilt = MAX_HEAD_TILT;
+	//		}
+	//	}
+	//}
+	//else {
+	//	//
+	//	if (booster_head_tilt > 0.0f) {
+	//		booster_head_tilt -= TILT_SPEED;
+	//		if (booster_head_tilt < 0.0f) {
+	//			booster_head_tilt = 0.0f;
+	//		}
+	//	}
+	//}
+
+	//
+	for (const auto& c : character) {
+		if (c->name == "character_face") {
+			//
+			glm::mat4 headRotation = glm::rotate(
 				glm::mat4(1.0f),
-				glm::radians(-g_players[id].m_face_rotation),
-				glm::vec3(0, 0, 1)
+				glm::radians(-g_players[g_myid].m_face_rotation),
+				glm::vec3(0.0f, 0.0f, 1.0f)
 			);
 
-			headRot = glm::rotate(
-				headRot,
-				glm::radians(booster_head_tilt),
-				glm::vec3(1, 0, 0)
+			headRotation = glm::rotate(
+				headRotation,
+				glm::radians(booster_head_tilt), //
+				glm::vec3(1.0f, 0.0f, 0.0f)
 			);
 
-			c->translateMatrix = karts[0]->translateMatrix * headRot;
+			c->translateMatrix = karts[0]->translateMatrix * headRotation;
 		}
-		else
-		{
+		else {
 			c->translateMatrix = karts[0]->translateMatrix;
 		}
 	}
 
-	// -------------------------
-	// 5) 카메라
-	// -------------------------
+	//
 	setCamera();
-	cameraPos = glm::mix(cameraPos, cameraTargetPos, 0.1f);
+	//
+	float cameraFollowSpeed = 0.1f; //
+	cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
 
-	// -------------------------
-	// 6) 사운드
-	// -------------------------
+	checkCollisionKart();
 	checkEngineSound();
+	//}
+		//}
 }
 
 void Map1_Mode::mouseClick(int button, int state, int x, int y) {

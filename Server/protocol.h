@@ -147,6 +147,7 @@ struct C2S_Change_Ready_Packet
 {
 	unsigned char size;
 	char type;
+	float x, y, z;
 	bool is_ready;
 };
 

@@ -93,6 +93,10 @@ void Player::process_packet(char* p)
 		C2S_Change_Ready_Packet* change_ready_packet = reinterpret_cast<C2S_Change_Ready_Packet*>(p);
 
 		SetIsReady(change_ready_packet->is_ready);
+		m_posX = change_ready_packet->x;
+		m_posY = change_ready_packet->y;
+		m_posZ = change_ready_packet->z;
+
 		std::cout << "[Player : " << m_name << "]" << " ready status? : " << isReady << std::endl;
 
 	}
