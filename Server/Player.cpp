@@ -106,17 +106,37 @@ void Player::process_packet(char* p)
 		C2S_Move_Packet* move_packet = reinterpret_cast<C2S_Move_Packet*>(p);
 
 		switch (move_packet->key_type) {
-		case UP:      m_up = true;    break;
-		case UP_RELEASED:    m_up = false;   break;
+		case UP:      
+			m_up = true;    
+			break;
+		case UP_RELEASED:   
+			m_up = false;  
+			m_release = true;
+			break;
 
-		case DOWN:    m_down = true;  break;
-		case DOWN_RELEASED:  m_down = false; break;
+		case DOWN:    
+			m_down = true; 
+			break;
+		case DOWN_RELEASED:
+			m_down = false; 
+			m_release = true;
+			break;
 
-		case LEFT:    m_left = true;  break;
-		case LEFT_RELEASED:  m_left = false; break;
+		case LEFT:   
+			m_left = true; 
+			break;
+		case LEFT_RELEASED:
+			m_left = false; 
+			m_release = true;
+			break;
 
-		case RIGHT:   m_right = true; break;
-		case RIGHT_RELEASED: m_right = false; break;
+		case RIGHT:  
+			m_right = true;
+			break;
+		case RIGHT_RELEASED: 
+			m_right = false; 
+			m_release = true;
+			break;
 		}
 	}
 	break;

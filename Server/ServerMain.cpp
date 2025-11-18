@@ -1,6 +1,8 @@
 #include "Player.h"
 #include <iostream>
 
+const float PI = 3.1415926535f;
+
 bool PlayerCollisionCheck(int myId)
 {
 	// 내 위치/크기 가져오기
@@ -55,6 +57,7 @@ DWORD WINAPI ClientThread(LPVOID socket)
 }
 
 
+
 DWORD WINAPI UpdatePositon(LPVOID lpParam)
 {
 	S2C_Move_Packet* scpacket = new S2C_Move_Packet;
@@ -81,7 +84,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					std::lock_guard<std::mutex> lock1(g_UserMutex);
 
 					float speed = g_users[i].GetSpeed();
-					float turnSpeed = 0.0f;
+					float turnSpeed = g_users[i].GetYaw();
 
 					if (g_users[i].m_up)
 					{
@@ -122,6 +125,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					if (g_users[i].m_left)
 					{
 						turnSpeed = TURN_ANGLE;
+
 						float f = g_users[i].GetFaceRotation();
 						f -= RETURN_SPEED;
 						g_users[i].SetFaceRotation(f);
@@ -174,15 +178,27 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					if (f < -MAX_FACE_ROTATION) f = -MAX_FACE_ROTATION;
 					g_users[i].SetFaceRotation(f);
 
+					// update position
+					float rad = g_users[i].GetYaw() * PI / 180.0f;
+
+					float dirX = sinf(rad);
+					float dirZ = -cosf(rad);
+
+					if (g_users[i].GetSpeed() > 0.0)
+					{
+						g_users[i].m_posX += speed * dirX;
+						g_users[i].m_posZ += speed * dirZ;
+					}
+
 					if (g_users[i].GetOnline()) {
 						scpacket->id = g_users[i].GetID();
 						scpacket->speed = g_users[i].GetSpeed();
 						scpacket->yaw = g_users[i].GetYaw();
 						scpacket->key = g_users[i].GetKey();
-						scpacket->face_rotation = g_users[i].GetFaceRotation();
 						scpacket->x = g_users[i].m_posX;
 						scpacket->y = g_users[i].m_posY;
 						scpacket->z = g_users[i].m_posZ;
+						scpacket->face_rotation = g_users[i].GetFaceRotation();
 					}
 				}
 
@@ -198,6 +214,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		}
 	}
 }
+
 
 
 //DWORD WINAPI UpdatePositon(LPVOID lpParam)
