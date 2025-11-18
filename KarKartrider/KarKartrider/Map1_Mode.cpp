@@ -415,64 +415,40 @@ void Map1_Mode::checkEngineSound() {
 	}
 }
 
-void Map1_Mode::timer() {
-	//if (!Pause) {
-	//	if (start_count < 4) {
-	//		if (start_count >= 0)
-	//			playCountdown(start_count);
-	//		++start_count;
-	//	}
-	//	else {
+void Map1_Mode::timer()
+{
+	// =============================
+	// 1) 서버 authoritative 위치(XZ만) 적용
+	// =============================
 
-	std::cout << g_players[g_myid].x << std::endl;
+	// 현재 클라이언트에서 사용 중인 Y 값 유지
+	float currentY = karts[0]->translateMatrix[3].y;
 
-	for (const auto& kart : karts) {
-		//move
-		kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -g_players[g_myid].m_speed));
-	}
+	glm::vec3 serverPos(
+		g_players[g_myid].x,
+		currentY,                   // ★ Y는 서버값 대신 클라값 유지
+		g_players[g_myid].z
+	);
 
-	for (const auto& kart : karts) {
-		// rotate
-		kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
-		kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(g_players[g_myid].m_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
-		kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
-	}
+	// 카트 transform 초기화 후 서버 XZ 적용
+	karts[0]->translateMatrix = glm::mat4(1.0f);
+	karts[0]->translateMatrix = glm::translate(karts[0]->translateMatrix, serverPos);
 
-	for (const auto& c : character) {
-		c->translateMatrix = karts[0]->translateMatrix;
-	}
+	// 서버 yaw 회전 적용
+	karts[0]->translateMatrix = glm::rotate(
+		karts[0]->translateMatrix,
+		glm::radians(g_players[g_myid].m_yaw),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
 
-	if (g_players[g_myid].m_speed != 0.0f) {
-		reducedRotationInfluence = 0.1f + (std::abs(g_players[g_myid].m_speed) / MAX_SPEED) * 0.4f; 
-	}
-	else {
-		reducedRotationInfluence += 0.01f;
-		if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
-	}
 
-	//if (isBoosterActive) {
-	//	//
-	//	if (booster_head_tilt < MAX_HEAD_TILT) {
-	//		booster_head_tilt += TILT_SPEED;
-	//		if (booster_head_tilt > MAX_HEAD_TILT) {
-	//			booster_head_tilt = MAX_HEAD_TILT;
-	//		}
-	//	}
-	//}
-	//else {
-	//	//
-	//	if (booster_head_tilt > 0.0f) {
-	//		booster_head_tilt -= TILT_SPEED;
-	//		if (booster_head_tilt < 0.0f) {
-	//			booster_head_tilt = 0.0f;
-	//		}
-	//	}
-	//}
-
-	//
-	for (const auto& c : character) {
-		if (c->name == "character_face") {
-			//
+	// =============================
+	// 2) 캐릭터 모델 붙이기 (기존 유지)
+	// =============================
+	for (const auto& c : character)
+	{
+		if (c->name == "character_face")
+		{
 			glm::mat4 headRotation = glm::rotate(
 				glm::mat4(1.0f),
 				glm::radians(-g_players[g_myid].m_face_rotation),
@@ -481,28 +457,49 @@ void Map1_Mode::timer() {
 
 			headRotation = glm::rotate(
 				headRotation,
-				glm::radians(booster_head_tilt), //
+				glm::radians(booster_head_tilt),
 				glm::vec3(1.0f, 0.0f, 0.0f)
 			);
 
 			c->translateMatrix = karts[0]->translateMatrix * headRotation;
 		}
-		else {
+		else
+		{
 			c->translateMatrix = karts[0]->translateMatrix;
 		}
 	}
 
-	//
+
+	// =============================
+	// 3) 회전 영향도 (기존 유지)
+	// =============================
+	if (g_players[g_myid].m_speed != 0.0f)
+	{
+		reducedRotationInfluence = 0.1f +
+			(std::abs(g_players[g_myid].m_speed) / MAX_SPEED) * 0.4f;
+	}
+	else
+	{
+		reducedRotationInfluence += 0.01f;
+		if (reducedRotationInfluence > 1.0f)
+			reducedRotationInfluence = 1.0f;
+	}
+
+
+	// =============================
+	// 4) 카메라 업데이트 (기존 유지)
+	// =============================
 	setCamera();
-	//
-	float cameraFollowSpeed = 0.1f; //
+	float cameraFollowSpeed = 0.1f;
 	cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
 
-	checkCollisionKart();
+
+	// =============================
+	// 5) 사운드/애니메이션 유지
+	// =============================
 	checkEngineSound();
-	//}
-		//}
 }
+
 
 void Map1_Mode::mouseClick(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {

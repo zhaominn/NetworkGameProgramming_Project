@@ -56,12 +56,12 @@ bool PlayerCollisionCheck(int myId)
 
 DWORD WINAPI UpdatePositon(LPVOID lpParam)
 {
-	S2C_Move_Packet* scpacket = new S2C_Move_Packet;
-	scpacket->size = sizeof(S2C_Move_Packet);
-	scpacket->type = S2C_MOVE;
+	S2C_Move_Packet scpacket{};
+	scpacket.size = sizeof(S2C_Move_Packet);
+	scpacket.type = S2C_MOVE;
 
-	// Collect the state of all players and send it to every player
-	std::chrono::steady_clock::time_point last_send_time = std::chrono::steady_clock::now();
+	auto last_send_time = std::chrono::steady_clock::now();
+
 	while (true)
 	{
 		if (!g_GameStart) {
@@ -69,163 +69,114 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 			continue;
 		}
 
-		auto current_time = std::chrono::steady_clock::now();
-		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_send_time).count();
+		auto now = std::chrono::steady_clock::now();
+		auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_send_time).count();
 
-		if (elapsed_time >= 1000 / 33) {
-			for (int i = 0; i < MAX_USER; ++i) {
+		// 약 33fps 주기
+		if (elapsed_ms >= (1000 / 33))
+		{
+			float deltaTime = elapsed_ms / 1000.0f;
+			last_send_time = now;
 
-				// update
+			for (int i = 0; i < MAX_USER; i++)
+			{
+				if (!g_users[i].GetOnline())
+					continue;
+
 				{
-					std::lock_guard<std::mutex> lock1(g_UserMutex);
+					std::lock_guard<std::mutex> lock(g_UserMutex);
 
-					float speed = g_users[i].GetSpeed();
-					float turnSpeed = 0.0f;
+					Player& pl = g_users[i];
 
-					if (g_users[i].m_up) 
-					{
-						speed += ACCELERATION;
+					// ----------- 1) 입력 기반 속도/회전 갱신 ----------------
+					float speed = pl.GetSpeed();
+					float yaw = pl.GetYaw();      // 도 단위
+					float turn = 0.0f;             // yaw 변화량 (도/s)
 
-						float f = g_users[i].GetFaceRotation();
+					// 전진/후진 입력
+					if (pl.m_up)
+						speed += ACCELERATION * deltaTime;
+					if (pl.m_down)
+						speed -= ACCELERATION * deltaTime;
 
-						if (f > 0) {
-							f -= RETURN_SPEED;
-							if (f < 0) f = 0;
-						}
-						else if (f < 0) {
-							f += RETURN_SPEED;
-							if (f > 0) f = 0;
-						}
+					// 회전 입력
+					if (pl.m_left)
+						turn += TURN_ANGLE;
+					if (pl.m_right)
+						turn -= TURN_ANGLE;
 
-						g_users[i].SetFaceRotation(f);
-					}
-
-					if (g_users[i].m_down) 
-					{
-						speed -= ACCELERATION;
-
-						float f = g_users[i].GetFaceRotation();
-
-						if (f > 0) {
-							f -= RETURN_SPEED;
-							if (f < 0) f = 0;
-						}
-						else if (f < 0) {
-							f += RETURN_SPEED;
-							if (f > 0) f = 0;
-						}
-
-						g_users[i].SetFaceRotation(f);
-					}
-
-					if (g_users[i].m_left) 
-					{
-						turnSpeed = TURN_ANGLE;
-						float f = g_users[i].GetFaceRotation();
-						f -= RETURN_SPEED;
-						g_users[i].SetFaceRotation(f);
-					}
-
-					if (g_users[i].m_right) 
-					{
-						turnSpeed = -TURN_ANGLE;
-						float f = g_users[i].GetFaceRotation();
-						f += RETURN_SPEED;
-						g_users[i].SetFaceRotation(f);
-					}
-
-					if (g_users[i].m_release) 
+					// 감속 처리
+					if (!pl.m_up && !pl.m_down)
 					{
 						if (speed > 0.0f) {
-							speed -= DECELERATION;
+							speed -= DECELERATION * deltaTime;
 							if (speed < 0.0f) speed = 0.0f;
 						}
 						else if (speed < 0.0f) {
-							speed += DECELERATION;
+							speed += DECELERATION * deltaTime;
 							if (speed > 0.0f) speed = 0.0f;
 						}
-
-						turnSpeed = 0.0f;
-
-						float f = g_users[i].GetFaceRotation();
-
-						if (f > 0) {
-							f -= RETURN_SPEED;
-							if (f < 0) f = 0;
-						}
-						else if (f < 0) {
-							f += RETURN_SPEED;
-							if (f > 0) f = 0;
-						}
-
-						g_users[i].SetFaceRotation(f);
 					}
 
-
-					if (speed > MAX_SPEED)speed = MAX_SPEED;
+					// 속도 제한
+					if (speed > MAX_SPEED) speed = MAX_SPEED;
 					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
 
-					g_users[i].SetSpeed(speed);
-					g_users[i].SetYaw(turnSpeed);
+					// yaw 회전 적용
+					yaw += turn * deltaTime;
 
-					float f = g_users[i].GetFaceRotation();
-					if (f > MAX_FACE_ROTATION) f = MAX_FACE_ROTATION;
-					if (f < -MAX_FACE_ROTATION) f = -MAX_FACE_ROTATION;
-					g_users[i].SetFaceRotation(f);
+					// yaw 정규화
+					if (yaw > 180.f)  yaw -= 360.f;
+					if (yaw < -180.f) yaw += 360.f;
 
+					pl.SetSpeed(speed);
+					pl.SetYaw(yaw);
 
-					// 1) yaw -> 라디안 변환
-					float yawDeg = g_users[i].GetYaw();
-					float yawRad = yawDeg * (3.141592f / 180.0f);
+					// ----------- 2) XYZ 위치 갱신 ----------------
 
-					// 2) old pos 저장 (충돌 나면 복구용)
-					float oldX = g_users[i].m_posX;
-					float oldZ = g_users[i].m_posZ;
+					float oldX = pl.m_posX;
+					float oldZ = pl.m_posZ;
 
-					// 3) deltaTime
-					float delta = 0.033f;   // 33ms
+					// yaw → 라디안
+					float yawRad = yaw * (3.141592f / 180.0f);
 
-					// 4) 방향 벡터
-					float dirX = cos(yawRad);
-					float dirZ = sin(yawRad);
+					// 네 클라 모델 기준: 카트의 전진 방향은 -Z
+					float dirX = -sinf(yawRad);
+					float dirZ = -cosf(yawRad);
 
-					// 5) 이동 적용
-					g_users[i].m_posX += dirX * g_users[i].GetSpeed() * delta;
-					g_users[i].m_posZ += dirZ * g_users[i].GetSpeed() * delta;
+					pl.m_posX += dirX * speed * deltaTime;
+					pl.m_posZ += dirZ * speed * deltaTime;
+					// pl.m_posY 서버에서는 고정 유지 (필요하면 수정)
 
-					//std::cout << g_users[i].m_posX << std::endl;
-
-					// 충돌검사
+					// ----------- 3) 플레이어 간 충돌 처리 -------------
 					if (PlayerCollisionCheck(i))
 					{
-						// 원래 위치로 복구
-						g_users[i].m_posX = oldX;
-						g_users[i].m_posZ = oldZ;
+						// 충돌 발생 → 롤백
+						pl.m_posX = oldX;
+						pl.m_posZ = oldZ;
+
+						// 충돌 시 감속 효과 (원하면)
+						pl.SetSpeed(speed * 0.5f);
 					}
 
-					if (g_users[i].GetOnline()) {
-						scpacket->id = g_users[i].GetID();
-						scpacket->speed = g_users[i].GetSpeed();
-						scpacket->yaw = g_users[i].GetYaw();
-						scpacket->key = g_users[i].GetKey();
-						scpacket->face_rotation = g_users[i].GetFaceRotation();
+					// ----------- 4) 패킷 구성 -------------------------
+					scpacket.id = pl.GetID();
+					scpacket.speed = pl.GetSpeed();
+					scpacket.yaw = pl.GetYaw();
+					scpacket.key = pl.GetKey();
+					scpacket.face_rotation = pl.GetFaceRotation();
 
-						// kart position
-						scpacket->x = g_users[i].m_posX;
-						scpacket->y = g_users[i].m_posY;
-						scpacket->z = g_users[i].m_posZ;
-					}
+					scpacket.x = pl.m_posX;
+					scpacket.y = pl.m_posY;
+					scpacket.z = pl.m_posZ;
 				}
 
-				// send
-				if (g_users[i].GetOnline()) {
-					std::lock_guard<std::mutex> lock2(g_Sendmutex);
-					g_users[i].send_packet(reinterpret_cast<char*>(scpacket), sizeof(S2C_Move_Packet));
+				// ----------- 5) 패킷 전송 -------------------------
+				{
+					std::lock_guard<std::mutex> lock(g_Sendmutex);
+					g_users[i].send_packet(reinterpret_cast<char*>(&scpacket), sizeof(scpacket));
 				}
-
-
 			}
-			last_send_time = current_time;
 		}
 	}
 }
