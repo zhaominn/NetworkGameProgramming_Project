@@ -22,14 +22,14 @@ public:
 	bool m_release = false;
 
 	// player position
-	float m_posX;
-	float m_posY;
-	float m_posZ;
+	float m_posX = 0;
+	float m_posY = 0;
+	float m_posZ = 0;
 
 	// collider size (player)
-	float m_colliderHalfX;
-	float m_colliderHalfY;
-	float m_colliderHalfZ;
+	float m_colliderHalfX = 0.933135f;
+	float m_colliderHalfY = 0.533785f;
+	float m_colliderHalfZ = 1.526595f;
 
 public:
 	Player() : m_id(-1), m_name(), m_yaw(0), m_speed(0), m_face_rotation(0),

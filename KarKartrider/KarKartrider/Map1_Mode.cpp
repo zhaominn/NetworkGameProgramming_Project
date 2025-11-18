@@ -328,6 +328,9 @@ void Map1_Mode::checkCollisionKart() {
 	for (auto& kart : karts) {
 		if (kart->name != "car") continue;
 
+		/*glm::vec3 size = calculateModelSize(kart);
+		std::cout << "KART SIZE: " << size.x << ", " << size.y << ", " << size.z << std::endl;*/
+
 		kart->rigidBody->setGravity(btVector3(0.0f, 0.0f, 0.0f));
 
 		for (const auto& barri : road1_barricate) {
@@ -420,7 +423,6 @@ void Map1_Mode::timer() {
 	//		++start_count;
 	//	}
 	//	else {
-
 
 	for (const auto& kart : karts) {
 		//move
