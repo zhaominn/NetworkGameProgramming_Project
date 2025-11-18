@@ -21,6 +21,16 @@ public:
 	bool m_right = false;
 	bool m_release = false;
 
+	// player position
+	float m_posX;
+	float m_posY;
+	float m_posZ;
+
+	// collider size (player)
+	float m_colliderHalfX;
+	float m_colliderHalfY;
+	float m_colliderHalfZ;
+
 public:
 	Player() : m_id(-1), m_name(), m_yaw(0), m_speed(0), m_face_rotation(0),
 		m_key(RELEASED), isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {

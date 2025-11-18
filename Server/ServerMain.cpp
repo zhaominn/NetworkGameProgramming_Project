@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <iostream>
 
 DWORD WINAPI ClientThread(LPVOID socket)
 {
@@ -17,6 +18,40 @@ DWORD WINAPI ClientThread(LPVOID socket)
 	g_users[my_id].disconnect();
 	printf("[Thread %d] Thread End.\n", my_id);
 	return 0;
+}
+
+bool PlayerCollisionCheck(int myId)
+{
+	// 내 위치/크기 가져오기
+	float x1 = g_users[myId].m_posX;
+	float z1 = g_users[myId].m_posZ;
+
+	float halfX1 = g_users[myId].m_colliderHalfX;
+	float halfZ1 = g_users[myId].m_colliderHalfZ;
+
+	// 다른 플레이어와 비교
+	for (int i = 0; i < MAX_USER; i++)
+	{
+		if (i == myId) continue;                  // 자기 자신 제외
+		if (!g_users[i].GetOnline()) continue;    // 접속 안한 플레이어 제외
+
+		float x2 = g_users[i].m_posX;
+		float z2 = g_users[i].m_posZ;
+
+		float halfX2 = g_users[i].m_colliderHalfX;
+		float halfZ2 = g_users[i].m_colliderHalfZ;
+
+		// AABB 충돌 체크
+		bool overlapX = fabs(x1 - x2) < (halfX1 + halfX2);
+		bool overlapZ = fabs(z1 - z2) < (halfZ1 + halfZ2);
+
+		if (overlapX && overlapZ)
+		{
+			return true; // 충돌 발생
+		}
+	}
+
+	return false; // 충돌 없음
 }
 
 DWORD WINAPI UpdatePositon(LPVOID lpParam)
@@ -137,6 +172,36 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					if (f > MAX_FACE_ROTATION) f = MAX_FACE_ROTATION;
 					if (f < -MAX_FACE_ROTATION) f = -MAX_FACE_ROTATION;
 					g_users[i].SetFaceRotation(f);
+
+
+					// 1) yaw -> 라디안 변환
+					float yawDeg = g_users[i].GetYaw();
+					float yawRad = yawDeg * (3.141592f / 180.0f);
+
+					// 2) old pos 저장 (충돌 나면 복구용)
+					float oldX = g_users[i].m_posX;
+					float oldZ = g_users[i].m_posZ;
+
+					// 3) deltaTime
+					float delta = 0.033f;   // 33ms
+
+					// 4) 방향 벡터
+					float dirX = cos(yawRad);
+					float dirZ = sin(yawRad);
+
+					// 5) 이동 적용
+					g_users[i].m_posX += dirX * g_users[i].GetSpeed() * delta;
+					g_users[i].m_posZ += dirZ * g_users[i].GetSpeed() * delta;
+
+					//std::cout << g_users[i].m_posX << std::endl;
+
+					// 충돌검사
+					if (PlayerCollisionCheck(i))
+					{
+						// 원래 위치로 복구
+						g_users[i].m_posX = oldX;
+						g_users[i].m_posZ = oldZ;
+					}
 
 					if (g_users[i].GetOnline()) {
 						scpacket->id = g_users[i].GetID();
