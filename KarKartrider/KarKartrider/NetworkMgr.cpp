@@ -131,6 +131,16 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_players[g_myid].m_key = RELEASED;
 	}
 						break;
+	case S2C_LOGIN_FAIL: {
+
+		// 서버에서 보낸 로그인 패킷
+		std::cout << "로그인 실패!" << std::endl;
+	}
+					   break;
+	case S2C_ENTER_ROOM:
+		break;
+	case S2C_IS_READY:
+		break;
 	case S2C_GAME_START: {
 		std::cout << "Game Start@@@@@@@@@@@@@@@@@@@@" << std::endl;
 
@@ -140,7 +150,8 @@ void NetworkMgr::ProcessPacket(char* buf)
 
 	}
 					   break;
-	case S2C_MOVE: {
+	case S2C_MOVE:
+	{
 		S2C_Move_Packet* p = reinterpret_cast<S2C_Move_Packet*>(buf);
 		g_players[p->id].m_speed = p->speed;
 		g_players[p->id].m_key = p->key;
@@ -151,12 +162,17 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_players[p->id].z = p->z;
 	}
 				 break;
-	case S2C_LOGIN_FAIL: {
-
-		// 서버에서 보낸 로그인 패킷
-		std::cout << "로그인 실패!" << std::endl;
+	case S2C_BOOSTER:
+		break;
+	case S2C_RANK:
+	{
+		S2C_Rank_Packet* p = reinterpret_cast<S2C_Rank_Packet*>(buf);
+		g_players[g_myid].m_rank = p->rank;
+		g_players[g_myid].m_finish_time = g_delta_time;
 	}
-					   break;
+		break;
+	case S2C_LOGOUT:
+		break;
 	default:
 		std::cout << "찾을 수 없는 패킷 : " << (int)type << std::endl;
 		break;

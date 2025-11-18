@@ -41,8 +41,11 @@ public:
 	void send_packet(char* packet, int len);
 	void process_packet(char* p);
 	void disconnect();
+
 	void send_Game_Start_Packet();
 
+	// ingame
+	void send_Rank_Packet();
 	void checkIsFinished();
 
 private:

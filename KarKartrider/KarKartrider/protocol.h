@@ -125,6 +125,7 @@ struct S2C_Rank_Packet
 	unsigned char size;
 	char type;
 	char rank;
+	float finish_time;
 };
 
 struct S2C_Finish_Packet

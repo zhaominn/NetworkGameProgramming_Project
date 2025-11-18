@@ -207,6 +207,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 			last = now;
 			startTime = now;
 			g_ElapsedTime = 0.0f;
+			g_rankCnt = 1;
 			isFirstFrame = false;
 			std::cout << "=== Game Timer Started ===" << std::endl;
 		}

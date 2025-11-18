@@ -13,6 +13,9 @@ struct PlayerKart {
 	KEY_TYPE m_key;
 	SOCKET m_socket;
 
+	int m_rank;
+	float m_finish_time;
+
 	float x;
 	float y;
 	float z;
