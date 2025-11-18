@@ -112,6 +112,7 @@ struct S2C_GameStart_Packet
 };
 
 //class btRigidBody {}; // 나중에 수정..
+#pragma pack(push, 1)
 struct S2C_Move_Packet
 {
 	unsigned char size;
@@ -128,6 +129,7 @@ struct S2C_Move_Packet
 
 	//btRigidBody rigidBody;
 };
+#pragma pack(pop)
 
 struct S2C_Finish_Packet
 {

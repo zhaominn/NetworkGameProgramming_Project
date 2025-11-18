@@ -200,7 +200,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		auto now = std::chrono::steady_clock::now();
 		auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count();
 
-		if (ms >= 1000 / 33)
+		if (ms >= (1000 / 33))
 		{
 			float dt = ms / 1000.0f;
 			last = now;
@@ -214,29 +214,46 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 					Player& pl = g_users[i];
 
-					// ===== 1) X축으로만 이동하는 테스트 =====
+					// =================================================
+					// 1) 속도 갱신: W 누르면 앞으로 전진, 안 누르면 감속
+					// =================================================
 					float speed = pl.GetSpeed();
 
 					if (pl.m_up)
-						speed += ACCELERATION;   // 누르면 가속
+						speed += ACCELERATION;   // 가속
 					else
-						speed *= 0.90f;          // 안 누르면 자동 감속
+						speed *= 0.90f;          // 자동 감속
 
 					pl.SetSpeed(speed);
 
-					float oldX = pl.m_posX;
+					// =================================================
+					// 2) z축으로만 전진(회전 무시)
+					// =================================================
+					float oldZ = pl.m_posZ;
 
-					// ===== 2) X축으로만 이동! =====
-					pl.m_posX += speed * dt;
+					pl.m_posZ -= speed * dt;   // ★ -Z 방향이 앞으로 가는 방향
 
-					// ===== 3) 충돌 체크 (옵션) =====
-					if (PlayerCollisionCheck(i))
-						pl.m_posX = oldX;
+					// ===== 테스트 출력 =====
+					std::cout << "[Server Move]"
+						<< "  id=" << pl.GetID()
+						<< "  speed=" << speed
+						<< "  dt=" << dt
+						<< "  oldZ=" << oldZ
+						<< "  newZ=" << pl.m_posZ
+						<< std::endl;
 
-					// ===== 4) 패킷 채우기 =====
+					// =================================================
+					// 3) 충돌 체크
+					// =================================================
+					/*if (PlayerCollisionCheck(i))
+						pl.m_posZ = oldZ;*/
+
+					// =================================================
+					// 4) 패킷 작성
+					// =================================================
 					scpacket.id = pl.GetID();
 					scpacket.speed = pl.GetSpeed();
-					scpacket.yaw = 0; // 테스트라서 회전 X
+					scpacket.yaw = 0; // 테스트라 yaw 없음
 					scpacket.key = pl.GetKey();
 					scpacket.face_rotation = pl.GetFaceRotation();
 
@@ -245,7 +262,9 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					scpacket.z = pl.m_posZ;
 				}
 
-				// ===== 5) 패킷 전송 =====
+				// =================================================
+				// 5) 패킷 전송
+				// =================================================
 				{
 					std::lock_guard<std::mutex> lock(g_Sendmutex);
 					g_users[i].send_packet(reinterpret_cast<char*>(&scpacket), sizeof(scpacket));
@@ -254,6 +273,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		}
 	}
 }
+
 
 
 

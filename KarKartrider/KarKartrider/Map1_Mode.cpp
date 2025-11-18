@@ -416,6 +416,9 @@ void Map1_Mode::checkEngineSound() {
 }
 
 void Map1_Mode::timer() {
+
+	std::cout << "Server Z = " << g_players[g_myid].z << std::endl;
+
 	int id = g_myid;
 
 	// -------------------------
