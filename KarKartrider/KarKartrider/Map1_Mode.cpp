@@ -660,13 +660,34 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 void Map1_Mode::specialKeyUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
+	{
+		C2S_Move_Packet* packet = new C2S_Move_Packet;
+		packet->type = C2S_MOVE;
+		packet->key_type = KEY_TYPE::UP_RELEASED;
+		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
+		delete packet;
+	}
 	case GLUT_KEY_DOWN:
+	{
+		C2S_Move_Packet* packet = new C2S_Move_Packet;
+		packet->type = C2S_MOVE;
+		packet->key_type = KEY_TYPE::DOWN_RELEASED;
+		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
+		delete packet;
+	}
 	case GLUT_KEY_LEFT:
+	{
+		C2S_Move_Packet* packet = new C2S_Move_Packet;
+		packet->type = C2S_MOVE;
+		packet->key_type = KEY_TYPE::LEFT_RELEASED;
+		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
+		delete packet;
+	}
 	case GLUT_KEY_RIGHT:
 	{
 		C2S_Move_Packet* packet = new C2S_Move_Packet;
 		packet->type = C2S_MOVE;
-		packet->key_type = KEY_TYPE::RELEASED;
+		packet->key_type = KEY_TYPE::RIGHT_RELEASED;
 		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
 		delete packet;
 	}

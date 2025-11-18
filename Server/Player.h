@@ -1,8 +1,6 @@
 #pragma once
 #include "Room.h"
 
-class btRigidBody;
-
 class Player
 {
 private:
@@ -15,11 +13,18 @@ private:
 	bool isReady;
 	bool isOnline;
 	SOCKET m_socket;
-	btRigidBody* rigidBody = nullptr;
+
+public:
+	bool m_up = false;
+	bool m_down = false;
+	bool m_left = false;
+	bool m_right = false;
+	bool m_release = false;
 
 public:
 	Player() : m_id(-1), m_name(), m_yaw(0), m_speed(0), m_face_rotation(0),
-		m_key(RELEASED), isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {};
+		m_key(RELEASED), isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {
+	};
 	~Player();
 
 	bool recv_packet();
