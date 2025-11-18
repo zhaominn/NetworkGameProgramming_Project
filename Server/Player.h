@@ -43,8 +43,11 @@ public:
 	void disconnect();
 	void send_Game_Start_Packet();
 
+	void checkIsFinished();
+
 private:
 	void reset();
+
 
 public:
 	void SetSocket(SOCKET socket);

@@ -46,16 +46,16 @@ constexpr char S2C_IS_READY = 9;
 constexpr char S2C_GAME_START = 10;
 constexpr char S2C_MOVE = 11;
 constexpr char S2C_BOOSTER = 12;
-constexpr char S2C_WORLD_UPDATE = 13;
+// constexpr char S2C_WORLD_UPDATE = 13;
 constexpr char S2C_RANK = 14;
 constexpr char S2C_LOGOUT = 15;
 
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
 enum DATA_TYPE { ACCEPT, SEND, RECV };
-enum KEY_TYPE { 
+enum KEY_TYPE {
 	UP, DOWN, LEFT, RIGHT, RELEASED,
-	UP_RELEASED, DOWN_RELEASED, LEFT_RELEASED, RIGHT_RELEASED
+	UP_RELEASED, DOWN_RELEASED, LEFT_RELEASED, RIGHT_RELEASED,
 };
 enum GAME_STATE { LOBBY, ROOM, INGAME };
 
@@ -75,6 +75,13 @@ struct S2C_Login_Fail_Packet
 	char type;
 };
 
+struct S2C_EnterRoom_Packet
+{
+	unsigned char size;
+	char type;
+	char id;
+};
+
 struct S2C_Ready_Packet
 {
 	unsigned char size;
@@ -83,6 +90,28 @@ struct S2C_Ready_Packet
 	bool is_ready;
 };
 
+struct S2C_GameStart_Packet
+{
+	unsigned char size;
+	char type;
+};
+
+struct S2C_Move_Packet
+{
+	unsigned char size;
+	char type;
+	char id;
+	float speed;
+	float yaw;
+	float face_rotation;
+	KEY_TYPE key;
+
+	float x;
+	float y;
+	float z;
+
+	//btRigidBody rigidBody;
+};
 
 struct S2C_Booster_Packet
 {
@@ -97,38 +126,6 @@ struct S2C_Rank_Packet
 	char type;
 	char rank;
 };
-
-struct S2C_EnterRoom_Packet
-{
-	unsigned char size;
-	char type;
-	char id;
-};
-
-struct S2C_GameStart_Packet
-{
-	unsigned char size;
-	char type;
-};
-
-//class btRigidBody {}; // 나중에 수정..
-#pragma pack(push, 1)
-struct S2C_Move_Packet
-{
-	unsigned char size;
-	char type;
-	char id;
-	float speed;
-	float yaw;
-	float face_rotation;
-	KEY_TYPE key;
-
-	float x;
-	float y;
-	float z;
-	//btRigidBody rigidBody;
-};
-#pragma pack(pop)
 
 struct S2C_Finish_Packet
 {

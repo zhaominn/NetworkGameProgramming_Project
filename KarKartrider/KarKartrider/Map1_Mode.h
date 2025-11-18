@@ -66,8 +66,7 @@ public:
 	bool isBoosterRegenActive = true;    
 	std::thread boosterRegenThread;       
 	bool isBoosterActive = false; 
-	bool isGameOver = false; 
-	int game_timer = 30;
+	bool isGameOver = false;
 
 
 
@@ -83,7 +82,7 @@ public:
 
 	void draw_ui();
 
-	void draw_timer();
+	void draw_timer(float deltaTime);
 
 	void init() override;
 
@@ -99,7 +98,7 @@ public:
 
 	void finish_game();
 
-	void draw_finish_time();
+	void draw_finish_time(float deltaTime);
 
 	void lose_game();
 

@@ -73,7 +73,6 @@ public:
 	std::thread boosterRegenThread;
 	bool isBoosterActive = false;
 	bool isGameOver = false;
-	int game_timer = 30;
 
 	float character_face_rotation = 0.0f;
 	const float MAX_FACE_ROTATION = 25.0f;
@@ -95,7 +94,7 @@ public:
 
 	void draw_ui();
 
-	void draw_timer();
+	void draw_timer(float deltaTime);
 
 	void init() override;
 
@@ -109,7 +108,7 @@ public:
 
 	void finish_game();
 
-	void draw_finish_time();
+	void draw_finish_time(float deltaTime);
 
 	void lose_game();
 

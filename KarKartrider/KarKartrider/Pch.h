@@ -25,3 +25,5 @@
 #include <freeglut.h>
 
 #include "Mode.h"
+
+extern float g_delta_time;

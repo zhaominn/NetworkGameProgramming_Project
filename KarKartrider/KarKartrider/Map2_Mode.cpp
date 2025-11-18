@@ -1,4 +1,4 @@
-#include "Pch.h"
+﻿#include "Pch.h"
 #include "RoadModel.h"
 #include "KartModel.h"
 #include "shaderMaker.h"
@@ -97,13 +97,13 @@ void Map2_Mode::draw_ui() {
 	glUseProgram(0);
 }
 
-void Map2_Mode::draw_timer() {
+void Map2_Mode::draw_timer(float deltaTime) {
 	glUseProgram(shaderProgramID_UI);
 
 	GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isTimer");
 	glUniform1i(isTimerLocation, true);
 
-	std::string timerText = "Time: " + std::to_string(game_timer);
+	std::string timerText = "Time: " + std::to_string(deltaTime);
 	glRasterPos2f(-0.95f, 0.9f);
 	for (char c : timerText) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
@@ -255,13 +255,13 @@ void Map2_Mode::finish_game() {
 	}
 }
 
-void Map2_Mode::draw_finish_time() {
+void Map2_Mode::draw_finish_time(float deltaTime) {
 	glUseProgram(shaderProgramID_UI);
 
 	GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isRed");
 	glUniform1i(isTimerLocation, true);
 
-	std::string Text = "Time: " + std::to_string(30 - game_timer);
+	std::string Text = "Time: " + std::to_string(30 - deltaTime);
 
 	glRasterPos2f(0.0f, 0.0f);
 	for (char c : Text) {
@@ -727,12 +727,12 @@ void Map2_Mode::draw_model()  {
 
 	// Draw Timer
 	glDisable(GL_DEPTH_TEST);
-	draw_timer();
+	draw_timer(g_delta_time);
 	draw_ui();
 	draw_dashBoard();
 	draw_speed();
 	if (isGameOver)
-		draw_finish_time();
+		draw_finish_time(g_delta_time);
 	glEnable(GL_DEPTH_TEST);
 
 	glDisable(GL_DEPTH_TEST);
@@ -768,19 +768,6 @@ void Map2_Mode::updatePhysics(float deltaTime) {
 
 		instance->updatePhysics(deltaTime);
 		instance->timer();
-
-		if (!instance->isGameOver) {
-			static float elapsedTime = 0.0f;
-			elapsedTime += deltaTime;
-			if (elapsedTime >= 1.0f) {
-				elapsedTime = 0.0f;
-				instance->game_timer--;
-				if (instance->game_timer <= 0) {
-					instance->game_timer = 0;
-					instance->lose_game();
-				}
-			}
-		}
 	}
 
 	glutPostRedisplay();

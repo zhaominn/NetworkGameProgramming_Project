@@ -107,7 +107,7 @@ void Map1_Mode::draw_ui() {
 	glUseProgram(0);
 }
 
-void Map1_Mode::draw_timer() {
+void Map1_Mode::draw_timer(float deltaTime) {
 	glUseProgram(shaderProgramID_UI);
 
 
@@ -115,7 +115,7 @@ void Map1_Mode::draw_timer() {
 	glUniform1i(isTimerLocation, true);
 
 
-	std::string timerText = "Time: " + std::to_string(game_timer);
+	std::string timerText = "Time: " + std::to_string(deltaTime);
 	glRasterPos2f(-0.95f, 0.9f);
 	for (char c : timerText) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
@@ -130,7 +130,21 @@ void Map1_Mode::init()
 
 	UpdateRigidBodyTransforms(road1_barricate);
 	UpdateRigidBodyTransforms(karts);
+	
+	/*std::cout << "---------------------- Road1 Barricate Coordinates ----------------------" << std::endl;
 
+	for (auto& model : road1_barricate) {
+		if (!model || !model->rigidBody) continue;
+
+		float x = model->translateMatrix[3][0];
+		float y = model->translateMatrix[3][1];
+		float z = model->translateMatrix[3][2];
+
+		std::cout << "Barricate  Pos : "
+			<< x << ", " << y << ", " << z << std::endl;
+	}
+
+	std::cout << "---------------------- Road1 Barricate Coordinates ----------------------" << std::endl;*/
 
 	kart_keyState[UP] = false;
 	kart_keyState[DOWN] = false;
@@ -280,7 +294,7 @@ void Map1_Mode::finish_game() {
 		}).detach();
 }
 
-void Map1_Mode::draw_finish_time() {
+void Map1_Mode::draw_finish_time(float deltaTime) {
 	glUseProgram(shaderProgramID_UI);
 
 
@@ -288,7 +302,7 @@ void Map1_Mode::draw_finish_time() {
 	glUniform1i(isTimerLocation, true);
 
 
-	std::string Text = "Time: " + std::to_string(30 - game_timer);
+	std::string Text = "Time: " + std::to_string(30 - deltaTime);
 
 	glRasterPos2f(0.0f, 0.0f);
 	for (char c : Text) {
@@ -751,12 +765,12 @@ void Map1_Mode::draw_model() {
 
 	// Draw Timer
 	glDisable(GL_DEPTH_TEST);
-	draw_timer();
+	draw_timer(g_delta_time);
 	draw_ui();
 	draw_dashBoard();
 	draw_speed();
 	if (isGameOver)
-		draw_finish_time();
+		draw_finish_time(g_delta_time);
 	glEnable(GL_DEPTH_TEST);
 
 	glDisable(GL_DEPTH_TEST);
@@ -799,19 +813,6 @@ void Map1_Mode::timerHelper(int value) {
 		instance->updatePhysics(deltaTime); // ���� ���� ������Ʈ
 		instance->timer(); // ������ �� ���� ���� ������Ʈ
 
-		// ���� Ÿ�̸� ���� (���� ���� ���¿����� Ÿ�̸Ӹ� ���ҽ�Ű�� ����)
-		if (!instance->isGameOver) {
-			static float elapsedTime = 0.0f;
-			elapsedTime += deltaTime;
-			if (elapsedTime >= 1.0f) { // 1�ʰ� �����ٸ�
-				elapsedTime = 0.0f;
-				instance->game_timer--; // Ÿ�̸� 1�� ����
-				if (instance->game_timer <= 0) { // Ÿ�̸Ӱ� 0�� �Ǹ�
-					instance->game_timer = 0;
-					instance->lose_game(); // �й� ó��
-				}
-			}
-		}
 	}
 
 	//

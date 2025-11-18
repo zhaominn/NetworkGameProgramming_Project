@@ -21,6 +21,7 @@ private:
 	char m_id;
 	bool m_running;
 	Mode* m_currentMode;
+	float m_deltaTime;
 
 public:
 	NetworkMgr();

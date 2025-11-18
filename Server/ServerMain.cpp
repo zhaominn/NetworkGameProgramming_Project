@@ -1,25 +1,6 @@
 #include "Player.h"
 #include <iostream>
 
-DWORD WINAPI ClientThread(LPVOID socket)
-{
-	Player* player = reinterpret_cast<Player*>(socket);
-	SOCKET client_socket = player->GetSocket();
-	int my_id = player->GetID();
-
-	printf("[Player %d] ClientThread Start.\n", my_id);
-
-	while (true) {
-		player->recv_packet();
-		if (player->GetID() == -1)
-			break;
-	}
-
-	g_users[my_id].disconnect();
-	printf("[Thread %d] Thread End.\n", my_id);
-	return 0;
-}
-
 bool PlayerCollisionCheck(int myId)
 {
 	// 내 위치/크기 가져오기
@@ -52,6 +33,25 @@ bool PlayerCollisionCheck(int myId)
 	}
 
 	return false; // 충돌 없음
+}
+
+DWORD WINAPI ClientThread(LPVOID socket)
+{
+	Player* player = reinterpret_cast<Player*>(socket);
+	SOCKET client_socket = player->GetSocket();
+	int my_id = player->GetID();
+
+	printf("[Player %d] ClientThread Start.\n", my_id);
+
+	while (true) {
+		player->recv_packet();
+		if (player->GetID() == -1)
+			break;
+	}
+
+	g_users[my_id].disconnect();
+	printf("[Thread %d] Thread End.\n", my_id);
+	return 0;
 }
 
 //DWORD WINAPI UpdatePositon(LPVOID lpParam)
@@ -181,29 +181,46 @@ bool PlayerCollisionCheck(int myId)
 //	}
 //}
 
-
 DWORD WINAPI UpdatePositon(LPVOID lpParam)
 {
 	S2C_Move_Packet scpacket{};
 	scpacket.size = sizeof(S2C_Move_Packet);
 	scpacket.type = S2C_MOVE;
 
+
 	auto last = std::chrono::steady_clock::now();
+	auto startTime = std::chrono::steady_clock::now();
+	bool isFirstFrame = true;
 
 	while (true)
 	{
+
 		if (!g_GameStart) {
-			Sleep(1);
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			isFirstFrame = true;
 			continue;
 		}
 
 		auto now = std::chrono::steady_clock::now();
+
+		if (isFirstFrame) {
+			last = now;
+			startTime = now;
+			g_ElapsedTime = 0.0f;
+			isFirstFrame = false;
+			std::cout << "=== Game Timer Started ===" << std::endl;
+		}
+
 		auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count();
 
 		if (ms >= (1000 / 33))
 		{
 			float dt = ms / 1000.0f;
 			last = now;
+
+			std::chrono::duration<float> elapsed = now - startTime;
+			g_ElapsedTime = elapsed.count();
+
 
 			for (int i = 0; i < MAX_USER; i++)
 			{
@@ -218,19 +235,14 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					// 1) 속도 갱신: W 누르면 앞으로 전진, 안 누르면 감속
 					// =================================================
 					float speed = pl.GetSpeed();
-
-					if (pl.m_up)
-						speed += ACCELERATION;   // 가속
-					else
-						speed *= 0.90f;          // 자동 감속
-
+					if (pl.m_up) speed += ACCELERATION;   // 가속
+					else speed *= 0.90f;          // 자동 감속
 					pl.SetSpeed(speed);
 
 					// =================================================
 					// 2) z축으로만 전진(회전 무시)
 					// =================================================
 					float oldZ = pl.m_posZ;
-
 					pl.m_posZ -= speed * dt;   // ★ -Z 방향이 앞으로 가는 방향
 
 					// ===== 테스트 출력 =====
@@ -256,11 +268,13 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					scpacket.yaw = 0; // 테스트라 yaw 없음
 					scpacket.key = pl.GetKey();
 					scpacket.face_rotation = pl.GetFaceRotation();
-
 					scpacket.x = pl.m_posX;
 					scpacket.y = pl.m_posY;
 					scpacket.z = pl.m_posZ;
 				}
+
+				// 게임 종료했는지 확인
+				g_users[i].checkIsFinished();
 
 				// =================================================
 				// 5) 패킷 전송
@@ -273,9 +287,6 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		}
 	}
 }
-
-
-
 
 int main()
 {
@@ -380,6 +391,8 @@ int main()
 					EnterCriticalSection(&g_CS);
 					g_GameStart = true;
 					LeaveCriticalSection(&g_CS);
+
+					g_ElapsedTime = 0.f;
 				}
 			}
 			break;

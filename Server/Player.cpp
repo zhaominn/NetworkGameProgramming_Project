@@ -1,5 +1,7 @@
 #include "Player.h"
 
+// - 212 ~ -304 Map1 EndLine
+
 Player::~Player()
 {
 	delete[] m_name;
@@ -112,7 +114,6 @@ void Player::process_packet(char* p)
 		case RIGHT:   m_right = true; break;
 		case RIGHT_RELEASED: m_right = false; break;
 		}
-
 	}
 	break;
 	case C2S_BOOSTER:
@@ -200,6 +201,14 @@ void Player::send_Game_Start_Packet()
 	send_packet(reinterpret_cast<char*>(game_start), sizeof(S2C_GameStart_Packet));
 
 	delete game_start;
+}
+
+void Player::checkIsFinished()
+{
+	if ((g_room[0].mapType == STRAIGHT) && (m_posZ <= -304))
+	{
+		// send_Rank_Packet();
+	}
 }
 
 void Player::reset()

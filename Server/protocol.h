@@ -46,7 +46,7 @@ constexpr char S2C_IS_READY = 9;
 constexpr char S2C_GAME_START = 10;
 constexpr char S2C_MOVE = 11;
 constexpr char S2C_BOOSTER = 12;
-constexpr char S2C_WORLD_UPDATE = 13;
+// constexpr char S2C_WORLD_UPDATE = 13;
 constexpr char S2C_RANK = 14;
 constexpr char S2C_LOGOUT = 15;
 
@@ -75,6 +75,13 @@ struct S2C_Login_Fail_Packet
 	char type;
 };
 
+struct S2C_EnterRoom_Packet
+{
+	unsigned char size;
+	char type;
+	char id;
+};
+
 struct S2C_Ready_Packet
 {
 	unsigned char size;
@@ -83,36 +90,12 @@ struct S2C_Ready_Packet
 	bool is_ready;
 };
 
-
-struct S2C_Booster_Packet
-{
-	unsigned char size;
-	char type;
-	char id;
-};
-
-struct S2C_Rank_Packet
-{
-	unsigned char size;
-	char type;
-	char rank;
-};
-
-struct S2C_EnterRoom_Packet
-{
-	unsigned char size;
-	char type;
-	char id;
-};
-
 struct S2C_GameStart_Packet
 {
 	unsigned char size;
 	char type;
 };
 
-//class btRigidBody {}; // 나중에 수정..
-#pragma pack(push, 1)
 struct S2C_Move_Packet
 {
 	unsigned char size;
@@ -129,7 +112,20 @@ struct S2C_Move_Packet
 
 	//btRigidBody rigidBody;
 };
-#pragma pack(pop)
+
+struct S2C_Booster_Packet
+{
+	unsigned char size;
+	char type;
+	char id;
+};
+
+struct S2C_Rank_Packet
+{
+	unsigned char size;
+	char type;
+	char rank;
+};
 
 struct S2C_Finish_Packet
 {
