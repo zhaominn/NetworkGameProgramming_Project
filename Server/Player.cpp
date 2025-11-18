@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include "btBulletDynamicsCommon.h" // 충돌헤더
+
 Player::~Player()
 {
 	delete[] m_name;
