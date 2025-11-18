@@ -168,6 +168,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 	{
 		S2C_Rank_Packet* p = reinterpret_cast<S2C_Rank_Packet*>(buf);
 		g_players[g_myid].m_rank = p->rank;
+		g_delta_time = p->finish_time;
 		g_players[g_myid].m_finish_time = g_delta_time;
 	}
 		break;

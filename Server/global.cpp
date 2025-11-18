@@ -14,7 +14,7 @@ bool g_AllPlayerLogin = false;
 bool g_AllPlayerReady = false;
 bool g_GameStart = false;
 bool g_GameEnd = false;
-int g_rankCnt = 1	;
+int g_rankCnt = 1;
 
 std::mutex g_Sendmutex;
 std::mutex g_UserMutex;

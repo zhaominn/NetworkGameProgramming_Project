@@ -32,7 +32,7 @@ extern bool g_AllPlayerLogin;
 extern bool g_AllPlayerReady;
 extern bool g_GameStart;
 extern bool g_GameEnd;
-int g_rankCnt;
+extern int g_rankCnt;
 
 extern std::mutex g_Sendmutex;
 extern std::mutex g_UserMutex;

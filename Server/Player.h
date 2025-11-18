@@ -12,6 +12,7 @@ private:
 	KEY_TYPE m_key;
 	bool isReady;
 	bool isOnline;
+	bool isFinished;
 	SOCKET m_socket;
 
 public:
@@ -33,7 +34,7 @@ public:
 
 public:
 	Player() : m_id(-1), m_name(), m_yaw(0), m_speed(0), m_face_rotation(0),
-		m_key(RELEASED), isReady(false), isOnline(false), m_socket(INVALID_SOCKET) {
+		m_key(RELEASED), isReady(false), isOnline(false), isFinished(false), m_socket(INVALID_SOCKET) {
 	};
 	~Player();
 

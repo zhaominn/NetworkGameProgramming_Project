@@ -114,12 +114,26 @@ void Map1_Mode::draw_timer(float deltaTime) {
 	GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isTimer");
 	glUniform1i(isTimerLocation, true);
 
-
-	std::string timerText = "Time: " + std::to_string(deltaTime);
+	/*std::string timerText = "Time: " + std::to_string(deltaTime);
 	glRasterPos2f(-0.95f, 0.9f);
 	for (char c : timerText) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-	}
+	}*/
+
+	/*auto RenderText = [](float x, float y, std::string text) {
+		glRasterPos2f(x, y);
+		for (char c : text) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		}
+		};
+
+	std::string dtText = "Time: " + std::to_string(deltaTime);
+	RenderText(-0.95f, 0.90f, dtText);
+
+	std::string rankText = "Rank: " + std::to_string(g_players[g_myid].m_rank) + " / " + std::to_string(MAX_USER);
+	RenderText(-0.95f, 0.80f, rankText);*/
+
+
 	glUniform1i(isTimerLocation, false);
 
 	glUseProgram(0);
@@ -302,12 +316,27 @@ void Map1_Mode::draw_finish_time(float deltaTime) {
 	glUniform1i(isTimerLocation, true);
 
 
-	std::string Text = "Time: " + std::to_string(30 - deltaTime);
+	std::string Text = "Time: " + std::to_string(deltaTime);
 
-	glRasterPos2f(0.0f, 0.0f);
-	for (char c : Text) {
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-	}
+	//glRasterPos2f(0.0f, 0.0f);
+	//for (char c : Text) {
+	//	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+	//}
+
+	auto RenderText = [](float x, float y, std::string text) {
+		glRasterPos2f(x, y);
+		for (char c : text) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		}
+		};
+
+	std::string dtText = "Time: " + std::to_string(deltaTime);
+	RenderText(0.0f, 0.0f, dtText);
+
+	std::string rankText = "Rank: " + std::to_string(g_players[g_myid].m_rank) + " / " + std::to_string(MAX_USER);
+	RenderText(0.0f, 0.1f, rankText);
+
+
 	glUniform1i(isTimerLocation, false);
 
 	glUseProgram(0);
