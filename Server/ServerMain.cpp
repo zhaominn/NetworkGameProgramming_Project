@@ -56,8 +56,6 @@ DWORD WINAPI ClientThread(LPVOID socket)
 	return 0;
 }
 
-
-
 DWORD WINAPI UpdatePositon(LPVOID lpParam)
 {
 	S2C_Move_Packet* scpacket = new S2C_Move_Packet;
@@ -66,6 +64,8 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 	// Collect the state of all players and send it to every player
 	std::chrono::steady_clock::time_point last_send_time = std::chrono::steady_clock::now();
+	auto startTime = std::chrono::steady_clock::now();
+
 	while (true)
 	{
 		if (!g_GameStart) {
@@ -75,6 +75,8 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 		auto current_time = std::chrono::steady_clock::now();
 		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_send_time).count();
+		
+		g_ElapsedTime = std::chrono::duration<float>(current_time - startTime).count();
 
 		if (elapsed_time >= 1000 / 33) {
 			for (int i = 0; i < MAX_USER; ++i) {
@@ -195,6 +197,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					g_users[i].send_packet(reinterpret_cast<char*>(scpacket), sizeof(S2C_Move_Packet));
 				}
 
+				g_users[i].checkIsFinished();
 
 			}
 			last_send_time = current_time;

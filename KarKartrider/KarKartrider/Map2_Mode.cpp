@@ -261,7 +261,7 @@ void Map2_Mode::draw_finish_time(float deltaTime) {
 	GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isRed");
 	glUniform1i(isTimerLocation, true);
 
-	std::string Text = "Time: " + std::to_string(30 - deltaTime);
+	std::string Text = "Time: " + std::to_string(deltaTime);
 
 	glRasterPos2f(0.0f, 0.0f);
 	for (char c : Text) {
