@@ -470,33 +470,40 @@ void Map1_Mode::timer() {
 	float z = g_players[g_myid].z;
 	float body_angle = g_players[g_myid].m_body_rotation;
 
+	glm::vec3 targetPos(x, y, z);
+
+	if (g_firstRenderFrame)
+	{
+		g_kartRenderPos = targetPos;
+		g_firstRenderFrame = false;
+	}
+
+	const float posLerp = 0.3f; 
+	g_kartRenderPos = glm::mix(g_kartRenderPos, targetPos, posLerp);
+
 	for (const auto& kart : karts) {
 		glm::mat4 model = glm::mat4(1.0f);
 
-		// 1) 위치
 		model = glm::translate(model, glm::vec3(x, y, z));
 
-		// 2) 바라보는 방향 (Y축 회전)  ← 이때 yaw 사용
 		model = glm::rotate(
 			model,
 			glm::radians(g_players[g_myid].m_yaw),
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		);
 
-		// 3) 차체 기울기 (좌우로 살짝 기울이는 용도)
 		model = glm::rotate(
 			model,
 			glm::radians(body_angle),
 			glm::vec3(0.0f, 0.0f, 1.0f)
 		);
 
-		// 최종
-		kart->translateMatrix = model;   // 절대 이전 프레임 행렬을 쓰지 않음
+		kart->translateMatrix = model;  
 	}
 
 	for (const auto& kart : karts) {
 		//move
-		kart->setPosition(glm::vec3(x, y, z));
+		kart->setPosition(g_kartRenderPos);
 	}
 
 
