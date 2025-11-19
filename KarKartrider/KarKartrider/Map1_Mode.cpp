@@ -470,12 +470,12 @@ void Map1_Mode::timer() {
 		kart->setPosition(glm::vec3(x, y, z));
 	}
 
-	for (const auto& kart : karts) {
-		// rotate
-		kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
-		kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(g_players[g_myid].m_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
-		kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
-	}
+	//for (const auto& kart : karts) {
+	//	// rotate
+	//	kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
+	//	kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(g_players[g_myid].m_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+	//	kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
+	//}
 
 	for (const auto& c : character) {
 		c->translateMatrix = karts[0]->translateMatrix;

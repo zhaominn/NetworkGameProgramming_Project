@@ -124,7 +124,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 					if (g_users[i].m_left)
 					{
-						turnSpeed = TURN_ANGLE;
+						turnSpeed += TURN_ANGLE;
 
 						float f = g_users[i].GetFaceRotation();
 						f -= RETURN_SPEED;
@@ -133,7 +133,8 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 					if (g_users[i].m_right)
 					{
-						turnSpeed = -TURN_ANGLE;
+						turnSpeed += -TURN_ANGLE;
+
 						float f = g_users[i].GetFaceRotation();
 						f += RETURN_SPEED;
 						g_users[i].SetFaceRotation(f);
@@ -181,14 +182,13 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					// update position
 					float rad = g_users[i].GetYaw() * PI / 180.0f;
 
-					float dirX = sinf(rad);
+					float dirX = -sinf(rad);
 					float dirZ = -cosf(rad);
 
-					if (g_users[i].GetSpeed() > 0.0)
-					{
-						g_users[i].m_posX += speed * dirX;
-						g_users[i].m_posZ += speed * dirZ;
-					}
+
+					g_users[i].m_posX += speed * dirX;
+					g_users[i].m_posZ += speed * dirZ;
+
 
 					if (g_users[i].GetOnline()) {
 						scpacket->id = g_users[i].GetID();
