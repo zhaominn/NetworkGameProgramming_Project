@@ -463,19 +463,23 @@ void Map1_Mode::timer() {
 	float x = g_players[g_myid].x;
 	float y = g_players[g_myid].y;
 	float z = g_players[g_myid].z;
-	float yaw = g_players[g_myid].m_yaw;
+	float body_angle = g_players[g_myid].m_body_rotation;
 
 	for (const auto& kart : karts) {
 		//move
 		kart->setPosition(glm::vec3(x, y, z));
 	}
 
-	//for (const auto& kart : karts) {
-	//	// rotate
-	//	kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
-	//	kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(g_players[g_myid].m_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
-	//	kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
-	//}
+	for (const auto& kart : karts) {
+		// rotate
+		glm::mat4 bodyRotation = glm::rotate(
+			glm::mat4(1.0f),
+			glm::radians(body_angle),
+			glm::vec3(0.0f, 1.0f, 0.0f)
+		);
+
+		kart->translateMatrix = kart->translateMatrix * bodyRotation;
+	}
 
 	for (const auto& c : character) {
 		c->translateMatrix = karts[0]->translateMatrix;

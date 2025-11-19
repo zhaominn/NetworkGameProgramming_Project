@@ -83,8 +83,9 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 				{
 					std::lock_guard<std::mutex> lock1(g_UserMutex);
 
+					// update speed and yaw
 					float speed = g_users[i].GetSpeed();
-					float turnSpeed = g_users[i].GetYaw();
+					float yaw = g_users[i].GetYaw();
 
 					if (g_users[i].m_up)
 					{
@@ -124,20 +125,24 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 					if (g_users[i].m_left)
 					{
-						turnSpeed += TURN_ANGLE;
+						yaw += TURN_ANGLE;
 
 						float f = g_users[i].GetFaceRotation();
 						f -= RETURN_SPEED;
 						g_users[i].SetFaceRotation(f);
+
+						g_users[i].SetBodyRotation(TURN_ANGLE);
 					}
 
 					if (g_users[i].m_right)
 					{
-						turnSpeed += -TURN_ANGLE;
+						yaw += -TURN_ANGLE;
 
 						float f = g_users[i].GetFaceRotation();
 						f += RETURN_SPEED;
 						g_users[i].SetFaceRotation(f);
+
+						g_users[i].SetBodyRotation(-TURN_ANGLE);
 					}
 
 					if (g_users[i].m_release)
@@ -151,7 +156,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 							if (speed > 0.0f) speed = 0.0f;
 						}
 
-						turnSpeed = 0.0f;
+						//yaw = 0.0f;
 
 						float f = g_users[i].GetFaceRotation();
 
@@ -165,6 +170,8 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 						}
 
 						g_users[i].SetFaceRotation(f);
+
+						g_users[i].SetBodyRotation(0.0);
 					}
 
 
@@ -172,7 +179,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
 
 					g_users[i].SetSpeed(speed);
-					g_users[i].SetYaw(turnSpeed);
+					g_users[i].SetYaw(yaw);
 
 					float f = g_users[i].GetFaceRotation();
 					if (f > MAX_FACE_ROTATION) f = MAX_FACE_ROTATION;
@@ -189,7 +196,11 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					g_users[i].m_posX += speed * dirX;
 					g_users[i].m_posZ += speed * dirZ;
 
+					// collision check
+					// 여기 추가
 
+
+					// update all member
 					if (g_users[i].GetOnline()) {
 						scpacket->id = g_users[i].GetID();
 						scpacket->speed = g_users[i].GetSpeed();
@@ -199,6 +210,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 						scpacket->y = g_users[i].m_posY;
 						scpacket->z = g_users[i].m_posZ;
 						scpacket->face_rotation = g_users[i].GetFaceRotation();
+						scpacket->body_rotation = g_users[i].GetBodyRotation();
 					}
 				}
 

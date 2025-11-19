@@ -267,6 +267,7 @@ void Player::reset()
 	m_yaw = 0;
 	m_speed = 0;
 	m_face_rotation = 0;
+	m_body_rotation = 0;
 	m_key = RELEASED;
 	isReady = false;
 	isOnline = false;
@@ -314,6 +315,11 @@ void Player::SetFaceRotation(float f_rotation)
 	m_face_rotation = f_rotation;
 }
 
+void Player::SetBodyRotation(float b_rotation)
+{
+	m_body_rotation = b_rotation;
+}
+
 
 void Player::SetIsReady(bool ready)
 {
@@ -353,6 +359,11 @@ float Player::GetSpeed() const
 float Player::GetFaceRotation() const
 {
 	return m_face_rotation;
+}
+
+float Player::GetBodyRotation() const
+{
+	return m_body_rotation;
 }
 
 bool Player::GetReady() const

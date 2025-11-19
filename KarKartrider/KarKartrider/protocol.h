@@ -104,6 +104,7 @@ struct S2C_Move_Packet
 	float speed;
 	float yaw;
 	float face_rotation;
+	float body_rotation;
 	KEY_TYPE key;
 
 	float x;

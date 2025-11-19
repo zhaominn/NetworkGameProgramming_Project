@@ -8,6 +8,7 @@ struct PlayerKart {
 	float m_yaw;
 	float m_speed;
 	float m_face_rotation;
+	float m_body_rotation;
 	bool isReady;
 	bool isOnline;
 	KEY_TYPE m_key;

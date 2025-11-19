@@ -164,6 +164,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_players[p->id].m_key = p->key;
 		g_players[p->id].m_yaw = p->yaw;
 		g_players[p->id].m_face_rotation = p->face_rotation;
+		g_players[p->id].m_body_rotation = p->body_rotation;
 		g_players[p->id].x = p->x;
 		g_players[p->id].y = p->y;
 		g_players[p->id].z = p->z;

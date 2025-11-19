@@ -9,6 +9,7 @@ private:
 	float m_speed;
 	float m_yaw;
 	float m_face_rotation;
+	float m_body_rotation;
 	KEY_TYPE m_key;
 	bool isReady;
 	bool isOnline;
@@ -61,6 +62,7 @@ public:
 	void SetKey(KEY_TYPE key);
 	void SetSpeed(float speed);
 	void SetFaceRotation(float f_rotation);
+	void SetBodyRotation(float b_rotation);
 	void SetIsReady(bool ready);
 	void SetOnline(bool online);
 
@@ -71,6 +73,7 @@ public:
 	KEY_TYPE GetKey() const;
 	float GetSpeed() const;
 	float GetFaceRotation() const;
+	float GetBodyRotation() const;
 	bool GetReady() const;
 	bool GetOnline() const;
 };
