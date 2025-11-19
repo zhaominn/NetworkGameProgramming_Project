@@ -156,8 +156,6 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 							if (speed > 0.0f) speed = 0.0f;
 						}
 
-						//yaw = 0.0f;
-
 						float f = g_users[i].GetFaceRotation();
 
 						if (f > 0) {
@@ -192,12 +190,11 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					float dirX = -sinf(rad);
 					float dirZ = -cosf(rad);
 
-
 					g_users[i].m_posX += speed * dirX;
 					g_users[i].m_posZ += speed * dirZ;
 
 					// collision check
-					// 여기 추가
+					//PlayerCollisionCheck(g_users[i].GetID())
 
 
 					// update all member
@@ -227,115 +224,6 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 	}
 }
 
-
-
-//DWORD WINAPI UpdatePositon(LPVOID lpParam)
-//{
-//	S2C_Move_Packet scpacket{};
-//	scpacket.size = sizeof(S2C_Move_Packet);
-//	scpacket.type = S2C_MOVE;
-//
-//
-//	auto last = std::chrono::steady_clock::now();
-//	auto startTime = std::chrono::steady_clock::now();
-//	bool isFirstFrame = true;
-//
-//	while (true)
-//	{
-//
-//		if (!g_GameStart) {
-//			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-//			isFirstFrame = true;
-//			continue;
-//		}
-//
-//		auto now = std::chrono::steady_clock::now();
-//
-//		if (isFirstFrame) {
-//			last = now;
-//			startTime = now;
-//			g_ElapsedTime = 0.0f;
-//			g_rankCnt = 1;
-//			isFirstFrame = false;
-//			std::cout << "=== Game Timer Started ===" << std::endl;
-//		}
-//
-//		auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count();
-//
-//		if (ms >= (1000 / 33))
-//		{
-//			float dt = ms / 1000.0f;
-//			last = now;
-//
-//			std::chrono::duration<float> elapsed = now - startTime;
-//			g_ElapsedTime = elapsed.count();
-//
-//
-//			for (int i = 0; i < MAX_USER; i++)
-//			{
-//				if (!g_users[i].GetOnline()) continue;
-//
-//				{
-//					std::lock_guard<std::mutex> lock(g_UserMutex);
-//
-//					Player& pl = g_users[i];
-//
-//					// =================================================
-//					// 1) 속도 갱신: W 누르면 앞으로 전진, 안 누르면 감속
-//					// =================================================
-//					float speed = pl.GetSpeed();
-//					if (pl.m_up) speed += ACCELERATION;   // 가속
-//					else speed *= 0.90f;          // 자동 감속
-//					pl.SetSpeed(speed);
-//
-//					// =================================================
-//					// 2) z축으로만 전진(회전 무시)
-//					// =================================================
-//					float oldZ = pl.m_posZ;
-//					pl.m_posZ -= speed * dt;   // ★ -Z 방향이 앞으로 가는 방향
-//
-//					// ===== 테스트 출력 =====
-//					std::cout << "[Server Move]"
-//						<< "  id=" << pl.GetID()
-//						<< "  speed=" << speed
-//						<< "  dt=" << dt
-//						<< "  oldZ=" << oldZ
-//						<< "  newZ=" << pl.m_posZ
-//						<< std::endl;
-//
-//					// =================================================
-//					// 3) 충돌 체크
-//					// =================================================
-//					/*if (PlayerCollisionCheck(i))
-//						pl.m_posZ = oldZ;*/
-//
-//					// =================================================
-//					// 4) 패킷 작성
-//					// =================================================
-//					scpacket.id = pl.GetID();
-//					scpacket.speed = pl.GetSpeed();
-//					scpacket.yaw = 0; // 테스트라 yaw 없음
-//					scpacket.key = pl.GetKey();
-//					scpacket.face_rotation = pl.GetFaceRotation();
-//					scpacket.x = pl.m_posX;
-//					scpacket.y = pl.m_posY;
-//					scpacket.z = pl.m_posZ;
-//				}
-//
-//				// 게임 종료했는지 확인
-//				g_users[i].checkIsFinished();
-//
-//				// =================================================
-//				// 5) 패킷 전송
-//				// =================================================
-//				{
-//					std::lock_guard<std::mutex> lock(g_Sendmutex);
-//					g_users[i].send_packet(reinterpret_cast<char*>(&scpacket), sizeof(scpacket));
-//				}
-//			}
-//		}
-//	}
-//}
 
 int main()
 {

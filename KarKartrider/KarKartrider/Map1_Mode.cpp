@@ -144,7 +144,7 @@ void Map1_Mode::init()
 
 	UpdateRigidBodyTransforms(road1_barricate);
 	UpdateRigidBodyTransforms(karts);
-	
+
 	/*std::cout << "---------------------- Road1 Barricate Coordinates ----------------------" << std::endl;
 
 	for (auto& model : road1_barricate) {
@@ -224,50 +224,56 @@ void Map1_Mode::updateCameraDirection()
 {
 	glm::mat3 rotationMatrix = glm::mat3(karts[0]->translateMatrix);
 
-
 	glm::vec3 direction;
 	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	direction.y = sin(glm::radians(pitch));
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 
-
 	glm::vec3 rotatedDirection = rotationMatrix * direction;
-
 
 	glm::vec3 carPosition = glm::vec3(karts[0]->translateMatrix[3]);
 
-	cameraDirection = glm::normalize(rotatedDirection) + carPosition;
+	cameraDirection = glm::normalize(rotatedDirection) + smoothedCarPos;
 }
 
 void Map1_Mode::setCamera()
 {
 	glm::vec3 carPosition = glm::vec3(karts[0]->translateMatrix[3]);
-
-
 	glm::mat3 carRotationMatrix = glm::mat3(karts[0]->translateMatrix);
-
-
 	glm::quat carRotationQuat = glm::quat_cast(carRotationMatrix);
 
-	glm::quat interpolatedRotation = glm::slerp(cameraRotationQuat, carRotationQuat, reducedRotationInfluence);
-	cameraRotationQuat = interpolatedRotation;
+	float rawSpeed = g_players[g_myid].m_speed;
 
+	if (bFirstCameraFrame)
+	{
+		smoothedCarPos = carPosition;
+		smoothedCarRot = carRotationQuat;
+		smoothedSpeed = rawSpeed;
+		cameraPos = carPosition + carRotationQuat * glm::vec3(0.0f, 6.0f, 14.0f);
+		cameraRotationQuat = carRotationQuat;
+		bFirstCameraFrame = false;
+	}
 
-	glm::mat3 adjustedRotationMatrix = glm::mat3_cast(interpolatedRotation);
+	smoothedCarPos = glm::mix(smoothedCarPos, carPosition, carPosLerp);
+	smoothedCarRot = glm::slerp(smoothedCarRot, carRotationQuat, carRotLerp);
+	smoothedCarRot = glm::normalize(smoothedCarRot);
 
+	smoothedSpeed = glm::mix(smoothedSpeed, rawSpeed, speedLerp);
 
-	glm::vec3 baseOffset = glm::vec3(0.0f, 6.0f + (g_players[g_myid].m_speed * 2.0f), 14.0f + (g_players[g_myid].m_speed * 10.0f));
-	glm::vec3 rotatedOffset = adjustedRotationMatrix * baseOffset;
+	glm::vec3 baseOffset = glm::vec3(
+		0.0f,
+		6.0f + (smoothedSpeed * 2.0f),
+		14.0f + (smoothedSpeed * 10.0f)
+	);
 
+	glm::vec3 rotatedOffset = smoothedCarRot * baseOffset;
 
-	cameraTargetPos = carPosition + rotatedOffset;
-
+	cameraTargetPos = smoothedCarPos + rotatedOffset;
 
 	float cameraFollowSpeed = 0.1f;
 	cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
 
-
-	cameraDirection = carPosition;
+	cameraDirection = smoothedCarPos;
 }
 
 void Map1_Mode::goSelectMode_() {
@@ -486,7 +492,7 @@ void Map1_Mode::timer() {
 	}
 
 	if (g_players[g_myid].m_speed != 0.0f) {
-		reducedRotationInfluence = 0.1f + (std::abs(g_players[g_myid].m_speed) / MAX_SPEED) * 0.4f; 
+		reducedRotationInfluence = 0.1f + (std::abs(g_players[g_myid].m_speed) / MAX_SPEED) * 0.4f;
 	}
 	else {
 		reducedRotationInfluence += 0.01f;
@@ -515,18 +521,17 @@ void Map1_Mode::timer() {
 	//
 	for (const auto& c : character) {
 		if (c->name == "character_face") {
-			//
 			glm::mat4 headRotation = glm::rotate(
 				glm::mat4(1.0f),
 				glm::radians(-g_players[g_myid].m_face_rotation),
 				glm::vec3(0.0f, 0.0f, 1.0f)
 			);
 
-			headRotation = glm::rotate(
-				headRotation,
-				glm::radians(booster_head_tilt), //
-				glm::vec3(1.0f, 0.0f, 0.0f)
-			);
+			//headRotation = glm::rotate(
+			//	headRotation,
+			//	glm::radians(booster_head_tilt), 
+			//	glm::vec3(1.0f, 0.0f, 0.0f)
+			//);
 
 			c->translateMatrix = karts[0]->translateMatrix * headRotation;
 		}
@@ -535,16 +540,10 @@ void Map1_Mode::timer() {
 		}
 	}
 
-	//
 	setCamera();
-	//
-	float cameraFollowSpeed = 0.1f; //
-	cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
 
 	checkCollisionKart();
 	checkEngineSound();
-	//}
-		//}
 }
 
 void Map1_Mode::mouseClick(int button, int state, int x, int y) {
@@ -714,6 +713,7 @@ void Map1_Mode::specialKeyUp(int key, int x, int y) {
 		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
 		delete packet;
 	}
+	break;
 	case GLUT_KEY_DOWN:
 	{
 		C2S_Move_Packet* packet = new C2S_Move_Packet;
@@ -722,6 +722,7 @@ void Map1_Mode::specialKeyUp(int key, int x, int y) {
 		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
 		delete packet;
 	}
+	break;
 	case GLUT_KEY_LEFT:
 	{
 		C2S_Move_Packet* packet = new C2S_Move_Packet;
@@ -730,6 +731,7 @@ void Map1_Mode::specialKeyUp(int key, int x, int y) {
 		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
 		delete packet;
 	}
+	break;
 	case GLUT_KEY_RIGHT:
 	{
 		C2S_Move_Packet* packet = new C2S_Move_Packet;

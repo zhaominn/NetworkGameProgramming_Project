@@ -25,7 +25,6 @@ public:
 
 	bool Pause=false;
 
-	//Ű
 	std::unordered_map<Move, bool> kart_keyState;
 
 	bool up = false;
@@ -33,12 +32,22 @@ public:
 	bool left = false;
 	bool right = false;
 
+	// camera
 	glm::vec3 cameraTargetPos = glm::vec3(0.0, 0.0, 5.0); 
 	glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 5.0);       
 	glm::vec3 cameraDirection = glm::vec3(0.0, 0.0, -1.0);
 	glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0);
 	glm::mat4 projection = glm::mat4(1.0f);
 	glm::mat4 view = glm::mat4(1.0f);
+
+	glm::vec3 smoothedCarPos = glm::vec3(0.0f);
+	glm::quat smoothedCarRot = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+	float    smoothedSpeed = 0.0f;
+	bool     bFirstCameraFrame = true;
+
+	float carPosLerp = 0.2f;
+	float carRotLerp = 0.2f;
+	float speedLerp = 0.3f;
 
 	float yaw = -90.0f; 
 	float pitch = 0.0f; 
