@@ -205,7 +205,6 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 	}
 }
 
-
 int main()
 {
 	InitializeCriticalSection(&g_CS);

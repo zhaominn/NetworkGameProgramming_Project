@@ -65,7 +65,7 @@ void Map1_Mode::draw_speed()
 	glPushMatrix();
 	glPixelZoom(5.0f, 5.0f);
 
-	std::string speedText = std::to_string(static_cast<int>(kart_speed * 100));
+	std::string speedText = std::to_string(static_cast<int>(g_players[g_myid].m_speed*100));
 
 
 	glRasterPos2f(0.0f, -0.97f);
