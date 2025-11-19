@@ -59,7 +59,7 @@ void Map2_Mode::draw_speed() {
 	glPushMatrix();
 	glPixelZoom(5.0f, 5.0f);
 
-	std::string speedText = std::to_string(static_cast<int>(kart_speed * 100));
+	std::string speedText = std::to_string(static_cast<int>(g_players[g_myid].m_speed * 100));
 
 	glRasterPos2f(0.0f, -0.97f);
 	for (char c : speedText) {
@@ -263,10 +263,24 @@ void Map2_Mode::draw_finish_time(float deltaTime) {
 
 	std::string Text = "Time: " + std::to_string(deltaTime);
 
-	glRasterPos2f(0.0f, 0.0f);
+	/*glRasterPos2f(0.0f, 0.0f);
 	for (char c : Text) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-	}
+	}*/
+
+	auto RenderText = [](float x, float y, std::string text) {
+		glRasterPos2f(x, y);
+		for (char c : text) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		}
+		};
+
+	std::string dtText = "Time: " + std::to_string(deltaTime);
+	RenderText(0.0f, 0.0f, dtText);
+
+	std::string rankText = "Rank: " + std::to_string(g_players[g_myid].m_rank) + " / " + std::to_string(MAX_USER);
+	RenderText(0.0f, 0.1f, rankText);
+
 	glUniform1i(isTimerLocation, false);
 
 	glUseProgram(0);

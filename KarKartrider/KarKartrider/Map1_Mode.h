@@ -5,7 +5,6 @@
 #include <glm/glm/gtx/quaternion.hpp>
 #include <unordered_map> 
 #include <functional> 
-#include "NetGlobal.h"
 #include "protocol.h"
 
 
