@@ -11,9 +11,12 @@ private:
 	float m_face_rotation;
 	float m_body_rotation;
 	KEY_TYPE m_key;
+
 	bool isReady;
 	bool isOnline;
 	bool isFinished;
+	bool isBoosterActive;
+
 	SOCKET m_socket;
 
 public:
@@ -34,7 +37,7 @@ public:
 	float m_colliderHalfZ = 1.526595f;
 
 public:
-	Player() : m_id(-1), m_name(), m_yaw(0), m_speed(0), m_face_rotation(0),
+	Player() : m_id(-1), m_name(), m_yaw(0), m_speed(0), m_face_rotation(0), isBoosterActive(false),
 		m_key(RELEASED), isReady(false), isOnline(false), isFinished(false), m_socket(INVALID_SOCKET) {
 	};
 	~Player();

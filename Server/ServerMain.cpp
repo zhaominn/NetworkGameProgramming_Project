@@ -78,7 +78,9 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		
 		g_ElapsedTime = std::chrono::duration<float>(current_time - startTime).count();
 
-		if (elapsed_time >= 1000 / 33) {
+		float dt = static_cast<float>(elapsed_time) / 1000.0f;
+
+		if (elapsed_time >= 1000 / 60) {
 			for (int i = 0; i < MAX_USER; ++i) {
 
 				// update

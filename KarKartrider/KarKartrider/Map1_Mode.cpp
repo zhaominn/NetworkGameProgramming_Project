@@ -65,7 +65,7 @@ void Map1_Mode::draw_speed()
 	glPushMatrix();
 	glPixelZoom(5.0f, 5.0f);
 
-	std::string speedText = std::to_string(static_cast<int>(g_players[g_myid].m_speed*100));
+	std::string speedText = std::to_string(static_cast<int>(g_players[g_myid].m_speed * 100));
 
 
 	glRasterPos2f(0.0f, -0.97f);
@@ -478,7 +478,7 @@ void Map1_Mode::timer() {
 		g_firstRenderFrame = false;
 	}
 
-	const float posLerp = 0.3f; 
+	const float posLerp = 0.3f;
 	g_kartRenderPos = glm::mix(g_kartRenderPos, targetPos, posLerp);
 
 	for (const auto& kart : karts) {
@@ -498,7 +498,7 @@ void Map1_Mode::timer() {
 			glm::vec3(0.0f, 0.0f, 1.0f)
 		);
 
-		kart->translateMatrix = model;  
+		kart->translateMatrix = model;
 	}
 
 	for (const auto& kart : karts) {
@@ -706,19 +706,10 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 
 	// Ctrl
 	if (modifiers & GLUT_ACTIVE_CTRL) {
-
-		if (isBoosterActive) {
-			std::cout << "Booster is already active!" << std::endl;
-			return;
-		}
-
-		if (booster_cnt > 0) {
-			booster_cnt--;
-			activateBooster();
-		}
-		else {
-			std::cout << "No boosters left!" << std::endl;
-		}
+		C2S_Booster_Packet* packet = new C2S_Booster_Packet;
+		packet->type = C2S_BOOSTER;
+		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Booster_Packet));
+		delete packet;
 	}
 
 }

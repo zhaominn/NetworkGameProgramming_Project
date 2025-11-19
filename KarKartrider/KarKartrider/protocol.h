@@ -152,7 +152,7 @@ struct C2S_Change_Ready_Packet
 	bool is_ready;
 };
 
-struct C2S__Booster_Packet
+struct C2S_Booster_Packet
 {
 	unsigned char size;
 	char type;

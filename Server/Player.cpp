@@ -146,7 +146,10 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_BOOSTER:
 	{
-
+		if (!isBoosterActive) {
+			isBoosterActive = true;
+			std::cout << "booster on!" << std::endl;
+		}
 	}
 	break;
 	case C2S_LOGOUT:
@@ -271,6 +274,7 @@ void Player::reset()
 	m_key = RELEASED;
 	isReady = false;
 	isOnline = false;
+	isBoosterActive = false;
 	m_socket = INVALID_SOCKET;
 }
 
