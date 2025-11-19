@@ -108,6 +108,7 @@ void Player::process_packet(char* p)
 		switch (move_packet->key_type) {
 		case UP:      
 			m_up = true;    
+			m_release = false;
 			break;
 		case UP_RELEASED:   
 			m_up = false;  
@@ -116,6 +117,7 @@ void Player::process_packet(char* p)
 
 		case DOWN:    
 			m_down = true; 
+			m_release = false;
 			break;
 		case DOWN_RELEASED:
 			m_down = false; 
@@ -124,6 +126,7 @@ void Player::process_packet(char* p)
 
 		case LEFT:   
 			m_left = true; 
+			m_release = false;
 			break;
 		case LEFT_RELEASED:
 			m_left = false; 
@@ -132,6 +135,7 @@ void Player::process_packet(char* p)
 
 		case RIGHT:  
 			m_right = true;
+			m_release = false;
 			break;
 		case RIGHT_RELEASED: 
 			m_right = false; 
