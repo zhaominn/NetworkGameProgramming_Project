@@ -55,7 +55,7 @@ enum MAP_TYPE { STRAIGHT, RECTANGLE };
 enum DATA_TYPE { ACCEPT, SEND, RECV };
 enum KEY_TYPE {
 	UP, DOWN, LEFT, RIGHT, RELEASED,
-	UP_RELEASED, DOWN_RELEASED, LEFT_RELEASED, RIGHT_RELEASED, 
+	UP_RELEASED, DOWN_RELEASED, LEFT_RELEASED, RIGHT_RELEASED,
 };
 enum GAME_STATE { LOBBY, ROOM, INGAME };
 
@@ -101,6 +101,7 @@ struct S2C_Move_Packet
 	unsigned char size;
 	char type;
 	char id;
+	int booster_cnt;
 	float speed;
 	float yaw;
 	float face_rotation;
@@ -110,8 +111,6 @@ struct S2C_Move_Packet
 	float x;
 	float y;
 	float z;
-
-	//btRigidBody rigidBody;
 };
 
 struct S2C_Booster_Packet

@@ -271,6 +271,7 @@ void Player::reset()
 	m_speed = 0;
 	m_face_rotation = 0;
 	m_body_rotation = 0;
+	m_booster_cnt = 2;
 	m_key = RELEASED;
 	isReady = false;
 	isOnline = false;
@@ -297,6 +298,11 @@ void Player::SetName(const char* name)
 	m_name = new char[NAME_SIZE + 1];
 	strncpy(m_name, name, NAME_SIZE);
 	m_name[NAME_SIZE] = '\0';
+}
+
+void Player::SetBoosterCnt(int booster)
+{
+	m_booster_cnt = booster;
 }
 
 void Player::SetYaw(float yaw)
@@ -338,6 +344,11 @@ void Player::SetOnline(bool online)
 int Player::GetID() const
 {
 	return m_id;
+}
+
+int Player::GetBoosterCnt() const
+{
+	return m_booster_cnt;
 }
 
 char* Player::GetName() const
