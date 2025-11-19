@@ -45,6 +45,10 @@ public:
 	float    smoothedSpeed = 0.0f;
 	bool     bFirstCameraFrame = true;
 
+	glm::vec3 m_kartRenderPos = glm::vec3(0.0f);
+	glm::quat m_kartRenderRot = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+	bool     m_firstRenderFrame = true;
+
 	float carPosLerp = 0.2f;
 	float carRotLerp = 0.2f;
 	float speedLerp = 0.3f;

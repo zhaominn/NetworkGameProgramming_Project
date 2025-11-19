@@ -90,37 +90,11 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					if (g_users[i].m_up)
 					{
 						speed += ACCELERATION;
-
-						float f = g_users[i].GetFaceRotation();
-
-						if (f > 0) {
-							f -= RETURN_SPEED;
-							if (f < 0) f = 0;
-						}
-						else if (f < 0) {
-							f += RETURN_SPEED;
-							if (f > 0) f = 0;
-						}
-
-						g_users[i].SetFaceRotation(f);
 					}
 
 					if (g_users[i].m_down)
 					{
 						speed -= ACCELERATION;
-
-						float f = g_users[i].GetFaceRotation();
-
-						if (f > 0) {
-							f -= RETURN_SPEED;
-							if (f < 0) f = 0;
-						}
-						else if (f < 0) {
-							f += RETURN_SPEED;
-							if (f > 0) f = 0;
-						}
-
-						g_users[i].SetFaceRotation(f);
 					}
 
 					if (g_users[i].m_left)
@@ -145,7 +119,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 						g_users[i].SetBodyRotation(-TURN_ANGLE);
 					}
 
-					if (g_users[i].m_release)
+					if (!g_users[i].m_up && !g_users[i].m_down)
 					{
 						if (speed > 0.0f) {
 							speed -= DECELERATION;
@@ -155,6 +129,10 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 							speed += DECELERATION;
 							if (speed > 0.0f) speed = 0.0f;
 						}
+
+					}
+					if (!g_users[i].m_right && !g_users[i].m_left)
+					{
 
 						float f = g_users[i].GetFaceRotation();
 

@@ -465,11 +465,11 @@ void Map1_Mode::checkEngineSound() {
 }
 
 void Map1_Mode::timer() {
-
 	float x = g_players[g_myid].x;
 	float y = g_players[g_myid].y;
 	float z = g_players[g_myid].z;
 	float body_angle = g_players[g_myid].m_body_rotation;
+
 
 	for (const auto& kart : karts) {
 		//move
@@ -478,13 +478,15 @@ void Map1_Mode::timer() {
 
 	for (const auto& kart : karts) {
 		// rotate
-		glm::mat4 bodyRotation = glm::rotate(
+		kart->setRotation(g_players[g_myid].m_yaw);
+
+		glm::mat4 headRotation = glm::rotate(
 			glm::mat4(1.0f),
 			glm::radians(body_angle),
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		);
 
-		kart->translateMatrix = kart->translateMatrix * bodyRotation;
+		kart->translateMatrix = kart->translateMatrix * headRotation;
 	}
 
 	for (const auto& c : character) {
