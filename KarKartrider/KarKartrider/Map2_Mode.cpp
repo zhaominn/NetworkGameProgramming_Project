@@ -527,6 +527,25 @@ void Map2_Mode::timer() {
 				}
 			}
 
+			if (up || down || left || right)
+			{
+
+				if (up) networkmgr.SendMovePacket(KEY_TYPE::UP);
+				else if (down) networkmgr.SendMovePacket(KEY_TYPE::DOWN);
+				else if (left) networkmgr.SendMovePacket(KEY_TYPE::LEFT);
+				else if (right) networkmgr.SendMovePacket(KEY_TYPE::RIGHT);
+			}
+
+			if (!up || !down || !left || !right)
+			{
+
+				if (!up) networkmgr.SendMovePacket(KEY_TYPE::UP_RELEASED);
+				if (!down) networkmgr.SendMovePacket(KEY_TYPE::DOWN_RELEASED);
+				if (!left) networkmgr.SendMovePacket(KEY_TYPE::LEFT_RELEASED);
+				if (!right) networkmgr.SendMovePacket(KEY_TYPE::RIGHT_RELEASED);
+			}
+
+
 			setCamera();
 			float cameraFollowSpeed = 0.1f;
 			cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
@@ -629,24 +648,22 @@ void Map2_Mode::specialKey(int key, int x, int y)  {
 
 
 	switch (key) {
-	case GLUT_KEY_UP:
-		kart_keyState[UP] = true;
-		break;
-	case GLUT_KEY_DOWN:
-		kart_keyState[DOWN] = true;
-		break;
-	case GLUT_KEY_LEFT:
-		kart_keyState[LEFT] = true;
-		if (character_face_rotation > -MAX_FACE_ROTATION) {
-			character_face_rotation -= ROTATION_SPEED;
-		}
-		break;
-	case GLUT_KEY_RIGHT:
-		kart_keyState[RIGHT] = true;
-		if (character_face_rotation < MAX_FACE_ROTATION) {
-			character_face_rotation += ROTATION_SPEED;
-		}
-		break;
+	case GLUT_KEY_UP: {
+		up = true;
+	}
+					break;
+	case GLUT_KEY_DOWN: {
+		down = true;
+	}
+					  break;
+	case GLUT_KEY_LEFT: {
+		left = true;
+	}
+					  break;
+	case GLUT_KEY_RIGHT: {
+		right = true;
+	}
+					   break;
 	}
 
 	int modifiers = glutGetModifiers();
@@ -671,17 +688,25 @@ void Map2_Mode::specialKey(int key, int x, int y)  {
 void Map2_Mode::specialKeyUp(int key, int x, int y)  {
 	switch (key) {
 	case GLUT_KEY_UP:
-		kart_keyState[UP] = false;
-		break;
+	{
+		up = false;
+	}
+	break;
 	case GLUT_KEY_DOWN:
-		kart_keyState[DOWN] = false;
-		break;
+	{
+		down = false;
+	}
+	break;
 	case GLUT_KEY_LEFT:
-		kart_keyState[LEFT] = false;
-		break;
+	{
+		left = false;
+	}
+	break;
 	case GLUT_KEY_RIGHT:
-		kart_keyState[RIGHT] = false;
-		break;
+	{
+		right = false;
+	}
+	break;
 	}
 }
 
