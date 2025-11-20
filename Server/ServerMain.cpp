@@ -1,7 +1,6 @@
 #include "Player.h"
 #include <iostream>
 
-const float PI = 3.1415926535f;
 
 bool PlayerCollisionCheck(int myId)
 {
@@ -75,133 +74,19 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 		auto current_time = std::chrono::steady_clock::now();
 		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_send_time).count();
-		
+
 		g_ElapsedTime = std::chrono::duration<float>(current_time - startTime).count();
 
 		float dt = static_cast<float>(elapsed_time) / 1000.0f;
 
 		if (elapsed_time >= 1000 / 60) {
 			for (int i = 0; i < MAX_USER; ++i) {
-
-				// update
 				{
-					std::lock_guard<std::mutex> lock1(g_UserMutex);
-
-					// update speed and yaw
-					float speed = g_users[i].GetSpeed();
-					float yaw = g_users[i].GetYaw();
-
-					if (g_users[i].m_up)
-					{
-						speed += ACCELERATION;
-					}
-
-					if (g_users[i].m_down)
-					{
-						speed -= ACCELERATION;
-					}
-
-					if (g_users[i].m_left)
-					{
-						yaw += TURN_ANGLE;
-
-						float f = g_users[i].GetFaceRotation();
-						f -= RETURN_SPEED;
-						g_users[i].SetFaceRotation(f);
-
-						g_users[i].SetBodyRotation(TURN_ANGLE);
-					}
-
-					if (g_users[i].m_right)
-					{
-						yaw += -TURN_ANGLE;
-
-						float f = g_users[i].GetFaceRotation();
-						f += RETURN_SPEED;
-						g_users[i].SetFaceRotation(f);
-
-						g_users[i].SetBodyRotation(-TURN_ANGLE);
-					}
-
-					if (!g_users[i].m_up && !g_users[i].m_down)
-					{
-						if (speed > 0.0f) {
-							speed -= DECELERATION;
-							if (speed < 0.0f) speed = 0.0f;
-						}
-						else if (speed < 0.0f) {
-							speed += DECELERATION;
-							if (speed > 0.0f) speed = 0.0f;
-						}
-
-					}
-					if (!g_users[i].m_right && !g_users[i].m_left)
-					{
-
-						float f = g_users[i].GetFaceRotation();
-
-						if (f > 0.0f) {
-							f -= RETURN_SPEED;
-							if (f < 0.0f) f = 0.0f;
-						}
-						else if (f < 0.0f) {
-							f += RETURN_SPEED;
-							if (f > 0.0f) f = 0.0f;
-						}
-
-						g_users[i].SetFaceRotation(f);
-
-						g_users[i].SetBodyRotation(0.0);
-					}
-
-
-					if (speed > MAX_SPEED)speed = MAX_SPEED;
-					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
-
-					g_users[i].SetSpeed(speed);
-					g_users[i].SetYaw(yaw);
-
-					float f = g_users[i].GetFaceRotation();
-					if (f > MAX_FACE_ROTATION) f = MAX_FACE_ROTATION;
-					if (f < -MAX_FACE_ROTATION) f = -MAX_FACE_ROTATION;
-					g_users[i].SetFaceRotation(f);
-
-					// update position
-					float rad = g_users[i].GetYaw() * PI / 180.0f;
-
-					float dirX = -sinf(rad);
-					float dirZ = -cosf(rad);
-
-					g_users[i].m_posX += speed * dirX;
-					g_users[i].m_posZ += speed * dirZ;
-
-					// collision check
-					//PlayerCollisionCheck(g_users[i].GetID())
-
-
-					// update all member
 					if (g_users[i].GetOnline()) {
-						scpacket->id = g_users[i].GetID();
-						scpacket->booster_cnt = g_users[i].GetBodyRotation();
-						scpacket->speed = g_users[i].GetSpeed();
-						scpacket->yaw = g_users[i].GetYaw();
-						scpacket->key = g_users[i].GetKey();
-						scpacket->x = g_users[i].m_posX;
-						scpacket->y = g_users[i].m_posY;
-						scpacket->z = g_users[i].m_posZ;
-						scpacket->face_rotation = g_users[i].GetFaceRotation();
-						scpacket->body_rotation = g_users[i].GetBodyRotation();
+						g_users[i].send_move_Packet();
 					}
 				}
-
-				// send
-				if (g_users[i].GetOnline()) {
-					std::lock_guard<std::mutex> lock2(g_Sendmutex);
-					g_users[i].send_packet(reinterpret_cast<char*>(scpacket), sizeof(S2C_Move_Packet));
-				}
-
 				g_users[i].checkIsFinished();
-
 			}
 			last_send_time = current_time;
 		}

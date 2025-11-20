@@ -125,11 +125,14 @@ void NetworkMgr::SendChangeReadyPacket(bool status)
 	delete change_ready_packet;
 }
 
-void NetworkMgr::SendMovePacket(KEY_TYPE key_type)
+void NetworkMgr::SendMovePacket(bool up, bool down, bool left, bool right)
 {
 	C2S_Move_Packet* packet = new C2S_Move_Packet;
 	packet->type = C2S_MOVE;
-	packet->key_type = key_type;
+	packet->up = up;
+	packet->down = down;
+	packet->left = left;
+	packet->right = right;
 
 	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
 	delete packet;
@@ -145,7 +148,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 		S2C_PlayerInfo_Packet* playerinfo_packet = reinterpret_cast<S2C_PlayerInfo_Packet*>(buf);
 		g_myid = playerinfo_packet->id;
 		g_players[g_myid].m_id = g_myid;
-		g_players[g_myid].m_key = RELEASED;
 	}
 						break;
 	case S2C_LOGIN_FAIL: {
@@ -171,7 +173,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 	{
 		S2C_Move_Packet* p = reinterpret_cast<S2C_Move_Packet*>(buf);
 		g_players[p->id].m_speed = p->speed;
-		g_players[p->id].m_key = p->key;
 		g_players[p->id].m_yaw = p->yaw;
 		g_players[p->id].m_face_rotation = p->face_rotation;
 		g_players[p->id].m_body_rotation = p->body_rotation;

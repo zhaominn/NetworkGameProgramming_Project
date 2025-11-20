@@ -103,45 +103,83 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_MOVE:
 	{
+		std::lock_guard<std::mutex> lock1(g_UserMutex);
+
 		C2S_Move_Packet* move_packet = reinterpret_cast<C2S_Move_Packet*>(p);
+		m_up = move_packet->up;
+		m_down = move_packet->down;
+		m_left = move_packet->left;
+		m_right = move_packet->right;
 
-		switch (move_packet->key_type) {
-		case UP:      
-			m_up = true;    
-			m_release = false;
-			break;
-		case UP_RELEASED:   
-			m_up = false;  
-			m_release = true;
-			break;
-
-		case DOWN:    
-			m_down = true; 
-			m_release = false;
-			break;
-		case DOWN_RELEASED:
-			m_down = false; 
-			m_release = true;
-			break;
-
-		case LEFT:   
-			m_left = true; 
-			m_release = false;
-			break;
-		case LEFT_RELEASED:
-			m_left = false; 
-			m_release = true;
-			break;
-
-		case RIGHT:  
-			m_right = true;
-			m_release = false;
-			break;
-		case RIGHT_RELEASED: 
-			m_right = false; 
-			m_release = true;
-			break;
+		if (m_up)
+		{
+			SetSpeed(m_speed + ACCELERATION);
 		}
+		if (m_down)
+		{
+			SetSpeed(m_speed - ACCELERATION);
+		}
+		if (m_left)
+		{
+			SetYaw(m_yaw + TURN_ANGLE);
+			float f = GetFaceRotation();
+			f -= RETURN_SPEED;
+			SetFaceRotation(f);
+			SetBodyRotation(TURN_ANGLE);
+		}
+		if (m_right)
+		{
+			SetYaw(m_yaw - TURN_ANGLE);
+			float f = GetFaceRotation();
+			f += RETURN_SPEED;
+			SetFaceRotation(f);
+			SetBodyRotation(-TURN_ANGLE);
+		}
+
+
+		if (!m_up && !m_down)
+		{
+			if (GetSpeed() > 0.0f) {
+				SetSpeed(m_speed - DECELERATION);
+				if (GetSpeed() < 0.0f) SetSpeed(0.0f);
+			}
+			else if (GetSpeed() < 0.0f) {
+				SetSpeed(m_speed + DECELERATION);
+				if (GetSpeed() > 0.0f) SetSpeed(0.0f);
+			}
+		}
+
+		if (!m_left && !m_right)
+		{
+			float f = GetFaceRotation();
+			if (f > 0.0f) {
+				f -= RETURN_SPEED;
+				if (f < 0.0f) f = 0.0f;
+			}
+			else if (f < 0.0f) {
+				f += RETURN_SPEED;
+				if (f > 0.0f) f = 0.0f;
+			}
+			SetFaceRotation(f);
+			SetBodyRotation(0.0);
+		}
+
+		if (m_speed > MAX_SPEED) SetSpeed(MAX_SPEED);
+		if (m_speed < -MAX_SPEED / 2.0f) SetSpeed(-MAX_SPEED / 2.0f);
+
+		float f_limit = GetFaceRotation();
+		if (f_limit > MAX_FACE_ROTATION) f_limit = MAX_FACE_ROTATION;
+		if (f_limit < -MAX_FACE_ROTATION) f_limit = -MAX_FACE_ROTATION;
+		SetFaceRotation(f_limit);
+
+		// -------------- 일괄 이동 처리 --------------
+		float rad = GetYaw() * PI / 180.0f;
+
+		float dirX = -sinf(rad);
+		float dirZ = -cosf(rad);
+
+		m_posX += GetSpeed() * dirX;
+		m_posZ += GetSpeed() * dirZ;
 	}
 	break;
 	case C2S_BOOSTER:
@@ -182,7 +220,6 @@ void Player::process_packet(char* p)
 		std::cout << "Error Invalid Packet Type\n";
 	}
 }
-
 
 void Player::disconnect()
 {
@@ -234,6 +271,26 @@ void Player::send_Game_Start_Packet()
 	delete game_start;
 }
 
+void Player::send_move_Packet()
+{
+	S2C_Move_Packet* move_pkt = new S2C_Move_Packet;
+	move_pkt->size = sizeof(S2C_Move_Packet);
+	move_pkt->type = S2C_MOVE;
+
+	std::lock_guard<std::mutex> lock2(g_Sendmutex);
+	move_pkt->id = GetID();
+	move_pkt->booster_cnt = GetBodyRotation();
+	move_pkt->speed = GetSpeed();
+	move_pkt->yaw = GetYaw();
+	move_pkt->x = m_posX;
+	move_pkt->y = m_posY;
+	move_pkt->z = m_posZ;
+	move_pkt->face_rotation = GetFaceRotation();
+	move_pkt->body_rotation = GetBodyRotation();
+
+	send_packet(reinterpret_cast<char*>(move_pkt), sizeof(S2C_Move_Packet));
+}
+
 void Player::send_Rank_Packet()
 {
 	S2C_Rank_Packet* rank_pkt = new S2C_Rank_Packet;
@@ -249,7 +306,7 @@ void Player::send_Rank_Packet()
 
 void Player::checkIsFinished()
 {
-	if (!isFinished&&(g_room[0].mapType == STRAIGHT) && (m_posZ <= -212))
+	if (!isFinished && (g_room[0].mapType == STRAIGHT) && (m_posZ <= -212))
 	{
 		isFinished = true;
 		send_Rank_Packet();
@@ -272,7 +329,6 @@ void Player::reset()
 	m_face_rotation = 0;
 	m_body_rotation = 0;
 	m_booster_cnt = 2;
-	m_key = RELEASED;
 	isReady = false;
 	isOnline = false;
 	isBoosterActive = false;
@@ -310,11 +366,6 @@ void Player::SetYaw(float yaw)
 	m_yaw = yaw;
 }
 
-void Player::SetKey(KEY_TYPE key)
-{
-	m_key = key;
-}
-
 void Player::SetSpeed(float speed)
 {
 	m_speed = speed;
@@ -329,7 +380,6 @@ void Player::SetBodyRotation(float b_rotation)
 {
 	m_body_rotation = b_rotation;
 }
-
 
 void Player::SetIsReady(bool ready)
 {
@@ -359,11 +409,6 @@ char* Player::GetName() const
 float Player::GetYaw() const
 {
 	return m_yaw;
-}
-
-KEY_TYPE Player::GetKey() const
-{
-	return m_key;
 }
 
 float Player::GetSpeed() const

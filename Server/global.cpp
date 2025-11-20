@@ -16,5 +16,7 @@ bool g_GameStart = false;
 bool g_GameEnd = false;
 int g_rankCnt = 1;
 
+const float PI = 3.1415926535f;
+
 std::mutex g_Sendmutex;
 std::mutex g_UserMutex;

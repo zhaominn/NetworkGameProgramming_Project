@@ -45,7 +45,7 @@ public:
 	void SendLoginPacket(std::string name);
 
 	void SendChangeReadyPacket(bool status);
-	void SendMovePacket(KEY_TYPE key_type);
+	void SendMovePacket(bool up, bool down, bool left, bool right);
 
 public:
 	void ProcessPacket(char* buf);

@@ -11,7 +11,6 @@ struct PlayerKart {
 	float m_body_rotation;
 	bool isReady;
 	bool isOnline;
-	KEY_TYPE m_key;
 	SOCKET m_socket;
 
 	int m_rank;

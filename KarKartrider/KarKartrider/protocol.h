@@ -53,10 +53,6 @@ constexpr char S2C_LOGOUT = 15;
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
 enum DATA_TYPE { ACCEPT, SEND, RECV };
-enum KEY_TYPE {
-	UP, DOWN, LEFT, RIGHT, RELEASED,
-	UP_RELEASED, DOWN_RELEASED, LEFT_RELEASED, RIGHT_RELEASED,
-};
 enum GAME_STATE { LOBBY, ROOM, INGAME };
 
 #pragma pack (push, 1)
@@ -106,7 +102,6 @@ struct S2C_Move_Packet
 	float yaw;
 	float face_rotation;
 	float body_rotation;
-	KEY_TYPE key;
 
 	float x;
 	float y;
@@ -175,7 +170,11 @@ struct C2S_Move_Packet
 {
 	unsigned char size;
 	char type;
-	KEY_TYPE key_type;
+
+	bool up;
+	bool down;
+	bool left;
+	bool right;
 	//btRigidBody rigidBody;
 };
 

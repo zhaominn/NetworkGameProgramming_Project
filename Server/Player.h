@@ -11,7 +11,6 @@ private:
 	float m_yaw;
 	float m_face_rotation;
 	float m_body_rotation;
-	KEY_TYPE m_key;
 
 	bool isReady;
 	bool isOnline;
@@ -38,8 +37,8 @@ public:
 	float m_colliderHalfZ = 1.526595f;
 
 public:
-	Player() : m_id(-1), m_name(), m_booster_cnt(2), m_yaw(0), m_speed(0), m_face_rotation(0), isBoosterActive(false),
-		m_key(RELEASED), isReady(false), isOnline(false), isFinished(false), m_socket(INVALID_SOCKET) {
+	Player() : m_id(-1), m_name(), m_booster_cnt(2), m_yaw(0), m_speed(0), m_face_rotation(0),
+		isBoosterActive(false), isReady(false), isOnline(false), isFinished(false), m_socket(INVALID_SOCKET) {
 	};
 	~Player();
 
@@ -49,6 +48,7 @@ public:
 	void disconnect();
 
 	void send_Game_Start_Packet();
+	void send_move_Packet();
 
 	// ingame
 	void send_Rank_Packet();
@@ -64,7 +64,6 @@ public:
 	void SetName(const char* name);
 	void SetBoosterCnt(int booster);
 	void SetYaw(float yaw);
-	void SetKey(KEY_TYPE key);
 	void SetSpeed(float speed);
 	void SetFaceRotation(float f_rotation);
 	void SetBodyRotation(float b_rotation);
@@ -76,7 +75,6 @@ public:
 	int GetBoosterCnt() const;
 	char* GetName() const;
 	float GetYaw() const;
-	KEY_TYPE GetKey() const;
 	float GetSpeed() const;
 	float GetFaceRotation() const;
 	float GetBodyRotation() const;

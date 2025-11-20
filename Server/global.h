@@ -34,5 +34,7 @@ extern bool g_GameStart;
 extern bool g_GameEnd;
 extern int g_rankCnt;
 
+extern const float PI;
+
 extern std::mutex g_Sendmutex;
 extern std::mutex g_UserMutex;

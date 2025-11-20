@@ -527,23 +527,7 @@ void Map2_Mode::timer() {
 				}
 			}
 
-			if (up || down || left || right)
-			{
-
-				if (up) networkmgr.SendMovePacket(KEY_TYPE::UP);
-				else if (down) networkmgr.SendMovePacket(KEY_TYPE::DOWN);
-				else if (left) networkmgr.SendMovePacket(KEY_TYPE::LEFT);
-				else if (right) networkmgr.SendMovePacket(KEY_TYPE::RIGHT);
-			}
-
-			if (!up || !down || !left || !right)
-			{
-
-				if (!up) networkmgr.SendMovePacket(KEY_TYPE::UP_RELEASED);
-				if (!down) networkmgr.SendMovePacket(KEY_TYPE::DOWN_RELEASED);
-				if (!left) networkmgr.SendMovePacket(KEY_TYPE::LEFT_RELEASED);
-				if (!right) networkmgr.SendMovePacket(KEY_TYPE::RIGHT_RELEASED);
-			}
+			networkmgr.SendMovePacket(up, down, left, right);
 
 
 			setCamera();
