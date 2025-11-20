@@ -125,6 +125,16 @@ void NetworkMgr::SendChangeReadyPacket(bool status)
 	delete change_ready_packet;
 }
 
+void NetworkMgr::SendMovePacket(KEY_TYPE key_type)
+{
+	C2S_Move_Packet* packet = new C2S_Move_Packet;
+	packet->type = C2S_MOVE;
+	packet->key_type = key_type;
+
+	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
+	delete packet;
+}
+
 void NetworkMgr::ProcessPacket(char* buf)
 {
 	unsigned char type = buf[1];

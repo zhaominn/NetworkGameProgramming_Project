@@ -446,7 +446,6 @@ void Map1_Mode::checkCollisionKart() {
 	}
 }
 
-
 void Map1_Mode::checkEngineSound() {
 	if (g_players[g_myid].m_speed != 0.0f) {
 		if (!isMotorSound) {
@@ -560,6 +559,25 @@ void Map1_Mode::timer() {
 		}
 	}
 
+
+	if (up || down || left || right)
+	{
+		
+		if(up) networkmgr.SendMovePacket(KEY_TYPE::UP);
+		else if(down) networkmgr.SendMovePacket(KEY_TYPE::DOWN);
+		else if(left) networkmgr.SendMovePacket(KEY_TYPE::LEFT);
+		else if (right) networkmgr.SendMovePacket(KEY_TYPE::RIGHT);
+	}
+
+	if (!up || !down || !left || !right)
+	{
+		
+		if(!up) networkmgr.SendMovePacket(KEY_TYPE::UP_RELEASED);
+		if(!down) networkmgr.SendMovePacket(KEY_TYPE::DOWN_RELEASED);
+		if(!left) networkmgr.SendMovePacket(KEY_TYPE::LEFT_RELEASED);
+		if (!right) networkmgr.SendMovePacket(KEY_TYPE::RIGHT_RELEASED);
+	}
+
 	setCamera();
 
 	checkCollisionKart();
@@ -625,7 +643,6 @@ void Map1_Mode::keyboard(unsigned char key, int x, int y) {
 	}
 }
 
-
 void Map1_Mode::activateBooster() {
 
 
@@ -669,35 +686,19 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 
 	switch (key) {
 	case GLUT_KEY_UP: {
-		C2S_Move_Packet* packet = new C2S_Move_Packet;
-		packet->type = C2S_MOVE;
-		packet->key_type = KEY_TYPE::UP;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
-		delete packet;
+		up = true;
 	}
 					break;
 	case GLUT_KEY_DOWN: {
-		C2S_Move_Packet* packet = new C2S_Move_Packet;
-		packet->type = C2S_MOVE;
-		packet->key_type = KEY_TYPE::DOWN;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
-		delete packet;
+		down = true;
 	}
 					  break;
 	case GLUT_KEY_LEFT: {
-		C2S_Move_Packet* packet = new C2S_Move_Packet;
-		packet->type = C2S_MOVE;
-		packet->key_type = KEY_TYPE::LEFT;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
-		delete packet;
+		left = true;
 	}
 					  break;
 	case GLUT_KEY_RIGHT: {
-		C2S_Move_Packet* packet = new C2S_Move_Packet;
-		packet->type = C2S_MOVE;
-		packet->key_type = KEY_TYPE::RIGHT;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
-		delete packet;
+		right = true;
 	}
 					   break;
 	}
@@ -718,38 +719,22 @@ void Map1_Mode::specialKeyUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
 	{
-		C2S_Move_Packet* packet = new C2S_Move_Packet;
-		packet->type = C2S_MOVE;
-		packet->key_type = KEY_TYPE::UP_RELEASED;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
-		delete packet;
+		up = false;
 	}
 	break;
 	case GLUT_KEY_DOWN:
 	{
-		C2S_Move_Packet* packet = new C2S_Move_Packet;
-		packet->type = C2S_MOVE;
-		packet->key_type = KEY_TYPE::DOWN_RELEASED;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
-		delete packet;
+		down = false;
 	}
 	break;
 	case GLUT_KEY_LEFT:
 	{
-		C2S_Move_Packet* packet = new C2S_Move_Packet;
-		packet->type = C2S_MOVE;
-		packet->key_type = KEY_TYPE::LEFT_RELEASED;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
-		delete packet;
+		left = false;
 	}
 	break;
 	case GLUT_KEY_RIGHT:
 	{
-		C2S_Move_Packet* packet = new C2S_Move_Packet;
-		packet->type = C2S_MOVE;
-		packet->key_type = KEY_TYPE::RIGHT_RELEASED;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Move_Packet));
-		delete packet;
+		right = false;
 	}
 	break;
 	}
@@ -839,7 +824,6 @@ void Map1_Mode::draw_bb() {
 void Map1_Mode::finish() {
 
 }
-
 
 void Map1_Mode::updatePhysics(float deltaTime) {
 	// ���� ���� ������Ʈ (deltaTime�� ���� ��Ȯ�� ����)
