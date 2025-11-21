@@ -9,6 +9,7 @@ struct PlayerKart {
 	float m_speed;
 	float m_face_rotation;
 	float m_body_rotation;
+	float m_booster_head_tilt;
 	bool isReady;
 	bool isOnline;
 	SOCKET m_socket;

@@ -184,10 +184,31 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_BOOSTER:
 	{
-		if (!isBoosterActive) {
+		//if (!isBoosterActive) {
 			isBoosterActive = true;
 			std::cout << "booster on!" << std::endl;
+	/*		return;
+		}*/
+
+		if (isBoosterActive) {
+			if (m_booster_head_tilt < MAX_HEAD_TILT) {
+				m_booster_head_tilt += TILT_SPEED;
+				if (m_booster_head_tilt > MAX_HEAD_TILT) {
+					m_booster_head_tilt = MAX_HEAD_TILT;
+				}
+			}
 		}
+		else {
+			if (m_booster_head_tilt > 0.0f) {
+				m_booster_head_tilt -= TILT_SPEED;
+				if (m_booster_head_tilt < 0.0f) {
+					m_booster_head_tilt = 0.0f;
+				}
+			}
+		}
+
+		send_booster_packet();
+
 	}
 	break;
 	case C2S_LOGOUT:
@@ -291,6 +312,18 @@ void Player::send_move_Packet()
 	send_packet(reinterpret_cast<char*>(move_pkt), sizeof(S2C_Move_Packet));
 }
 
+void Player::send_booster_packet()
+{
+	S2C_Booster_Packet* booster_pkt = new S2C_Booster_Packet;
+	booster_pkt->id = GetID();
+	booster_pkt->size = sizeof(S2C_Booster_Packet);
+	booster_pkt->type = S2C_BOOSTER;
+	booster_pkt->booster_head_tilt = GetHeadtilt();
+	send_packet(reinterpret_cast<char*>(booster_pkt), sizeof(S2C_Booster_Packet));
+
+	delete booster_pkt;
+}
+
 void Player::send_Rank_Packet()
 {
 	S2C_Rank_Packet* rank_pkt = new S2C_Rank_Packet;
@@ -381,6 +414,11 @@ void Player::SetBodyRotation(float b_rotation)
 	m_body_rotation = b_rotation;
 }
 
+void Player::SetHeadTilt(float headtilt)
+{
+	m_booster_head_tilt = headtilt;
+}
+
 void Player::SetIsReady(bool ready)
 {
 	isReady = ready;
@@ -424,6 +462,11 @@ float Player::GetFaceRotation() const
 float Player::GetBodyRotation() const
 {
 	return m_body_rotation;
+}
+
+float Player::GetHeadtilt() const
+{
+	return m_booster_head_tilt;
 }
 
 bool Player::GetReady() const

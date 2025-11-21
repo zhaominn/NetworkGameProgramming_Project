@@ -21,7 +21,6 @@ constexpr float MAX_FACE_ROTATION = 25.0f;
 constexpr float ROTATION_SPEED = 5.0f;
 constexpr float RETURN_SPEED = 2.0f;
 
-constexpr float booster_head_tilt = 0.0f;
 constexpr float MAX_HEAD_TILT = 20.0f;
 constexpr float TILT_SPEED = 2.0f;
 
@@ -113,6 +112,7 @@ struct S2C_Booster_Packet
 	unsigned char size;
 	char type;
 	char id;
+	float         booster_head_tilt;
 };
 
 struct S2C_Rank_Packet

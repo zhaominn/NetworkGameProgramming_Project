@@ -30,6 +30,7 @@ public:
 	bool down = false;
 	bool left = false;
 	bool right = false;
+	bool ctrl = false;
 
 	// camera
 	glm::vec3 cameraTargetPos = glm::vec3(0.0, 0.0, 5.0); 

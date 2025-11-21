@@ -518,25 +518,6 @@ void Map1_Mode::timer() {
 		if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
 	}
 
-	//if (isBoosterActive) {
-	//	//
-	//	if (booster_head_tilt < MAX_HEAD_TILT) {
-	//		booster_head_tilt += TILT_SPEED;
-	//		if (booster_head_tilt > MAX_HEAD_TILT) {
-	//			booster_head_tilt = MAX_HEAD_TILT;
-	//		}
-	//	}
-	//}
-	//else {
-	//	//
-	//	if (booster_head_tilt > 0.0f) {
-	//		booster_head_tilt -= TILT_SPEED;
-	//		if (booster_head_tilt < 0.0f) {
-	//			booster_head_tilt = 0.0f;
-	//		}
-	//	}
-	//}
-
 	//
 	for (const auto& c : character) {
 		if (c->name == "character_face") {
@@ -546,11 +527,11 @@ void Map1_Mode::timer() {
 				glm::vec3(0.0f, 0.0f, 1.0f)
 			);
 
-			//headRotation = glm::rotate(
-			//	headRotation,
-			//	glm::radians(booster_head_tilt), 
-			//	glm::vec3(1.0f, 0.0f, 0.0f)
-			//);
+			headRotation = glm::rotate(
+				headRotation,
+				glm::radians(g_players[g_myid].m_booster_head_tilt),
+				glm::vec3(1.0f, 0.0f, 0.0f)
+			);
 
 			c->translateMatrix = karts[0]->translateMatrix * headRotation;
 		}
@@ -691,6 +672,11 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 
 	// Ctrl
 	if (modifiers & GLUT_ACTIVE_CTRL) {
+		if (!ctrl)
+		{
+			ctrl = true;
+		}
+
 		C2S_Booster_Packet* packet = new C2S_Booster_Packet;
 		packet->type = C2S_BOOSTER;
 		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Booster_Packet));

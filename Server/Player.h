@@ -11,6 +11,7 @@ private:
 	float m_yaw;
 	float m_face_rotation;
 	float m_body_rotation;
+	float m_booster_head_tilt;
 
 	bool isReady;
 	bool isOnline;
@@ -37,7 +38,7 @@ public:
 	float m_colliderHalfZ = 1.526595f;
 
 public:
-	Player() : m_id(-1), m_name(), m_booster_cnt(2), m_yaw(0), m_speed(0), m_face_rotation(0),
+	Player() : m_id(-1), m_name(), m_booster_cnt(2), m_yaw(0), m_speed(0), m_face_rotation(0), m_booster_head_tilt(0),
 		isBoosterActive(false), isReady(false), isOnline(false), isFinished(false), m_socket(INVALID_SOCKET) {
 	};
 	~Player();
@@ -49,6 +50,7 @@ public:
 
 	void send_Game_Start_Packet();
 	void send_move_Packet();
+	void send_booster_packet();
 
 	// ingame
 	void send_Rank_Packet();
@@ -67,6 +69,7 @@ public:
 	void SetSpeed(float speed);
 	void SetFaceRotation(float f_rotation);
 	void SetBodyRotation(float b_rotation);
+	void SetHeadTilt(float headtilt);
 	void SetIsReady(bool ready);
 	void SetOnline(bool online);
 
@@ -78,6 +81,7 @@ public:
 	float GetSpeed() const;
 	float GetFaceRotation() const;
 	float GetBodyRotation() const;
+	float GetHeadtilt() const;
 	bool GetReady() const;
 	bool GetOnline() const;
 };

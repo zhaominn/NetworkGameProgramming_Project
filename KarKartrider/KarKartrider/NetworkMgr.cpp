@@ -182,6 +182,11 @@ void NetworkMgr::ProcessPacket(char* buf)
 	}
 				 break;
 	case S2C_BOOSTER:
+	{
+		S2C_Booster_Packet* p = reinterpret_cast<S2C_Booster_Packet*>(buf);
+		g_players[p->id].m_booster_head_tilt = p->booster_head_tilt;
+		std::cout << "get boooster packet" << std::endl;
+	}
 		break;
 	case S2C_RANK:
 	{
