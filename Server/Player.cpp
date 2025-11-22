@@ -63,11 +63,7 @@ void Player::process_packet(char* p)
 
 		// if login fail
 		if (strlen(login_packet->name) == 0) {
-			printf("[Login Fail] empty name\n");
-			S2C_Login_Fail_Packet fail_packet;
-			fail_packet.size = sizeof(S2C_Login_Fail_Packet);
-			fail_packet.type = S2C_LOGIN_FAIL;
-			send_packet(reinterpret_cast<char*>(&fail_packet), sizeof(fail_packet));
+			send_Login_Fail_Packet();
 			disconnect();
 			return;
 		}
@@ -78,14 +74,7 @@ void Player::process_packet(char* p)
 		std::cout << "[Player : " << m_name << "]" << std::endl;
 		std::cout << "[id : " << m_id << "]" << std::endl;
 
-		S2C_PlayerInfo_Packet* info_packet = new S2C_PlayerInfo_Packet;
-		info_packet->size = sizeof(S2C_PlayerInfo_Packet);
-		info_packet->type = S2C_PLAYER_INFO;
-		info_packet->id = (char)m_id;
-
-		send_packet(reinterpret_cast<char*>(info_packet), sizeof(S2C_PlayerInfo_Packet));
-
-		delete info_packet;
+		send_Player_Info_Packet();
 	}
 	break;
 	case C2S_IS_READY:
@@ -279,6 +268,27 @@ void Player::disconnect()
 	g_game_state = LOBBY;
 	g_GameStart = false;
 	g_room->reset();
+}
+
+void Player::send_Player_Info_Packet()
+{
+	S2C_PlayerInfo_Packet* info_packet = new S2C_PlayerInfo_Packet;
+	info_packet->size = sizeof(S2C_PlayerInfo_Packet);
+	info_packet->type = S2C_PLAYER_INFO;
+	info_packet->id = (char)m_id;
+
+	send_packet(reinterpret_cast<char*>(info_packet), sizeof(S2C_PlayerInfo_Packet));
+
+	delete info_packet;
+}
+
+void Player::send_Login_Fail_Packet()
+{
+	printf("[Login Fail] empty name\n");
+	S2C_Login_Fail_Packet fail_packet;
+	fail_packet.size = sizeof(S2C_Login_Fail_Packet);
+	fail_packet.type = S2C_LOGIN_FAIL;
+	send_packet(reinterpret_cast<char*>(&fail_packet), sizeof(fail_packet));
 }
 
 void Player::send_Game_Start_Packet()
