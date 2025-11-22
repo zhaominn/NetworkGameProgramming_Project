@@ -81,6 +81,9 @@ public:
 	bool isGameOver = false;
 
 
+	// 내 카트 위치
+	glm::mat4 myKartMatrix = glm::mat4(1.0f);
+
 
 	Map1_Mode();
 	~Map1_Mode() {

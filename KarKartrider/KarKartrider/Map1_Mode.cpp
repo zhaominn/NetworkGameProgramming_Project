@@ -223,7 +223,7 @@ void Map1_Mode::playCountdown(int count) {
 
 void Map1_Mode::updateCameraDirection()
 {
-	glm::mat3 rotationMatrix = glm::mat3(karts[0]->translateMatrix);
+	glm::mat3 rotationMatrix = glm::mat3(myKartMatrix);
 
 	glm::vec3 direction;
 	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -232,15 +232,15 @@ void Map1_Mode::updateCameraDirection()
 
 	glm::vec3 rotatedDirection = rotationMatrix * direction;
 
-	glm::vec3 carPosition = glm::vec3(karts[0]->translateMatrix[3]);
+	glm::vec3 carPosition = glm::vec3(myKartMatrix[3]);
 
 	cameraDirection = glm::normalize(rotatedDirection) + smoothedCarPos;
 }
 
 void Map1_Mode::setCamera()
 {
-	glm::vec3 carPosition = glm::vec3(karts[0]->translateMatrix[3]);
-	glm::mat3 carRotationMatrix = glm::mat3(karts[0]->translateMatrix);
+	glm::vec3 carPosition = glm::vec3(myKartMatrix[3]);
+	glm::mat3 carRotationMatrix = glm::mat3(myKartMatrix);
 	glm::quat carRotationQuat = glm::quat_cast(carRotationMatrix);
 
 	float rawSpeed = g_players[g_myid].m_speed;
@@ -681,6 +681,9 @@ void Map1_Mode::RenderPlayer() {
 		model = glm::translate(model, glm::vec3(px, py, pz));
 		model = glm::rotate(model, glm::radians(pyaw), glm::vec3(0, 1, 0));
 		model = glm::rotate(model, glm::radians(pbody), glm::vec3(0, 0, 1));
+
+		if (pid == g_myid)
+			myKartMatrix = model;
 
 		// --- 카트 파츠 ---
 		for (auto& part : karts)
