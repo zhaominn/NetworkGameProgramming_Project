@@ -172,13 +172,21 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_MOVE:
 	{
 		S2C_Move_Packet* p = reinterpret_cast<S2C_Move_Packet*>(buf);
-		g_players[p->id].m_speed = p->speed;
-		g_players[p->id].m_yaw = p->yaw;
-		g_players[p->id].m_face_rotation = p->face_rotation;
-		g_players[p->id].m_body_rotation = p->body_rotation;
-		g_players[p->id].x = p->x;
-		g_players[p->id].y = p->y;
-		g_players[p->id].z = p->z;
+
+
+		for (int i = 0; i < MAX_USER; ++i) {
+
+			std::cout << p->arr[i].z << std::endl;
+
+			g_players[i].m_speed = p->arr[i].speed;
+			g_players[i].m_yaw = p->arr[i].yaw;
+			g_players[i].m_face_rotation = p->arr[i].fase_rotation;
+			g_players[i].m_body_rotation = p->arr[i].body_rotation;
+			g_players[i].x = p->arr[i].x;
+			g_players[i].y = p->arr[i].y;
+			g_players[i].z = p->arr[i].z;
+		}
+
 	}
 				 break;
 	case S2C_BOOSTER:

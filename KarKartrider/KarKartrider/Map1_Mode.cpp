@@ -463,7 +463,16 @@ void Map1_Mode::checkEngineSound() {
 	}
 }
 
+void Map1_Mode::RenderPlayer() {
+	/*for (int i = 0; i < MAX_USER; ++i) {
+		std::cout << g_players[i].z << std::endl;
+	}*/
+}
+
 void Map1_Mode::timer() {
+
+	RenderPlayer();
+
 	float x = g_players[g_myid].x;
 	float y = g_players[g_myid].y;
 	float z = g_players[g_myid].z;

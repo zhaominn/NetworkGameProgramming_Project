@@ -326,6 +326,7 @@ void Player::send_Game_Start_Packet()
 
 void Player::send_move_Packet()
 {
+
 	S2C_Move_Packet* move_pkt = new S2C_Move_Packet;
 	move_pkt->size = sizeof(S2C_Move_Packet);
 	move_pkt->type = S2C_MOVE;
