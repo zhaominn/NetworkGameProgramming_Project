@@ -53,6 +53,16 @@ void Player::send_packet(char* packet, int size)
 	send(m_socket, packet, size, 0);
 }
 
+void Player::broadcast(char* packet, int len) // 자신을 제외한 모든 유저에게 패킷 전송
+{
+	for (int i = 0; i < MAX_USER; ++i) {
+		if (g_users[i].GetSocket() != INVALID_SOCKET) {
+			if (g_users[i].GetID() == this->GetID()) continue;
+			g_users[i].send_packet(packet, len);
+		}
+	}
+}
+
 void Player::process_packet(char* p)
 {
 	const unsigned char packet_type = p[1];
@@ -174,10 +184,10 @@ void Player::process_packet(char* p)
 	case C2S_BOOSTER:
 	{
 		//if (!isBoosterActive) {
-			isBoosterActive = true;
-			std::cout << "booster on!" << std::endl;
-	/*		return;
-		}*/
+		isBoosterActive = true;
+		std::cout << "booster on!" << std::endl;
+		/*		return;
+			}*/
 
 		if (isBoosterActive) {
 			if (m_booster_head_tilt < MAX_HEAD_TILT) {
@@ -289,6 +299,17 @@ void Player::send_Login_Fail_Packet()
 	fail_packet.size = sizeof(S2C_Login_Fail_Packet);
 	fail_packet.type = S2C_LOGIN_FAIL;
 	send_packet(reinterpret_cast<char*>(&fail_packet), sizeof(fail_packet));
+}
+
+void Player::send_Ready_Packet()
+{
+	S2C_Ready_Packet* ready_pkt = new S2C_Ready_Packet;
+	ready_pkt->size = sizeof(S2C_Ready_Packet);
+	ready_pkt->type = S2C_IS_READY;
+	ready_pkt->id = GetID();
+	ready_pkt->is_ready = GetReady();
+	broadcast(reinterpret_cast<char*>(ready_pkt), sizeof(S2C_Ready_Packet));
+	delete ready_pkt;
 }
 
 void Player::send_Game_Start_Packet()
