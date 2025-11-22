@@ -57,10 +57,7 @@ DWORD WINAPI ClientThread(LPVOID socket)
 
 DWORD WINAPI UpdatePositon(LPVOID lpParam)
 {
-	S2C_Move_Packet* scpacket = new S2C_Move_Packet;
-	scpacket->size = sizeof(S2C_Move_Packet);
-	scpacket->type = S2C_MOVE;
-
+	
 	// Collect the state of all players and send it to every player
 	std::chrono::steady_clock::time_point last_send_time = std::chrono::steady_clock::now();
 	auto startTime = std::chrono::steady_clock::now();
@@ -80,24 +77,6 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		float dt = static_cast<float>(elapsed_time) / 1000.0f;
 
 		if (elapsed_time >= 1000 / 60) {
-
-			std::cout << "0" << " : " << scpacket->arr[0].z << std::endl;
-			std::cout << "1" << " : " << scpacket->arr[1].z << std::endl;
-			std::cout << "2" << " : " << scpacket->arr[2].z << std::endl;
-
-			for (int i = 0; i < MAX_USER; ++i) {
-				if (!g_users[i].GetOnline()) continue;
-
-				scpacket->arr[i].id = g_users[i].GetID();
-				scpacket->arr[i].speed = g_users[i].GetSpeed();
-				scpacket->arr[i].yaw = g_users[i].GetYaw();
-				scpacket->arr[i].fase_rotation = g_users[i].GetFaceRotation();
-				scpacket->arr[i].body_rotation = g_users[i].GetBodyRotation();
-				scpacket->arr[i].x = g_users[i].m_posX;
-				scpacket->arr[i].y = g_users[i].m_posY;
-				scpacket->arr[i].z = g_users[i].m_posZ;
-
-			}
 
 			for (int i = 0; i < MAX_USER; ++i) {
 				{

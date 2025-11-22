@@ -332,6 +332,19 @@ void Player::send_move_Packet()
 	move_pkt->type = S2C_MOVE;
 
 	std::lock_guard<std::mutex> lock2(g_Sendmutex);
+
+	for (int i = 0; i < MAX_USER; ++i) {
+
+		move_pkt->arr[i].id = g_users[i].GetID();
+		move_pkt->arr[i].speed = g_users[i].GetSpeed();
+		move_pkt->arr[i].yaw = g_users[i].GetYaw();
+		move_pkt->arr[i].face_rotation = g_users[i].GetFaceRotation();
+		move_pkt->arr[i].body_rotation = g_users[i].GetBodyRotation();
+		move_pkt->arr[i].x = g_users[i].m_posX;
+		move_pkt->arr[i].y = g_users[i].m_posY;
+		move_pkt->arr[i].z = g_users[i].m_posZ;
+	}
+
 	move_pkt->id = GetID();
 	move_pkt->booster_cnt = GetBodyRotation();
 	move_pkt->speed = GetSpeed();
@@ -343,7 +356,7 @@ void Player::send_move_Packet()
 	move_pkt->body_rotation = GetBodyRotation();
 
 	send_packet(reinterpret_cast<char*>(move_pkt), sizeof(S2C_Move_Packet));
-	broadcast(reinterpret_cast<char*>(move_pkt), sizeof(S2C_Move_Packet));
+	//broadcast(reinterpret_cast<char*>(move_pkt), sizeof(S2C_Move_Packet));
 }
 
 void Player::send_booster_packet()

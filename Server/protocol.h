@@ -95,7 +95,7 @@ struct S2C_Move_All_Packet {
 	char id;
 	float speed;
 	float yaw;
-	float fase_rotation;
+	float face_rotation;
 	float body_rotation;
 	
 	float x;
