@@ -181,6 +181,7 @@ void Map1_Mode::init()
 		c->translateMatrix = glm::translate(c->translateMatrix, glm::vec3(0.0, 4.0, 0.0));
 	}
 
+
 	isBackgroundSound = true;
 	backgroundSoundThread = std::thread(&Map1_Mode::backgroundSound, this);
 
@@ -463,20 +464,15 @@ void Map1_Mode::checkEngineSound() {
 	}
 }
 
-void Map1_Mode::RenderPlayer() {
-	/*for (int i = 0; i < MAX_USER; ++i) {
-		std::cout << g_players[i].z << std::endl;
-	}*/
-}
 
 void Map1_Mode::timer() {
 
-	RenderPlayer();
-
+	// ================
+   // 1) 내 위치 보간
+   // ================
 	float x = g_players[g_myid].x;
 	float y = g_players[g_myid].y;
 	float z = g_players[g_myid].z;
-	float body_angle = g_players[g_myid].m_body_rotation;
 
 	glm::vec3 targetPos(x, y, z);
 
@@ -489,71 +485,19 @@ void Map1_Mode::timer() {
 	const float posLerp = 0.3f;
 	g_kartRenderPos = glm::mix(g_kartRenderPos, targetPos, posLerp);
 
-	for (const auto& kart : karts) {
-		glm::mat4 model = glm::mat4(1.0f);
-
-		model = glm::translate(model, glm::vec3(x, y, z));
-
-		model = glm::rotate(
-			model,
-			glm::radians(g_players[g_myid].m_yaw),
-			glm::vec3(0.0f, 1.0f, 0.0f)
-		);
-
-		model = glm::rotate(
-			model,
-			glm::radians(body_angle),
-			glm::vec3(0.0f, 0.0f, 1.0f)
-		);
-
-		kart->translateMatrix = model;
-	}
-
-	for (const auto& kart : karts) {
-		//move
-		kart->setPosition(g_kartRenderPos);
-	}
-
-
-	for (const auto& c : character) {
-		c->translateMatrix = karts[0]->translateMatrix;
-	}
-
-	if (g_players[g_myid].m_speed != 0.0f) {
-		reducedRotationInfluence = 0.1f + (std::abs(g_players[g_myid].m_speed) / MAX_SPEED) * 0.4f;
-	}
-	else {
-		reducedRotationInfluence += 0.01f;
-		if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
-	}
-
-	//
-	for (const auto& c : character) {
-		if (c->name == "character_face") {
-			glm::mat4 headRotation = glm::rotate(
-				glm::mat4(1.0f),
-				glm::radians(-g_players[g_myid].m_face_rotation),
-				glm::vec3(0.0f, 0.0f, 1.0f)
-			);
-
-			headRotation = glm::rotate(
-				headRotation,
-				glm::radians(g_players[g_myid].m_booster_head_tilt),
-				glm::vec3(1.0f, 0.0f, 0.0f)
-			);
-
-			c->translateMatrix = karts[0]->translateMatrix * headRotation;
-		}
-		else {
-			c->translateMatrix = karts[0]->translateMatrix;
-		}
-	}
-
-
+	// ================
+	// 2) 네트워크 입력 송신
+	// ================
 	networkmgr.SendMovePacket(up, down, left, right);
 
+	// ================
+	// 3) 카메라 추적 계산
+	// ================
 	setCamera();
 
+	// ================
+	// 4) 충돌, 사운드 처리
+	// ================
 	checkCollisionKart();
 	checkEngineSound();
 }
@@ -720,6 +664,59 @@ void Map1_Mode::specialKeyUp(int key, int x, int y) {
 
 }
 
+
+void Map1_Mode::RenderPlayer() {
+	for (int pid = 0; pid < MAX_USER; pid++)
+	{
+		/*if (!g_players[pid].isOnline)
+			continue;*/
+
+		float px = g_players[pid].x;
+		float py = g_players[pid].y;
+		float pz = g_players[pid].z;
+		float pyaw = g_players[pid].m_yaw;
+		float pbody = g_players[pid].m_body_rotation;
+
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(px, py, pz));
+		model = glm::rotate(model, glm::radians(pyaw), glm::vec3(0, 1, 0));
+		model = glm::rotate(model, glm::radians(pbody), glm::vec3(0, 0, 1));
+
+		// --- 카트 파츠 ---
+		for (auto& part : karts)
+		{
+			part->translateMatrix = model;
+			part->draw(shaderProgramID, isKeyPressed_s);
+		}
+
+		// --- 캐릭터 파츠 ---
+		for (auto& c : character)
+		{
+			glm::mat4 cm = model;
+
+			if (c->name == "character_face")
+			{
+				glm::mat4 headRot = glm::rotate(
+					glm::mat4(1.0f),
+					glm::radians(-g_players[pid].m_face_rotation),
+					glm::vec3(0, 0, 1)
+				);
+
+				headRot = glm::rotate(
+					headRot,
+					glm::radians(g_players[pid].m_booster_head_tilt),
+					glm::vec3(1, 0, 0)
+				);
+
+				cm = model * headRot;
+			}
+
+			c->translateMatrix = cm;
+			c->draw(shaderProgramID, isKeyPressed_s);
+		}
+	}
+}
+
 void Map1_Mode::draw_model() {
 
 	glClearColor(1.0, 1.0, 1.0, 1.0f);
@@ -753,9 +750,8 @@ void Map1_Mode::draw_model() {
 
 	glEnable(GL_DEPTH_TEST);
 
-	for (const auto& kart : karts) {
-		kart->draw(shaderProgramID, isKeyPressed_s);
-	}
+	RenderPlayer();
+
 	for (const auto& road : road1) {
 		road->draw(shaderProgramID, isKeyPressed_s);
 	}

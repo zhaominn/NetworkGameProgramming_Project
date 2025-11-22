@@ -188,7 +188,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 		}
 
 	}
-				 break;
+	break;
 	case S2C_BOOSTER:
 	{
 		S2C_Booster_Packet* p = reinterpret_cast<S2C_Booster_Packet*>(buf);
