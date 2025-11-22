@@ -697,6 +697,9 @@ void Map1_Mode::RenderPlayer() {
 		{
 			glm::mat4 cm = model;
 
+			if (c->name == "booster" && !isBoosterActive)
+				continue;
+
 			if (c->name == "character_face")
 			{
 				glm::mat4 headRot = glm::rotate(
@@ -758,11 +761,7 @@ void Map1_Mode::draw_model() {
 	for (const auto& road : road1) {
 		road->draw(shaderProgramID, isKeyPressed_s);
 	}
-	for (const auto& c : character) {
-		if (c->name == "booster" && !isBoosterActive)
-			continue;
-		c->draw(shaderProgramID, isKeyPressed_s);
-	}
+	
 	for (const auto& barricate : road1_barricate) {
 		barricate->draw(shaderProgramID, isKeyPressed_s);
 	}
