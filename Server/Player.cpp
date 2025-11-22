@@ -308,6 +308,7 @@ void Player::send_Ready_Packet()
 	ready_pkt->type = S2C_IS_READY;
 	ready_pkt->id = GetID();
 	ready_pkt->is_ready = GetReady();
+	send_packet(reinterpret_cast<char*>(ready_pkt), sizeof(S2C_Ready_Packet));
 	broadcast(reinterpret_cast<char*>(ready_pkt), sizeof(S2C_Ready_Packet));
 	delete ready_pkt;
 }
@@ -341,6 +342,7 @@ void Player::send_move_Packet()
 	move_pkt->body_rotation = GetBodyRotation();
 
 	send_packet(reinterpret_cast<char*>(move_pkt), sizeof(S2C_Move_Packet));
+	broadcast(reinterpret_cast<char*>(move_pkt), sizeof(S2C_Move_Packet));
 }
 
 void Player::send_booster_packet()
