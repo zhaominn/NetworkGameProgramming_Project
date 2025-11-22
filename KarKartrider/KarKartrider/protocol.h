@@ -91,6 +91,13 @@ struct S2C_GameStart_Packet
 	char type;
 };
 
+struct S2C_Player_State_Data {
+	int id;
+	float x;
+	float z;
+	float yaw;
+};
+
 struct S2C_Move_Packet
 {
 	unsigned char size;
@@ -98,13 +105,10 @@ struct S2C_Move_Packet
 	char id;
 	int booster_cnt;
 	float speed;
-	float yaw;
 	float face_rotation;
 	float body_rotation;
 
-	float x;
-	float y;
-	float z;
+	S2C_Player_State_Data data[MAX_USER];
 };
 
 struct S2C_Booster_Packet
