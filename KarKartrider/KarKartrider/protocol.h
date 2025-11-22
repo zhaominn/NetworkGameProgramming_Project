@@ -97,7 +97,6 @@ struct S2C_Move_All_Packet {
 	float yaw;
 	float face_rotation;
 	float body_rotation;
-	int boost_status;
 
 	float x;
 	float y;
@@ -114,7 +113,6 @@ struct S2C_Move_Packet
 	float yaw;
 	float face_rotation;
 	float body_rotation;
-	int boost_status;
 
 	float x;
 	float y;
