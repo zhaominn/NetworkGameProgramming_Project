@@ -92,7 +92,23 @@ void Player::process_packet(char* p)
 		C2S_Change_Ready_Packet* change_ready_packet = reinterpret_cast<C2S_Change_Ready_Packet*>(p);
 
 		SetIsReady(change_ready_packet->is_ready);
-		m_posX = change_ready_packet->x;
+
+
+		switch (m_id)
+		{
+		case 0:
+			m_posX = -5;
+			break;
+		case 1:
+			m_posX = 0;
+			break;
+		case 2:
+			m_posX = 5;
+			break;
+		default:
+			break;
+		}
+
 		m_posY = change_ready_packet->y;
 		m_posZ = change_ready_packet->z;
 
