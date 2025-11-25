@@ -85,29 +85,41 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					Player& pl = g_users[i];
 
 					// -----------------------------
-					// 1) 이동 입력 적용
+					// 1) move input
 					// -----------------------------
 					float speed = pl.GetSpeed();
 
+					// forward
 					if (pl.m_up)
 						speed += ACCELERATION * dt;
-					else if (speed > 0)
-						speed -= DECELERATION * dt;
 
-					if (speed < 0) speed = 0;
+					// back
+					if (pl.m_down)
+						speed -= ACCELERATION * dt;
+
+					if (!pl.m_up && !pl.m_down)
+					{
+						if (speed > 0)
+							speed -= DECELERATION * dt;
+						else if (speed < 0)
+							speed += DECELERATION * dt;
+					}
+
+					// speed clamp
 					if (speed > MAX_SPEED) speed = MAX_SPEED;
+					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
 
 					pl.SetSpeed(speed);
 
 					// -----------------------------
-					// 2) 이동 적용 (Z 방향)
+					// 2) move (z)
 					// -----------------------------
 					float oldZ = pl.m_posZ;
 
-					pl.m_posZ -= speed * dt;   // 앞으로가 -Z 방향
+					pl.m_posZ -= speed * dt; 
 
 					// -----------------------------
-					// 3) 충돌 검사 -> 충돌이면 롤백
+					// 3) collision
 					// -----------------------------
 					if (PlayerCollisionCheck(i))
 					{
@@ -116,7 +128,7 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					}
 
 					// -----------------------------
-					// 4) 이동 패킷 전송
+					// 4) move packet send
 					// -----------------------------
 					pl.send_move_Packet();
 				}
