@@ -138,6 +138,16 @@ void NetworkMgr::SendMovePacket(bool up, bool down, bool left, bool right)
 	delete packet;
 }
 
+void NetworkMgr::SendBoosterPacket(bool boosterOn)
+{
+	C2S_Booster_Packet* packet = new C2S_Booster_Packet;
+	packet->type = C2S_BOOSTER;
+	packet->boosterOn = boosterOn;
+
+	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Booster_Packet));
+	delete packet;
+}
+
 void NetworkMgr::ProcessPacket(char* buf)
 {
 	unsigned char type = buf[1];

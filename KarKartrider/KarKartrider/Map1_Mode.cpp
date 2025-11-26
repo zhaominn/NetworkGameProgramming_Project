@@ -630,10 +630,8 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 			ctrl = true;
 		}
 
-		C2S_Booster_Packet* packet = new C2S_Booster_Packet;
-		packet->type = C2S_BOOSTER;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Booster_Packet));
-		delete packet;
+		booster = true;
+		networkmgr.SendBoosterPacket(booster);
 	}
 
 }
@@ -660,6 +658,10 @@ void Map1_Mode::specialKeyUp(int key, int x, int y) {
 		right = false;
 	}
 	break;
+	case GLUT_ACTIVE_CTRL:
+	{
+		ctrl = false;
+	}
 	}
 
 }

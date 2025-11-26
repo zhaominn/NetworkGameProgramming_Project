@@ -164,6 +164,7 @@ struct C2S_Booster_Packet
 {
 	unsigned char size;
 	char type;
+	bool boosterOn;
 };
 
 struct C2S_Change_Map_Packet

@@ -30,6 +30,7 @@ public:
 	bool down = false;
 	bool left = false;
 	bool right = false;
+	bool booster = true;
 	bool ctrl = false;
 
 	// camera
