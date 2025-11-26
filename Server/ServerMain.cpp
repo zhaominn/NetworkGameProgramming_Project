@@ -78,102 +78,58 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 		if (elapsed_time >= 1000 / 60) {
 
-			for (int i = 0; i < MAX_USER; ++i) {
-				{
-					if (!g_users[i].GetOnline()) continue;
+			{
+				std::lock_guard<std::mutex> lock1(g_UserMutex);
+				for (int i = 0; i < MAX_USER; ++i) {
 
 					Player& pl = g_users[i];
+					if (!pl.GetOnline()) continue;
 
-					// -----------------------------
 					// 1) move input
-					// -----------------------------
 					float speed = pl.GetSpeed();
-					float head_tilt = pl.GetHeadtilt();
 
-					if (!pl.GetBoosterStatus()) {
-						// forward
-						if (pl.m_up)
-							speed += ACCELERATION * dt;
+					// forward
+					if (pl.m_up)
+						speed += ACCELERATION * dt;
 
-						// back
-						if (pl.m_down)
-							speed -= ACCELERATION * dt;
+					// back
+					if (pl.m_down)
+						speed -= ACCELERATION * dt;
 
-						if (!pl.m_up && !pl.m_down)
-						{
-							if (speed > 0)
-								speed -= DECELERATION * dt;
-							else if (speed < 0)
-								speed += DECELERATION * dt;
-						}
-
-						// speed clamp
-						if (speed > MAX_SPEED) speed = MAX_SPEED;
-						if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
+					if (!pl.m_up && !pl.m_down)
+					{
+						if (speed > 0)
+							speed -= DECELERATION * dt;
+						else if (speed < 0)
+							speed += DECELERATION * dt;
 					}
-					else {
-						// forward
-						if (pl.m_up)
-							speed += ACCELERATION * 1.05 * dt;
 
-						// back
-						if (pl.m_down)
-							speed -= ACCELERATION * 1.05 * dt;
+					// speed clamp
+					if (speed > MAX_SPEED) speed = MAX_SPEED;
+					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
 
-						if (!pl.m_up && !pl.m_down)
-						{
-							if (speed > 0)
-								speed -= DECELERATION * dt;
-							else if (speed < 0)
-								speed += DECELERATION * dt;
-						}
-
-						// speed clamp
-						if (speed > BOOSTER_SPEED) speed = BOOSTER_SPEED;
-						if (speed < -BOOSTER_SPEED / 2.0f) speed = -BOOSTER_SPEED / 2.0f;
-
-						if (head_tilt < MAX_HEAD_TILT) {
-							head_tilt += TILT_SPEED;
-							if (head_tilt > MAX_HEAD_TILT) {
-								head_tilt = MAX_HEAD_TILT;
-							}
-						}
-
-						if (head_tilt > 0.0f) {
-							head_tilt -= TILT_SPEED;
-							if (head_tilt < 0.0f) {
-								head_tilt = 0.0f;
-							}
-						}
-
-						pl.send_booster_packet();
-					}
 
 					pl.SetSpeed(speed);
-					pl.SetHeadTilt(head_tilt);
 
-					// -----------------------------
 					// 2) move (z)
-					// -----------------------------
 					float oldZ = pl.m_posZ;
 
 					pl.m_posZ -= speed * dt;
 
-					// -----------------------------
 					// 3) collision
-					// -----------------------------
 					if (PlayerCollisionCheck(i))
 					{
 						pl.m_posZ = oldZ;  // º¹±¸
 						pl.SetSpeed(pl.GetSpeed() * 0.5f);
 					}
 
-					// -----------------------------
-					// 4) move packet send
-					// -----------------------------
-					pl.send_move_Packet();
+					pl.checkIsFinished();
 				}
-				g_users[i].checkIsFinished();
+			}
+
+			for (int i = 0; i < MAX_USER; ++i) {
+				// 4) move packet send
+				g_users[i].send_move_Packet();
 			}
 			last_send_time = current_time;
 		}

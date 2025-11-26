@@ -118,21 +118,27 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_MOVE:
 	{
-		std::lock_guard<std::mutex> lock1(g_UserMutex);
-
 		C2S_Move_Packet* move_packet = reinterpret_cast<C2S_Move_Packet*>(p);
 		m_up = move_packet->up;
 		m_down = move_packet->down;
 		m_left = move_packet->left;
 		m_right = move_packet->right;
 
+		float max_speed = MAX_SPEED;
+		float acceleration = ACCELERATION;
+
+		if (isBoosterActive) {
+			max_speed = BOOSTER_SPEED;
+			acceleration = ACCELERATION;
+		}
+
 		if (m_up)
 		{
-			SetSpeed(m_speed + ACCELERATION);
+			SetSpeed(m_speed + acceleration);
 		}
 		if (m_down)
 		{
-			SetSpeed(m_speed - ACCELERATION);
+			SetSpeed(m_speed - acceleration);
 		}
 		if (m_left)
 		{
@@ -179,8 +185,8 @@ void Player::process_packet(char* p)
 			SetBodyRotation(0.0);
 		}
 
-		if (m_speed > MAX_SPEED) SetSpeed(MAX_SPEED);
-		if (m_speed < -MAX_SPEED / 2.0f) SetSpeed(-MAX_SPEED / 2.0f);
+		if (m_speed > max_speed) SetSpeed(max_speed);
+		if (m_speed < -max_speed / 2.0f) SetSpeed(-max_speed / 2.0f);
 
 		float f_limit = GetFaceRotation();
 		if (f_limit > MAX_FACE_ROTATION) f_limit = MAX_FACE_ROTATION;
@@ -199,14 +205,7 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_BOOSTER:
 	{
-		//if (!isBoosterActive) {
-		isBoosterActive = true;
-		std::cout << "booster on!" << std::endl;
-		/*		return;
-			}*/
-
-
-
+		ActiveBooster();
 	}
 	break;
 	case C2S_LOGOUT:
