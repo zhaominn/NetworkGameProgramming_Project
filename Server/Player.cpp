@@ -129,7 +129,7 @@ void Player::process_packet(char* p)
 
 		if (isBoosterActive) {
 			max_speed = BOOSTER_SPEED;
-			acceleration = ACCELERATION;
+			acceleration = ACCELERATION * 1.05f;
 		}
 
 		if (m_up)
@@ -193,6 +193,25 @@ void Player::process_packet(char* p)
 		if (f_limit < -MAX_FACE_ROTATION) f_limit = -MAX_FACE_ROTATION;
 		SetFaceRotation(f_limit);
 
+		if (isBoosterActive) {
+			// 머리를 X축으로 뒤로 기울이기 (서서히 MAX_HEAD_TILT까지)
+			if (m_booster_head_tilt < MAX_HEAD_TILT) {
+				m_booster_head_tilt += TILT_SPEED;
+				if (m_booster_head_tilt > MAX_HEAD_TILT) {
+					m_booster_head_tilt = MAX_HEAD_TILT;
+				}
+			}
+		}
+		else {
+			// 머리를 원래 상태로 복구 (서서히 0도로 복귀)
+			if (m_booster_head_tilt > 0.0f) {
+				m_booster_head_tilt -= TILT_SPEED;
+				if (m_booster_head_tilt < 0.0f) {
+					m_booster_head_tilt = 0.0f;
+				}
+			}
+		}
+
 		// -------------- 일괄 이동 처리 --------------
 		float rad = GetYaw() * PI / 180.0f;
 
@@ -205,6 +224,8 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_BOOSTER:
 	{
+		C2S_Booster_Packet* booster_packet = reinterpret_cast<C2S_Booster_Packet*>(p);
+		SetBoosterCnt(booster_packet->booster_cnt);
 		ActiveBooster();
 	}
 	break;
@@ -376,16 +397,24 @@ void Player::ActiveBooster()
 		return;
 	}
 
+	if (m_booster_cnt > 0) {
+		isBoosterActive = true;
 
-	isBoosterActive = true;
+		m_boosterEndTime = std::chrono::steady_clock::now() + std::chrono::seconds(3);
 
-	std::cout << "Booster activated! Remaining boosters: " << m_booster_cnt << std::endl;
+		std::cout << "Booster activated! Remaining: " << m_booster_cnt << std::endl;
+	}
 
+}
 
-	float originalMaxSpeed = MAX_SPEED;
-	float originalAcceleration = ACCELERATION;
+void Player::CheckBoosterState()
+{
+	if (!isBoosterActive) return;
 
-
+	if (std::chrono::steady_clock::now() >= m_boosterEndTime) {
+		isBoosterActive = false; 
+		std::cout << "Booster Deactivated!" << std::endl;
+	}
 }
 
 void Player::send_Rank_Packet()

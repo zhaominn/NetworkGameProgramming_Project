@@ -79,11 +79,14 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		if (elapsed_time >= 1000 / 60) {
 
 			{
-				std::lock_guard<std::mutex> lock1(g_UserMutex);
+				//std::lock_guard<std::mutex> lock1(g_UserMutex);
 				for (int i = 0; i < MAX_USER; ++i) {
 
 					Player& pl = g_users[i];
 					if (!pl.GetOnline()) continue;
+
+					// update booster state
+					pl.CheckBoosterState();
 
 					// 1) move input
 					float speed = pl.GetSpeed();

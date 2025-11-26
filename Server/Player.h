@@ -20,6 +20,8 @@ private:
 
 	SOCKET m_socket;
 
+	std::chrono::steady_clock::time_point m_boosterEndTime;
+
 public:
 	bool m_up = false;
 	bool m_down = false;
@@ -57,6 +59,7 @@ public:
 	void send_booster_packet();
 
 	void ActiveBooster();
+	void CheckBoosterState();
 
 	// ingame
 	void send_Rank_Packet();

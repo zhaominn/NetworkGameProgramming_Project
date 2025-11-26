@@ -46,7 +46,7 @@ public:
 
 	void SendChangeReadyPacket(bool status);
 	void SendMovePacket(bool up, bool down, bool left, bool right);
-	void SendBoosterPacket(bool boosterOn);
+	void SendBoosterPacket(bool boosterOn, int booster_cnt);
 
 public:
 	void ProcessPacket(char* buf);

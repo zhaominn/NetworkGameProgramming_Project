@@ -604,7 +604,7 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 		if (booster_cnt > 0) {
 			booster_cnt--;
 			booster = true;
-			networkmgr.SendBoosterPacket(booster);
+			networkmgr.SendBoosterPacket(booster, booster_cnt);
 			activateBoosterSound();
 		}
 		else {

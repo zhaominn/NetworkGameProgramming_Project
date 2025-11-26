@@ -138,11 +138,12 @@ void NetworkMgr::SendMovePacket(bool up, bool down, bool left, bool right)
 	delete packet;
 }
 
-void NetworkMgr::SendBoosterPacket(bool boosterOn)
+void NetworkMgr::SendBoosterPacket(bool boosterOn, int booster_cnt)
 {
 	C2S_Booster_Packet* packet = new C2S_Booster_Packet;
 	packet->type = C2S_BOOSTER;
 	packet->boosterOn = boosterOn;
+	packet->booster_cnt = booster_cnt;
 
 	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Booster_Packet));
 	delete packet;
