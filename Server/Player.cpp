@@ -205,24 +205,7 @@ void Player::process_packet(char* p)
 		/*		return;
 			}*/
 
-		if (isBoosterActive) {
-			if (m_booster_head_tilt < MAX_HEAD_TILT) {
-				m_booster_head_tilt += TILT_SPEED;
-				if (m_booster_head_tilt > MAX_HEAD_TILT) {
-					m_booster_head_tilt = MAX_HEAD_TILT;
-				}
-			}
-		}
-		else {
-			if (m_booster_head_tilt > 0.0f) {
-				m_booster_head_tilt -= TILT_SPEED;
-				if (m_booster_head_tilt < 0.0f) {
-					m_booster_head_tilt = 0.0f;
-				}
-			}
-		}
 
-		send_booster_packet();
 
 	}
 	break;
@@ -387,6 +370,25 @@ void Player::send_booster_packet()
 	delete booster_pkt;
 }
 
+void Player::ActiveBooster()
+{
+	if (isBoosterActive) {
+		std::cout << "Booster is already active!" << std::endl;
+		return;
+	}
+
+
+	isBoosterActive = true;
+
+	std::cout << "Booster activated! Remaining boosters: " << m_booster_cnt << std::endl;
+
+
+	float originalMaxSpeed = MAX_SPEED;
+	float originalAcceleration = ACCELERATION;
+
+
+}
+
 void Player::send_Rank_Packet()
 {
 	S2C_Rank_Packet* rank_pkt = new S2C_Rank_Packet;
@@ -457,6 +459,12 @@ void Player::SetBoosterCnt(int booster)
 	m_booster_cnt = booster;
 }
 
+void Player::SetBoosterStatus(bool booster_status)
+{
+	isBoosterActive = booster_status;
+}
+
+
 void Player::SetYaw(float yaw)
 {
 	m_yaw = yaw;
@@ -500,6 +508,11 @@ int Player::GetID() const
 int Player::GetBoosterCnt() const
 {
 	return m_booster_cnt;
+}
+
+bool Player::GetBoosterStatus() const
+{
+	return isBoosterActive;
 }
 
 char* Player::GetName() const

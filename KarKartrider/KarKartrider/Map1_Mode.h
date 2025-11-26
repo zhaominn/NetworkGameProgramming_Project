@@ -130,7 +130,7 @@ public:
 	
 	void keyboard(unsigned char key, int x, int y) override;
 
-	void activateBooster();
+	void activateBoosterSound();
 
 	void specialKey(int key, int x, int y) override;
 

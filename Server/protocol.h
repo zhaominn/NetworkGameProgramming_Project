@@ -27,7 +27,7 @@ constexpr float TILT_SPEED = 2.0f;
 constexpr unsigned short WINDOW_WIDTH = 980;
 constexpr unsigned short WINDOW_HEIGHT = 780;
 
-constexpr int  MAX_USER = 3;
+constexpr int  MAX_USER = 1;
 
 // packet
 // C2S
@@ -97,7 +97,7 @@ struct S2C_Move_All_Packet {
 	float yaw;
 	float face_rotation;
 	float body_rotation;
-	
+
 	float x;
 	float y;
 	float z;
@@ -120,7 +120,6 @@ struct S2C_Move_Packet
 
 	S2C_Move_All_Packet arr[MAX_USER];
 };
-
 
 struct S2C_Booster_Packet
 {
@@ -165,6 +164,7 @@ struct C2S_Booster_Packet
 {
 	unsigned char size;
 	char type;
+	bool boosterOn;
 };
 
 struct C2S_Change_Map_Packet

@@ -561,42 +561,13 @@ void Map1_Mode::keyboard(unsigned char key, int x, int y) {
 	}
 }
 
-void Map1_Mode::activateBooster() {
+void Map1_Mode::activateBoosterSound() {
 
-
-	//if (isBoosterActive) {
-	//	std::cout << "Booster is already active!" << std::endl;
-	//	return;
-	//}
-
-
-	//isBoosterActive = true;
-
-	//std::cout << "Booster activated! Remaining boosters: " << booster_cnt << std::endl;
-
-
-	//float originalMaxSpeed = MAX_SPEED;
-	//float originalAcceleration = ACCELERATION;
-
-
-	//MAX_SPEED = BOOSTER_SPEED;
-	//ACCELERATION *= 1.05f;
-
-
-	//if (!isBoosterSound) {
-	//	isBoosterSound = true;
-	//	boosterSoundThread = std::thread(&Map1_Mode::booster_sound, this);
-	//	boosterSoundThread.detach();
-	//}
-
-
-	//std::thread([this, originalMaxSpeed, originalAcceleration]() {
-	//	std::this_thread::sleep_for(std::chrono::duration<double>(4.4));
-	//	MAX_SPEED = originalMaxSpeed;
-	//	ACCELERATION = originalAcceleration;
-	//	isBoosterActive = false;
-	//	std::cout << "Booster ended. MAX_SPEED and ACCELERATION restored." << std::endl;
-	//	}).detach();
+	if (!isBoosterSound) {
+		isBoosterSound = true;
+		boosterSoundThread = std::thread(&Map1_Mode::booster_sound, this);
+		boosterSoundThread.detach();
+	}
 }
 
 void Map1_Mode::specialKey(int key, int x, int y) {
@@ -630,8 +601,15 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 			ctrl = true;
 		}
 
-		booster = true;
-		networkmgr.SendBoosterPacket(booster);
+		if (booster_cnt > 0) {
+			booster_cnt--;
+			booster = true;
+			networkmgr.SendBoosterPacket(booster);
+			activateBoosterSound();
+		}
+		else {
+			std::cout << "No boosters left!" << std::endl;
+		}
 	}
 
 }
@@ -658,10 +636,6 @@ void Map1_Mode::specialKeyUp(int key, int x, int y) {
 		right = false;
 	}
 	break;
-	case GLUT_ACTIVE_CTRL:
-	{
-		ctrl = false;
-	}
 	}
 
 }
@@ -763,7 +737,7 @@ void Map1_Mode::draw_model() {
 	for (const auto& road : road1) {
 		road->draw(shaderProgramID, isKeyPressed_s);
 	}
-	
+
 	for (const auto& barricate : road1_barricate) {
 		barricate->draw(shaderProgramID, isKeyPressed_s);
 	}
