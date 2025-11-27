@@ -780,24 +780,28 @@ void Map1_Mode::finish() {
 }
 
 void Map1_Mode::updatePhysics(float deltaTime) {
-	// ���� ���� ������Ʈ (deltaTime�� ���� ��Ȯ�� ����)
 	dynamicsWorld->stepSimulation(deltaTime);
 
-	// ���� �������� ��ü�� Transform ������Ʈ
 	UpdateRigidBodyTransforms(karts);
 	UpdateRigidBodyTransforms(road1_barricate);
 
-	// �浹 ó�� (���� ���� ������Ʈ �� ����)
+	btVector3 aabbMin, aabbMax;
+	road1_barricate[0]->rigidBody->getAabb(aabbMin, aabbMax);
+	std::cout << "AABB Min: " << aabbMin.getX() << ", "
+		<< aabbMin.getY() << ", " << aabbMin.getZ() << std::endl;
+
+	std::cout << "AABB Max: " << aabbMax.getX() << ", "
+		<< aabbMax.getY() << ", " << aabbMax.getZ() << std::endl;
+
 	checkCollisionKart();
 }
 
 void Map1_Mode::timerHelper(int value) {
 	if (Map1_Mode* instance = dynamic_cast<Map1_Mode*>(Mode::currentInstance)) {
-		const float deltaTime = 1.0f / 60.0f; // 60FPS ����, �� �������� �ð�
+		const float deltaTime = 1.0f / 60.0f;
 
-		// ���� ���� �� ���� ���� ������Ʈ (���� ���� ���¿����� ��� ����)
-		instance->updatePhysics(deltaTime); // ���� ���� ������Ʈ
-		instance->timer(); // ������ �� ���� ���� ������Ʈ
+		instance->updatePhysics(deltaTime);
+		instance->timer();
 
 	}
 
