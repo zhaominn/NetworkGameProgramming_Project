@@ -48,6 +48,8 @@ constexpr char S2C_BOOSTER = 12;
 // constexpr char S2C_WORLD_UPDATE = 13;
 constexpr char S2C_RANK = 14;
 constexpr char S2C_LOGOUT = 15;
+//wall collision
+constexpr char C2S_WALL_COLLISION = 16
 
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
