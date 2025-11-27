@@ -136,6 +136,7 @@ void LoginMode::init()
 	login_tex = loadTexture("asset/login/login_img.png");
 	before_tex = loadTexture("asset/login/game_start_after.png");
 	after_tex = loadTexture("asset/login/game_start_before.png");
+	nickname_tex = loadTexture("asset/login/enter_name.png");
 
 	isRunning = false;
 }
@@ -197,27 +198,29 @@ void LoginMode::mouseClick(int button, int state, int x, int y)
 
 void LoginMode::passiveMotion(int x, int y)
 {
-	float glX = ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH)) * 2.0f - 1.0f;
-	float glY = -(((float)y / (float)glutGet(GLUT_WINDOW_HEIGHT)) * 2.0f - 1.0f); 
+	if(!startButton){
+		float glX = ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH)) * 2.0f - 1.0f;
+		float glY = -(((float)y / (float)glutGet(GLUT_WINDOW_HEIGHT)) * 2.0f - 1.0f);
 
-	float btnWidth = 0.5f;
-	float btnHeight = btnWidth * (74.0f / 309.0f) * 1.2f;
-	float btnX = 0.0f; 
-	float btnY = -0.7f;
+		float btnWidth = 0.5f;
+		float btnHeight = btnWidth * (74.0f / 309.0f) * 1.2f;
+		float btnX = 0.0f;
+		float btnY = -0.7f;
 
-	float left = btnX - (btnWidth / 2.0f);
-	float right = btnX + (btnWidth / 2.0f);
-	float bottom = btnY - (btnHeight / 2.0f);
-	float top = btnY + (btnHeight / 2.0f);
+		float left = btnX - (btnWidth / 2.0f);
+		float right = btnX + (btnWidth / 2.0f);
+		float bottom = btnY - (btnHeight / 2.0f);
+		float top = btnY + (btnHeight / 2.0f);
 
-	if (glX >= left && glX <= right && glY >= bottom && glY <= top) {
-		isButtonHovered = true;
+		if (glX >= left && glX <= right && glY >= bottom && glY <= top) {
+			isButtonHovered = true;
+		}
+		else {
+			isButtonHovered = false;
+		}
+
+		glutPostRedisplay();
 	}
-	else {
-		isButtonHovered = false;
-	}
-
-	glutPostRedisplay();
 }
 
 void LoginMode::keyboard(unsigned char key, int x, int y)
@@ -261,25 +264,26 @@ void LoginMode::specialKeyUp(int key, int x, int y)
 
 void LoginMode::draw_model()
 {
-	glUseProgram(0);          
-	glDisable(GL_LIGHTING);   
-	glDisable(GL_DEPTH_TEST); 
-	glDisable(GL_CULL_FACE);  
+	glUseProgram(0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(-1.0, 1.0, -1.0, 1.0); 
+	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	draw_login();
+
 	if (startButton == false)
 	{
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		draw_login();
-
 		glEnable(GL_TEXTURE_2D);
 
 		if (isButtonHovered) {
@@ -290,11 +294,11 @@ void LoginMode::draw_model()
 		}
 
 		float btnWidth = 0.5f;
-		float btnHeight = btnWidth * (74.0f / 309.0f) * 1.2f;
-		float cx = 0.0f; 
-		float cy = -0.7f;
+		float btnHeight = btnWidth * (74.0f / 309.0f) * 1.2f; 
+		float cx = 0.0f;  
+		float cy = -0.7f; 
 
-		float hw = btnWidth / 2.0f; 
+		float hw = btnWidth / 2.0f;
 		float hh = btnHeight / 2.0f;
 
 		glBegin(GL_QUADS);
@@ -308,15 +312,36 @@ void LoginMode::draw_model()
 	}
 	else
 	{
-		glColor4f(0.0f, 0.0f, 0.0f, 1.0f); 
-		glRasterPos2f(-0.4f, 0.1f);
-		for (char c : std::string("Please Enter ID :"))
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, nickname_tex);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-		glColor4f(0.0f, 0.0f, 1.0f, 1.0f); 
-		glRasterPos2f(-0.1f, 0.1f);
-		for (char c : inputText)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		float labelWidth = 0.6f;
+		float labelHeight = labelWidth * (142.0f / 265.0f) * 1.2f;
+
+		float cx = 0.0f;
+		float cy = - 0.1f;
+
+		float hw = labelWidth / 2.0f;
+		float hh = labelHeight / 2.0f;
+
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(cx - hw, cy - hh, 0.0f);
+		glTexCoord2f(0.0f, 1.0f); glVertex3f(cx - hw, cy + hh, 0.0f);
+		glTexCoord2f(1.0f, 1.0f); glVertex3f(cx + hw, cy + hh, 0.0f);
+		glTexCoord2f(1.0f, 0.0f); glVertex3f(cx + hw, cy - hh, 0.0f);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+		glRasterPos2f(-0.25f, -0.2f);
+		for (char c : inputText)glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
+
+		glRasterPos2f(-0.25f + 0.002f, -0.2f);
+		for (char c : inputText) glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
+
+		glRasterPos2f(-0.25f, -0.2f - 0.002f);
+		for (char c : inputText) glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
 	}
 
 	glEnable(GL_DEPTH_TEST);

@@ -17,6 +17,8 @@ public:
 	GLuint login_tex;
 	GLuint before_tex;
 	GLuint after_tex;
+	GLuint nickname_tex;
+
 	LoginMode();
 	~LoginMode();
 
