@@ -14,7 +14,7 @@ constexpr float ACCELERATION = 0.004f;
 constexpr float DECELERATION = 0.003f;
 constexpr float LIMIT_SPEED = 1.0;
 constexpr float BOOSTER_SPEED = 2.0;
-constexpr float MAX_SPEED = 1.0;
+constexpr float MAX_SPEED = 0.5;
 constexpr float TURN_ANGLE = 1.0;
 
 constexpr float MAX_FACE_ROTATION = 25.0f;
@@ -97,6 +97,8 @@ struct S2C_Move_All_Packet {
 	float yaw;
 	float face_rotation;
 	float body_rotation;
+	float booster_head_tilt;
+	bool boosterOn;
 
 	float x;
 	float y;
@@ -113,6 +115,7 @@ struct S2C_Move_Packet
 	float yaw;
 	float face_rotation;
 	float body_rotation;
+	float booster_head_tilt;
 
 	float x;
 	float y;
@@ -126,7 +129,8 @@ struct S2C_Booster_Packet
 	unsigned char size;
 	char type;
 	char id;
-	float         booster_head_tilt;
+	bool boosterOn;
+	int booster_cnt;
 };
 
 struct S2C_Rank_Packet
@@ -164,6 +168,8 @@ struct C2S_Booster_Packet
 {
 	unsigned char size;
 	char type;
+	bool boosterOn;
+	int booster_cnt;
 };
 
 struct C2S_Change_Map_Packet

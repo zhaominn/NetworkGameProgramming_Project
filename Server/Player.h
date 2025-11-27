@@ -20,6 +20,8 @@ private:
 
 	SOCKET m_socket;
 
+	std::chrono::steady_clock::time_point m_boosterEndTime;
+
 public:
 	bool m_up = false;
 	bool m_down = false;
@@ -56,6 +58,9 @@ public:
 	void send_move_Packet();
 	void send_booster_packet();
 
+	void ActiveBooster();
+	void CheckBoosterState();
+
 	// ingame
 	void send_Rank_Packet();
 	void checkIsFinished();
@@ -69,6 +74,7 @@ public:
 	void SetId(short id);
 	void SetName(const char* name);
 	void SetBoosterCnt(int booster);
+	void SetBoosterStatus(bool booster_status);
 	void SetYaw(float yaw);
 	void SetSpeed(float speed);
 	void SetFaceRotation(float f_rotation);
@@ -80,6 +86,7 @@ public:
 	SOCKET GetSocket() const { return m_socket; }
 	int GetID() const;
 	int GetBoosterCnt() const;
+	bool GetBoosterStatus() const;
 	char* GetName() const;
 	float GetYaw() const;
 	float GetSpeed() const;

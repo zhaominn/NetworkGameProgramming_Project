@@ -57,7 +57,7 @@ DWORD WINAPI ClientThread(LPVOID socket)
 
 DWORD WINAPI UpdatePositon(LPVOID lpParam)
 {
-	
+
 	// Collect the state of all players and send it to every player
 	std::chrono::steady_clock::time_point last_send_time = std::chrono::steady_clock::now();
 	auto startTime = std::chrono::steady_clock::now();
@@ -81,56 +81,8 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 			for (int i = 0; i < MAX_USER; ++i) {
 				{
 					if (!g_users[i].GetOnline()) continue;
-
-					Player& pl = g_users[i];
-
-					// -----------------------------
-					// 1) move input
-					// -----------------------------
-					float speed = pl.GetSpeed();
-
-					// forward
-					if (pl.m_up)
-						speed += ACCELERATION * dt;
-
-					// back
-					if (pl.m_down)
-						speed -= ACCELERATION * dt;
-
-					if (!pl.m_up && !pl.m_down)
-					{
-						if (speed > 0)
-							speed -= DECELERATION * dt;
-						else if (speed < 0)
-							speed += DECELERATION * dt;
-					}
-
-					// speed clamp
-					if (speed > MAX_SPEED) speed = MAX_SPEED;
-					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
-
-					pl.SetSpeed(speed);
-
-					// -----------------------------
-					// 2) move (z)
-					// -----------------------------
-					float oldZ = pl.m_posZ;
-
-					pl.m_posZ -= speed * dt; 
-
-					// -----------------------------
-					// 3) collision
-					// -----------------------------
-					if (PlayerCollisionCheck(i))
-					{
-						pl.m_posZ = oldZ;  // º¹±¸
-						pl.SetSpeed(pl.GetSpeed() * 0.5f);
-					}
-
-					// -----------------------------
-					// 4) move packet send
-					// -----------------------------
-					pl.send_move_Packet();
+					g_users[i].CheckBoosterState();
+					g_users[i].send_move_Packet();
 				}
 				g_users[i].checkIsFinished();
 			}

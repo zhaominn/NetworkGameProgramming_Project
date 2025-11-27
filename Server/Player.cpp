@@ -118,21 +118,27 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_MOVE:
 	{
-		std::lock_guard<std::mutex> lock1(g_UserMutex);
-
 		C2S_Move_Packet* move_packet = reinterpret_cast<C2S_Move_Packet*>(p);
 		m_up = move_packet->up;
 		m_down = move_packet->down;
 		m_left = move_packet->left;
 		m_right = move_packet->right;
 
+		float max_speed = MAX_SPEED;
+		float acceleration = ACCELERATION;
+
+		if (isBoosterActive) {
+			max_speed = BOOSTER_SPEED;
+			acceleration = ACCELERATION * 1.5f;
+		}
+
 		if (m_up)
 		{
-			SetSpeed(m_speed + ACCELERATION);
+			SetSpeed(m_speed + acceleration);
 		}
 		if (m_down)
 		{
-			SetSpeed(m_speed - ACCELERATION);
+			SetSpeed(m_speed - acceleration);
 		}
 		if (m_left)
 		{
@@ -179,31 +185,13 @@ void Player::process_packet(char* p)
 			SetBodyRotation(0.0);
 		}
 
-		if (m_speed > MAX_SPEED) SetSpeed(MAX_SPEED);
-		if (m_speed < -MAX_SPEED / 2.0f) SetSpeed(-MAX_SPEED / 2.0f);
+		if (m_speed > max_speed) SetSpeed(max_speed);
+		if (m_speed < -max_speed / 2.0f) SetSpeed(-max_speed / 2.0f);
 
 		float f_limit = GetFaceRotation();
 		if (f_limit > MAX_FACE_ROTATION) f_limit = MAX_FACE_ROTATION;
 		if (f_limit < -MAX_FACE_ROTATION) f_limit = -MAX_FACE_ROTATION;
 		SetFaceRotation(f_limit);
-
-		// -------------- 老褒 捞悼 贸府 --------------
-		float rad = GetYaw() * PI / 180.0f;
-
-		float dirX = -sinf(rad);
-		float dirZ = -cosf(rad);
-
-		m_posX += GetSpeed() * dirX;
-		m_posZ += GetSpeed() * dirZ;
-	}
-	break;
-	case C2S_BOOSTER:
-	{
-		//if (!isBoosterActive) {
-		isBoosterActive = true;
-		std::cout << "booster on!" << std::endl;
-		/*		return;
-			}*/
 
 		if (isBoosterActive) {
 			if (m_booster_head_tilt < MAX_HEAD_TILT) {
@@ -222,8 +210,21 @@ void Player::process_packet(char* p)
 			}
 		}
 
-		send_booster_packet();
+		// -------------- 老褒 捞悼 贸府 --------------
+		float rad = GetYaw() * PI / 180.0f;
 
+		float dirX = -sinf(rad);
+		float dirZ = -cosf(rad);
+
+		m_posX += GetSpeed() * dirX;
+		m_posZ += GetSpeed() * dirZ;
+	}
+	break;
+	case C2S_BOOSTER:
+	{
+		C2S_Booster_Packet* booster_packet = reinterpret_cast<C2S_Booster_Packet*>(p);
+		SetBoosterCnt(booster_packet->booster_cnt);
+		ActiveBooster();
 	}
 	break;
 	case C2S_LOGOUT:
@@ -347,18 +348,23 @@ void Player::send_move_Packet()
 	move_pkt->size = sizeof(S2C_Move_Packet);
 	move_pkt->type = S2C_MOVE;
 
-	std::lock_guard<std::mutex> lock2(g_Sendmutex);
+	{
+		std::lock_guard<std::mutex> lock2(g_Sendmutex);
 
-	for (int i = 0; i < MAX_USER; ++i) {
+		for (int i = 0; i < MAX_USER; ++i) {
 
-		move_pkt->arr[i].id = g_users[i].GetID();
-		move_pkt->arr[i].speed = g_users[i].GetSpeed();
-		move_pkt->arr[i].yaw = g_users[i].GetYaw();
-		move_pkt->arr[i].face_rotation = g_users[i].GetFaceRotation();
-		move_pkt->arr[i].body_rotation = g_users[i].GetBodyRotation();
-		move_pkt->arr[i].x = g_users[i].m_posX;
-		move_pkt->arr[i].y = g_users[i].m_posY;
-		move_pkt->arr[i].z = g_users[i].m_posZ;
+			move_pkt->arr[i].id = g_users[i].GetID();
+			move_pkt->arr[i].speed = g_users[i].GetSpeed();
+			move_pkt->arr[i].yaw = g_users[i].GetYaw();
+			move_pkt->arr[i].face_rotation = g_users[i].GetFaceRotation();
+			move_pkt->arr[i].body_rotation = g_users[i].GetBodyRotation();
+			move_pkt->arr[i].booster_head_tilt = GetHeadtilt();
+			move_pkt->arr[i].x = g_users[i].m_posX;
+			move_pkt->arr[i].y = g_users[i].m_posY;
+			move_pkt->arr[i].z = g_users[i].m_posZ;
+			move_pkt->arr[i].z = g_users[i].m_posZ;
+			move_pkt->arr[i].boosterOn = g_users[i].isBoosterActive;
+		}
 	}
 
 	move_pkt->id = GetID();
@@ -366,10 +372,11 @@ void Player::send_move_Packet()
 	move_pkt->speed = GetSpeed();
 	move_pkt->yaw = GetYaw();
 	move_pkt->x = m_posX;
-	move_pkt->y = m_posY;
+	move_pkt->y = m_posY;                                       
 	move_pkt->z = m_posZ;
 	move_pkt->face_rotation = GetFaceRotation();
 	move_pkt->body_rotation = GetBodyRotation();
+	move_pkt->booster_head_tilt = GetHeadtilt();
 
 	send_packet(reinterpret_cast<char*>(move_pkt), sizeof(S2C_Move_Packet));
 	//broadcast(reinterpret_cast<char*>(move_pkt), sizeof(S2C_Move_Packet));
@@ -381,10 +388,42 @@ void Player::send_booster_packet()
 	booster_pkt->id = GetID();
 	booster_pkt->size = sizeof(S2C_Booster_Packet);
 	booster_pkt->type = S2C_BOOSTER;
-	booster_pkt->booster_head_tilt = GetHeadtilt();
+	booster_pkt->boosterOn = isBoosterActive;
+	booster_pkt->booster_cnt = m_booster_cnt;
 	send_packet(reinterpret_cast<char*>(booster_pkt), sizeof(S2C_Booster_Packet));
 
 	delete booster_pkt;
+}
+
+void Player::ActiveBooster()
+{
+	if (isBoosterActive) {
+		std::cout << "Booster is already active!" << std::endl;
+		return;
+	}
+
+	if (m_booster_cnt > 0) {
+		--m_booster_cnt;
+		isBoosterActive = true;
+		m_boosterEndTime = std::chrono::steady_clock::now() + std::chrono::seconds(3);
+		std::cout << "Booster activated! Remaining: " << m_booster_cnt << std::endl;
+	}
+
+	send_booster_packet();
+}
+
+void Player::CheckBoosterState()
+{
+	if (!isBoosterActive) return;
+
+	if (std::chrono::steady_clock::now() >= m_boosterEndTime) 
+	{
+		++m_booster_cnt;
+		isBoosterActive = false;
+		std::cout << "Booster Deactivated!" << std::endl;
+	}
+
+	send_booster_packet();
 }
 
 void Player::send_Rank_Packet()
@@ -457,6 +496,12 @@ void Player::SetBoosterCnt(int booster)
 	m_booster_cnt = booster;
 }
 
+void Player::SetBoosterStatus(bool booster_status)
+{
+	isBoosterActive = booster_status;
+}
+
+
 void Player::SetYaw(float yaw)
 {
 	m_yaw = yaw;
@@ -500,6 +545,11 @@ int Player::GetID() const
 int Player::GetBoosterCnt() const
 {
 	return m_booster_cnt;
+}
+
+bool Player::GetBoosterStatus() const
+{
+	return isBoosterActive;
 }
 
 char* Player::GetName() const

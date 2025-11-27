@@ -138,6 +138,17 @@ void NetworkMgr::SendMovePacket(bool up, bool down, bool left, bool right)
 	delete packet;
 }
 
+void NetworkMgr::SendBoosterPacket(bool boosterOn, int booster_cnt)
+{
+	C2S_Booster_Packet* packet = new C2S_Booster_Packet;
+	packet->type = C2S_BOOSTER;
+	packet->boosterOn = boosterOn;
+	packet->booster_cnt = booster_cnt;
+
+	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Booster_Packet));
+	delete packet;
+}
+
 void NetworkMgr::ProcessPacket(char* buf)
 {
 	unsigned char type = buf[1];
@@ -182,9 +193,11 @@ void NetworkMgr::ProcessPacket(char* buf)
 			g_players[i].m_yaw = p->arr[i].yaw;
 			g_players[i].m_face_rotation = p->arr[i].face_rotation;
 			g_players[i].m_body_rotation = p->arr[i].body_rotation;
+			g_players[i].m_booster_head_tilt = p->arr[i].booster_head_tilt;
 			g_players[i].x = p->arr[i].x;
 			g_players[i].y = p->arr[i].y;
 			g_players[i].z = p->arr[i].z;
+			g_players[i].isBoosterOn = p->arr[i].boosterOn;
 		}
 
 	}
@@ -192,8 +205,9 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_BOOSTER:
 	{
 		S2C_Booster_Packet* p = reinterpret_cast<S2C_Booster_Packet*>(buf);
-		g_players[p->id].m_booster_head_tilt = p->booster_head_tilt;
 		std::cout << "get boooster packet" << std::endl;
+		g_players[g_myid].isBoosterOn = p->boosterOn;
+		g_players[g_myid].m_booster_cnt = p->booster_cnt;
 	}
 	break;
 	case S2C_RANK:

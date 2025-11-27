@@ -30,6 +30,7 @@ public:
 	bool down = false;
 	bool left = false;
 	bool right = false;
+	bool booster = true;
 	bool ctrl = false;
 
 	// camera
@@ -131,7 +132,7 @@ public:
 	
 	void keyboard(unsigned char key, int x, int y) override;
 
-	void activateBooster();
+	void activateBoosterSound();
 
 	void specialKey(int key, int x, int y) override;
 

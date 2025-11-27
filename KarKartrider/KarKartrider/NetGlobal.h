@@ -4,6 +4,7 @@
 
 struct PlayerKart {
 	int m_id;
+	int m_booster_cnt = 2;
 	char* m_name;
 	float m_yaw;
 	float m_speed;
@@ -12,6 +13,7 @@ struct PlayerKart {
 	float m_booster_head_tilt;
 	bool isReady;
 	bool isOnline;
+	bool isBoosterOn;
 	SOCKET m_socket;
 
 	int m_rank;

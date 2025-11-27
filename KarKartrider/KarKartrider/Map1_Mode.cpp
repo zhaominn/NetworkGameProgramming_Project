@@ -19,22 +19,24 @@ Map1_Mode::Map1_Mode()
 
 void Map1_Mode::startBoosterRegen()
 {
-	while (isBoosterRegenActive) {
+	// 서버에서 처리
 
-		if (booster_cnt < MAX_BOOSTER_CNT) {
-			std::this_thread::sleep_for(std::chrono::seconds(6));
+	//while (isBoosterRegenActive) {
+
+	//	if (booster_cnt < MAX_BOOSTER_CNT) {
+	//		std::this_thread::sleep_for(std::chrono::seconds(6));
 
 
-			if (booster_cnt < MAX_BOOSTER_CNT) {
-				++booster_cnt;
-				std::cout << "Booster regenerated! Current boosters: " << booster_cnt << std::endl;
-			}
-		}
-		else {
+	//		if (booster_cnt < MAX_BOOSTER_CNT) {
+	//			++booster_cnt;
+	//			std::cout << "Booster regenerated! Current boosters: " << booster_cnt << std::endl;
+	//		}
+	//	}
+	//	else {
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
-	}
+	//		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	//	}
+	//}
 }
 
 void Map1_Mode::draw_dashBoard()
@@ -99,7 +101,7 @@ void Map1_Mode::draw_ui() {
 	glUniform1i(isTextureLocation, true);
 
 
-	for (int i = 0; i < booster_cnt; ++i) {
+	for (int i = 0; i < g_players[g_myid].m_booster_cnt; ++i) {
 		booster_uis[i]->draw(shaderProgramID_UI, isKeyPressed_s);
 	}
 	glUniform1i(isTextureLocation, false);
@@ -561,42 +563,13 @@ void Map1_Mode::keyboard(unsigned char key, int x, int y) {
 	}
 }
 
-void Map1_Mode::activateBooster() {
+void Map1_Mode::activateBoosterSound() {
 
-
-	//if (isBoosterActive) {
-	//	std::cout << "Booster is already active!" << std::endl;
-	//	return;
-	//}
-
-
-	//isBoosterActive = true;
-
-	//std::cout << "Booster activated! Remaining boosters: " << booster_cnt << std::endl;
-
-
-	//float originalMaxSpeed = MAX_SPEED;
-	//float originalAcceleration = ACCELERATION;
-
-
-	//MAX_SPEED = BOOSTER_SPEED;
-	//ACCELERATION *= 1.05f;
-
-
-	//if (!isBoosterSound) {
-	//	isBoosterSound = true;
-	//	boosterSoundThread = std::thread(&Map1_Mode::booster_sound, this);
-	//	boosterSoundThread.detach();
-	//}
-
-
-	//std::thread([this, originalMaxSpeed, originalAcceleration]() {
-	//	std::this_thread::sleep_for(std::chrono::duration<double>(4.4));
-	//	MAX_SPEED = originalMaxSpeed;
-	//	ACCELERATION = originalAcceleration;
-	//	isBoosterActive = false;
-	//	std::cout << "Booster ended. MAX_SPEED and ACCELERATION restored." << std::endl;
-	//	}).detach();
+	if (!isBoosterSound) {
+		isBoosterSound = true;
+		boosterSoundThread = std::thread(&Map1_Mode::booster_sound, this);
+		boosterSoundThread.detach();
+	}
 }
 
 void Map1_Mode::specialKey(int key, int x, int y) {
@@ -630,10 +603,14 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 			ctrl = true;
 		}
 
-		C2S_Booster_Packet* packet = new C2S_Booster_Packet;
-		packet->type = C2S_BOOSTER;
-		networkmgr.SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Booster_Packet));
-		delete packet;
+		if (g_players[g_myid].m_booster_cnt > 0) {
+			g_players[g_myid].isBoosterOn = true;
+			networkmgr.SendBoosterPacket(g_players[g_myid].isBoosterOn, g_players[g_myid].m_booster_cnt);
+			activateBoosterSound();
+		}
+		else {
+			std::cout << "No boosters left!" << std::endl;
+		}
 	}
 
 }
@@ -697,9 +674,6 @@ void Map1_Mode::RenderPlayer() {
 		{
 			glm::mat4 cm = model;
 
-			if (c->name == "booster" && !isBoosterActive)
-				continue;
-
 			if (c->name == "character_face")
 			{
 				glm::mat4 headRot = glm::rotate(
@@ -718,6 +692,9 @@ void Map1_Mode::RenderPlayer() {
 			}
 
 			c->translateMatrix = cm;
+
+			if (c->name == "booster" && !g_players[pid].isBoosterOn)
+				continue;
 			c->draw(shaderProgramID, isKeyPressed_s);
 		}
 	}
@@ -761,7 +738,7 @@ void Map1_Mode::draw_model() {
 	for (const auto& road : road1) {
 		road->draw(shaderProgramID, isKeyPressed_s);
 	}
-	
+
 	for (const auto& barricate : road1_barricate) {
 		barricate->draw(shaderProgramID, isKeyPressed_s);
 	}
@@ -788,14 +765,14 @@ void Map1_Mode::draw_model() {
 }
 
 void Map1_Mode::draw_bb() {
-	if (!bb_status)
-		return;
-	for (const auto& model : karts) { // �� bb draw
-		model->draw_rigidBody(shaderProgramID);
-	}
-	for (const auto& barricate : road1_barricate) { // �� bb draw
-		barricate->draw_rigidBody(shaderProgramID);
-	}
+	//if (!bb_status)
+	//	return;
+	//for (const auto& model : karts) { // �� bb draw
+	//	model->draw_rigidBody(shaderProgramID);
+	//}
+	//for (const auto& barricate : road1_barricate) { // �� bb draw
+	//	barricate->draw_rigidBody(shaderProgramID);
+	//}
 }
 
 void Map1_Mode::finish() {
