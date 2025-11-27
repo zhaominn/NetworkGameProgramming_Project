@@ -19,22 +19,24 @@ Map1_Mode::Map1_Mode()
 
 void Map1_Mode::startBoosterRegen()
 {
-	while (isBoosterRegenActive) {
+	// 서버에서 처리
 
-		if (booster_cnt < MAX_BOOSTER_CNT) {
-			std::this_thread::sleep_for(std::chrono::seconds(6));
+	//while (isBoosterRegenActive) {
+
+	//	if (booster_cnt < MAX_BOOSTER_CNT) {
+	//		std::this_thread::sleep_for(std::chrono::seconds(6));
 
 
-			if (booster_cnt < MAX_BOOSTER_CNT) {
-				++booster_cnt;
-				std::cout << "Booster regenerated! Current boosters: " << booster_cnt << std::endl;
-			}
-		}
-		else {
+	//		if (booster_cnt < MAX_BOOSTER_CNT) {
+	//			++booster_cnt;
+	//			std::cout << "Booster regenerated! Current boosters: " << booster_cnt << std::endl;
+	//		}
+	//	}
+	//	else {
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
-	}
+	//		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	//	}
+	//}
 }
 
 void Map1_Mode::draw_dashBoard()
@@ -99,7 +101,7 @@ void Map1_Mode::draw_ui() {
 	glUniform1i(isTextureLocation, true);
 
 
-	for (int i = 0; i < booster_cnt; ++i) {
+	for (int i = 0; i < g_players[g_myid].m_booster_cnt; ++i) {
 		booster_uis[i]->draw(shaderProgramID_UI, isKeyPressed_s);
 	}
 	glUniform1i(isTextureLocation, false);
@@ -601,10 +603,9 @@ void Map1_Mode::specialKey(int key, int x, int y) {
 			ctrl = true;
 		}
 
-		if (booster_cnt > 0) {
-			booster_cnt--;
-			booster = true;
-			networkmgr.SendBoosterPacket(booster, booster_cnt);
+		if (g_players[g_myid].m_booster_cnt > 0) {
+			g_players[g_myid].isBoosterOn = true;
+			networkmgr.SendBoosterPacket(g_players[g_myid].isBoosterOn, g_players[g_myid].m_booster_cnt);
 			activateBoosterSound();
 		}
 		else {
@@ -673,9 +674,6 @@ void Map1_Mode::RenderPlayer() {
 		{
 			glm::mat4 cm = model;
 
-			if (c->name == "booster" && !isBoosterActive)
-				continue;
-
 			if (c->name == "character_face")
 			{
 				glm::mat4 headRot = glm::rotate(
@@ -694,6 +692,9 @@ void Map1_Mode::RenderPlayer() {
 			}
 
 			c->translateMatrix = cm;
+
+			if (c->name == "booster" && !g_players[g_myid].isBoosterOn)
+				continue;
 			c->draw(shaderProgramID, isKeyPressed_s);
 		}
 	}

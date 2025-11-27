@@ -203,7 +203,10 @@ void NetworkMgr::ProcessPacket(char* buf)
 	break;
 	case S2C_BOOSTER:
 	{
+		S2C_Booster_Packet* p = reinterpret_cast<S2C_Booster_Packet*>(buf);
 		std::cout << "get boooster packet" << std::endl;
+		g_players[g_myid].isBoosterOn = p->boosterOn;
+		g_players[g_myid].m_booster_cnt = p->booster_cnt;
 	}
 		break;
 	case S2C_RANK:

@@ -78,60 +78,13 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 
 		if (elapsed_time >= 1000 / 60) {
 
-			{
-				//std::lock_guard<std::mutex> lock1(g_UserMutex);
-				for (int i = 0; i < MAX_USER; ++i) {
-
-					Player& pl = g_users[i];
-					if (!pl.GetOnline()) continue;
-
-					// update booster state
-					pl.CheckBoosterState();
-
-					// 1) move input
-					float speed = pl.GetSpeed();
-
-					// forward
-					if (pl.m_up)
-						speed += ACCELERATION * dt;
-
-					// back
-					if (pl.m_down)
-						speed -= ACCELERATION * dt;
-
-					if (!pl.m_up && !pl.m_down)
-					{
-						if (speed > 0)
-							speed -= DECELERATION * dt;
-						else if (speed < 0)
-							speed += DECELERATION * dt;
-					}
-
-					// speed clamp
-					if (speed > MAX_SPEED) speed = MAX_SPEED;
-					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
-
-					pl.SetSpeed(speed);
-
-					// 2) move (z)
-					float oldZ = pl.m_posZ;
-
-					pl.m_posZ -= speed * dt;
-
-					// 3) collision
-					if (PlayerCollisionCheck(i))
-					{
-						pl.m_posZ = oldZ;  // º¹±¸
-						pl.SetSpeed(pl.GetSpeed() * 0.5f);
-					}
-
-					pl.checkIsFinished();
-				}
-			}
-
 			for (int i = 0; i < MAX_USER; ++i) {
-				// 4) move packet send
-				g_users[i].send_move_Packet();
+				{
+					if (!g_users[i].GetOnline()) continue;
+					g_users[i].CheckBoosterState();
+					g_users[i].send_move_Packet();
+				}
+				g_users[i].checkIsFinished();
 			}
 			last_send_time = current_time;
 		}

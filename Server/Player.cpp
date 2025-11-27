@@ -129,7 +129,7 @@ void Player::process_packet(char* p)
 
 		if (isBoosterActive) {
 			max_speed = BOOSTER_SPEED;
-			acceleration = ACCELERATION * 1.05f;
+			acceleration = ACCELERATION * 1.5f;
 		}
 
 		if (m_up)
@@ -194,7 +194,6 @@ void Player::process_packet(char* p)
 		SetFaceRotation(f_limit);
 
 		if (isBoosterActive) {
-			// 머리를 X축으로 뒤로 기울이기 (서서히 MAX_HEAD_TILT까지)
 			if (m_booster_head_tilt < MAX_HEAD_TILT) {
 				m_booster_head_tilt += TILT_SPEED;
 				if (m_booster_head_tilt > MAX_HEAD_TILT) {
@@ -203,7 +202,6 @@ void Player::process_packet(char* p)
 			}
 		}
 		else {
-			// 머리를 원래 상태로 복구 (서서히 0도로 복귀)
 			if (m_booster_head_tilt > 0.0f) {
 				m_booster_head_tilt -= TILT_SPEED;
 				if (m_booster_head_tilt < 0.0f) {
@@ -350,19 +348,21 @@ void Player::send_move_Packet()
 	move_pkt->size = sizeof(S2C_Move_Packet);
 	move_pkt->type = S2C_MOVE;
 
-	std::lock_guard<std::mutex> lock2(g_Sendmutex);
+	{
+		std::lock_guard<std::mutex> lock2(g_Sendmutex);
 
-	for (int i = 0; i < MAX_USER; ++i) {
+		for (int i = 0; i < MAX_USER; ++i) {
 
-		move_pkt->arr[i].id = g_users[i].GetID();
-		move_pkt->arr[i].speed = g_users[i].GetSpeed();
-		move_pkt->arr[i].yaw = g_users[i].GetYaw();
-		move_pkt->arr[i].face_rotation = g_users[i].GetFaceRotation();
-		move_pkt->arr[i].body_rotation = g_users[i].GetBodyRotation();
-		move_pkt->arr[i].booster_head_tilt = GetHeadtilt();
-		move_pkt->arr[i].x = g_users[i].m_posX;
-		move_pkt->arr[i].y = g_users[i].m_posY;
-		move_pkt->arr[i].z = g_users[i].m_posZ;
+			move_pkt->arr[i].id = g_users[i].GetID();
+			move_pkt->arr[i].speed = g_users[i].GetSpeed();
+			move_pkt->arr[i].yaw = g_users[i].GetYaw();
+			move_pkt->arr[i].face_rotation = g_users[i].GetFaceRotation();
+			move_pkt->arr[i].body_rotation = g_users[i].GetBodyRotation();
+			move_pkt->arr[i].booster_head_tilt = GetHeadtilt();
+			move_pkt->arr[i].x = g_users[i].m_posX;
+			move_pkt->arr[i].y = g_users[i].m_posY;
+			move_pkt->arr[i].z = g_users[i].m_posZ;
+		}
 	}
 
 	move_pkt->id = GetID();
@@ -386,6 +386,8 @@ void Player::send_booster_packet()
 	booster_pkt->id = GetID();
 	booster_pkt->size = sizeof(S2C_Booster_Packet);
 	booster_pkt->type = S2C_BOOSTER;
+	booster_pkt->boosterOn = isBoosterActive;
+	booster_pkt->booster_cnt = m_booster_cnt;
 	send_packet(reinterpret_cast<char*>(booster_pkt), sizeof(S2C_Booster_Packet));
 
 	delete booster_pkt;
@@ -399,23 +401,27 @@ void Player::ActiveBooster()
 	}
 
 	if (m_booster_cnt > 0) {
+		--m_booster_cnt;
 		isBoosterActive = true;
-
 		m_boosterEndTime = std::chrono::steady_clock::now() + std::chrono::seconds(3);
-
 		std::cout << "Booster activated! Remaining: " << m_booster_cnt << std::endl;
 	}
 
+	send_booster_packet();
 }
 
 void Player::CheckBoosterState()
 {
 	if (!isBoosterActive) return;
 
-	if (std::chrono::steady_clock::now() >= m_boosterEndTime) {
+	if (std::chrono::steady_clock::now() >= m_boosterEndTime) 
+	{
+		++m_booster_cnt;
 		isBoosterActive = false;
 		std::cout << "Booster Deactivated!" << std::endl;
 	}
+
+	send_booster_packet();
 }
 
 void Player::send_Rank_Packet()
