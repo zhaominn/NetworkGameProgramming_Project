@@ -81,6 +81,15 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 			for (int i = 0; i < MAX_USER; ++i) {
 				{
 					if (!g_users[i].GetOnline()) continue;
+
+					float oldZ = g_users[i].m_posZ;
+
+					if (PlayerCollisionCheck(i))
+					{
+						g_users[i].m_posZ = oldZ; 
+						g_users[i].SetSpeed(g_users[i].GetSpeed() * 0.3f);
+					}
+
 					g_users[i].CheckBoosterState();
 					g_users[i].send_move_Packet();
 				}
