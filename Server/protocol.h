@@ -198,4 +198,16 @@ struct C2S_Move_Packet
 	//btRigidBody rigidBody;
 };
 
+struct AABB {
+	float minX, minY, minZ;
+	float maxX, maxY, maxZ;
+};
+
+struct C2S_Wall_Collision_Packet {
+	unsigned char size;
+	char type;
+
+	AABB aabb;
+};
+
 #pragma pack (pop)
