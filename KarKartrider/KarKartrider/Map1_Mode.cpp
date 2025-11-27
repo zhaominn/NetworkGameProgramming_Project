@@ -765,14 +765,14 @@ void Map1_Mode::draw_model() {
 }
 
 void Map1_Mode::draw_bb() {
-	if (!bb_status)
-		return;
-	for (const auto& model : karts) { // �� bb draw
-		model->draw_rigidBody(shaderProgramID);
-	}
-	for (const auto& barricate : road1_barricate) { // �� bb draw
-		barricate->draw_rigidBody(shaderProgramID);
-	}
+	//if (!bb_status)
+	//	return;
+	//for (const auto& model : karts) { // �� bb draw
+	//	model->draw_rigidBody(shaderProgramID);
+	//}
+	//for (const auto& barricate : road1_barricate) { // �� bb draw
+	//	barricate->draw_rigidBody(shaderProgramID);
+	//}
 }
 
 void Map1_Mode::finish() {
