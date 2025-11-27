@@ -183,6 +183,41 @@ void LoginMode::draw_login()
 
 void LoginMode::mouseClick(int button, int state, int x, int y)
 {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		if (startButton == false && isButtonHovered)
+		{
+			printf("Start 버튼 클릭 성공! 입력창으로 이동합니다.\n");
+
+			startButton = true;
+			glutPostRedisplay();
+		}
+	}
+}
+
+void LoginMode::passiveMotion(int x, int y)
+{
+	float glX = ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH)) * 2.0f - 1.0f;
+	float glY = -(((float)y / (float)glutGet(GLUT_WINDOW_HEIGHT)) * 2.0f - 1.0f); 
+
+	float btnWidth = 0.5f;
+	float btnHeight = btnWidth * (74.0f / 309.0f) * 1.2f;
+	float btnX = 0.0f; 
+	float btnY = -0.7f;
+
+	float left = btnX - (btnWidth / 2.0f);
+	float right = btnX + (btnWidth / 2.0f);
+	float bottom = btnY - (btnHeight / 2.0f);
+	float top = btnY + (btnHeight / 2.0f);
+
+	if (glX >= left && glX <= right && glY >= bottom && glY <= top) {
+		isButtonHovered = true;
+	}
+	else {
+		isButtonHovered = false;
+	}
+
+	glutPostRedisplay();
 }
 
 void LoginMode::keyboard(unsigned char key, int x, int y)
@@ -198,8 +233,6 @@ void LoginMode::keyboard(unsigned char key, int x, int y)
 			//selectMapMode->goSelectMode = [this]() { goSelectMode(); };
 			MM.SetMode(selectMapMode);
 		}
-		else
-			startButton = true;
 
 		return;
 	}
@@ -228,64 +261,67 @@ void LoginMode::specialKeyUp(int key, int x, int y)
 
 void LoginMode::draw_model()
 {
-	// ---------------------------------------------------------
-	// 1. 3D 렌더링 설정 강제 초기화 (이 부분이 핵심!)
-	// ---------------------------------------------------------
-	glUseProgram(0);          // ★ 쉐이더 끄기 (가장 유력한 원인)
-	glDisable(GL_LIGHTING);   // 조명 끄기
-	glDisable(GL_DEPTH_TEST); // 깊이 테스트 끄기 (맨 앞에 그리기)
-	glDisable(GL_CULL_FACE);  // ★ 뒷면 제거 끄기 (이거 때문에 안 보일 수 있음)
+	glUseProgram(0);          
+	glDisable(GL_LIGHTING);   
+	glDisable(GL_DEPTH_TEST); 
+	glDisable(GL_CULL_FACE);  
 
-	// 혼합(Blending) 설정 (PNG 투명도 지원을 위해 켜두는 게 좋음)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// ---------------------------------------------------------
-	// 2. 2D 카메라(좌표계) 설정
-	// ---------------------------------------------------------
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(-1.0, 1.0, -1.0, 1.0); // 화면 가득 채우는 좌표계 (-1 ~ 1)
-
+	gluOrtho2D(-1.0, 1.0, -1.0, 1.0); 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	// ---------------------------------------------------------
-	// 3. 그리기 로직
-	// ---------------------------------------------------------
 	if (startButton == false)
 	{
-		// [상태 1] 이미지 모드
-		// 색상이 섞이지 않게 순수 흰색으로 설정
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		draw_login();
+
+		glEnable(GL_TEXTURE_2D);
+
+		if (isButtonHovered) {
+			glBindTexture(GL_TEXTURE_2D, before_tex);
+		}
+		else {
+			glBindTexture(GL_TEXTURE_2D, after_tex);
+		}
+
+		float btnWidth = 0.5f;
+		float btnHeight = btnWidth * (74.0f / 309.0f) * 1.2f;
+		float cx = 0.0f; 
+		float cy = -0.7f;
+
+		float hw = btnWidth / 2.0f; 
+		float hh = btnHeight / 2.0f;
+
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(cx - hw, cy - hh, 0.0f);
+		glTexCoord2f(0.0f, 1.0f); glVertex3f(cx - hw, cy + hh, 0.0f);
+		glTexCoord2f(1.0f, 1.0f); glVertex3f(cx + hw, cy + hh, 0.0f);
+		glTexCoord2f(1.0f, 0.0f); glVertex3f(cx + hw, cy - hh, 0.0f);
+		glEnd();
+
+		glDisable(GL_TEXTURE_2D);
 	}
 	else
 	{
-		// [상태 2] 입력 모드
-
-		// 배경 이미지를 흐릿하게 깔고 싶으면 여기서 draw_login 호출
-		// glColor4f(0.5f, 0.5f, 0.5f, 1.0f); // 약간 어둡게
-		// draw_login(); 
-
-		// 텍스트 그리기
-		glColor4f(0.0f, 0.0f, 0.0f, 1.0f); // 검은색
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f); 
 		glRasterPos2f(-0.4f, 0.1f);
 		for (char c : std::string("Please Enter ID :"))
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
 
-		glColor4f(0.0f, 0.0f, 1.0f, 1.0f); // 파란색
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f); 
 		glRasterPos2f(-0.1f, 0.1f);
 		for (char c : inputText)
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
 	}
 
-	// ---------------------------------------------------------
-	// 4. 설정 복구 (다른 3D 객체를 위해)
-	// ---------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
-	glEnable(GL_CULL_FACE); // 3D 모델링을 위해 다시 켜줌
+	glEnable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
 }
 

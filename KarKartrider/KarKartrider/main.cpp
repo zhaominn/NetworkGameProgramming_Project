@@ -17,6 +17,7 @@ void InitBuffer();
 void initPhysics();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
+GLvoid PassiveMotion(int x, int y);
 
 DWORD WINAPI RecvThread(LPVOID lpParam)
 {
@@ -119,6 +120,7 @@ int main(int argc, char** argv) {
 	glutSpecialFunc(specialKey);
 	glutSpecialUpFunc(specialKeyUp);
 	glutMouseFunc(mouseClick);
+	glutPassiveMotionFunc(PassiveMotion);
 
 	networkmgr.StartRunning();
 
@@ -158,6 +160,11 @@ GLvoid drawScene() {
 	while ((err = glGetError()) != GL_NO_ERROR) {
 		cout << "OpenGL error: " << err << endl;
 	}
+}
+
+GLvoid PassiveMotion(int x, int y) {
+	// ModeManager(MM)를 통해 현재 모드(LoginMode 등)로 좌표 전달
+	MM.passiveMotion(x, y);
 }
 
 void InitBuffer() {

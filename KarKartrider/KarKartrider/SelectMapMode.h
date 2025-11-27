@@ -39,6 +39,7 @@ public:
     void goSelectMode();
     void init() override;
     void mouseClick(int button, int state, int x, int y) override;
+    void passiveMotion(int x, int y) override {}
     void keyboard(unsigned char key, int x, int y) override;
     void updateTargetCameraPos();
     void specialKey(int key, int x, int y) override;

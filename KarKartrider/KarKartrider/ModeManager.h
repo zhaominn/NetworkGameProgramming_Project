@@ -29,4 +29,6 @@ public:
 	void specialKeyUp(int key, int x, int y);
 
 	void mouseClick(int button, int state, int x, int y);
+
+	void passiveMotion(int x, int y);
 };
