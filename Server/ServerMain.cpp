@@ -111,7 +111,6 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 					if (speed > MAX_SPEED) speed = MAX_SPEED;
 					if (speed < -MAX_SPEED / 2.0f) speed = -MAX_SPEED / 2.0f;
 
-
 					pl.SetSpeed(speed);
 
 					// 2) move (z)

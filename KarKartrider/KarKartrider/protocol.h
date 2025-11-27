@@ -27,7 +27,7 @@ constexpr float TILT_SPEED = 2.0f;
 constexpr unsigned short WINDOW_WIDTH = 980;
 constexpr unsigned short WINDOW_HEIGHT = 780;
 
-constexpr int  MAX_USER = 3;
+constexpr int  MAX_USER = 1;
 
 // packet
 // C2S
@@ -97,6 +97,7 @@ struct S2C_Move_All_Packet {
 	float yaw;
 	float face_rotation;
 	float body_rotation;
+	float booster_head_tilt;
 
 	float x;
 	float y;
@@ -113,6 +114,7 @@ struct S2C_Move_Packet
 	float yaw;
 	float face_rotation;
 	float body_rotation;
+	float booster_head_tilt;
 
 	float x;
 	float y;
@@ -126,7 +128,6 @@ struct S2C_Booster_Packet
 	unsigned char size;
 	char type;
 	char id;
-	float         booster_head_tilt;
 };
 
 struct S2C_Rank_Packet

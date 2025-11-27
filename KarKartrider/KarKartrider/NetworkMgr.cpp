@@ -193,6 +193,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 			g_players[i].m_yaw = p->arr[i].yaw;
 			g_players[i].m_face_rotation = p->arr[i].face_rotation;
 			g_players[i].m_body_rotation = p->arr[i].body_rotation;
+			g_players[i].m_booster_head_tilt = p->arr[i].booster_head_tilt;
 			g_players[i].x = p->arr[i].x;
 			g_players[i].y = p->arr[i].y;
 			g_players[i].z = p->arr[i].z;
@@ -202,8 +203,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 	break;
 	case S2C_BOOSTER:
 	{
-		S2C_Booster_Packet* p = reinterpret_cast<S2C_Booster_Packet*>(buf);
-		g_players[p->id].m_booster_head_tilt = p->booster_head_tilt;
 		std::cout << "get boooster packet" << std::endl;
 	}
 		break;
