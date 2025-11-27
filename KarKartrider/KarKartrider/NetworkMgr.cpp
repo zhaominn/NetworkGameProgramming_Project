@@ -197,6 +197,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 			g_players[i].x = p->arr[i].x;
 			g_players[i].y = p->arr[i].y;
 			g_players[i].z = p->arr[i].z;
+			g_players[i].isBoosterOn = p->arr[i].boosterOn;
 		}
 
 	}

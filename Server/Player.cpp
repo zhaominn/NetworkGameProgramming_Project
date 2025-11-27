@@ -362,6 +362,8 @@ void Player::send_move_Packet()
 			move_pkt->arr[i].x = g_users[i].m_posX;
 			move_pkt->arr[i].y = g_users[i].m_posY;
 			move_pkt->arr[i].z = g_users[i].m_posZ;
+			move_pkt->arr[i].z = g_users[i].m_posZ;
+			move_pkt->arr[i].boosterOn = g_users[i].isBoosterActive;
 		}
 	}
 

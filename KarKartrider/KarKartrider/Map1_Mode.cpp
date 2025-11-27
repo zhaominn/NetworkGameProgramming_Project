@@ -693,7 +693,7 @@ void Map1_Mode::RenderPlayer() {
 
 			c->translateMatrix = cm;
 
-			if (c->name == "booster" && !g_players[g_myid].isBoosterOn)
+			if (c->name == "booster" && !g_players[pid].isBoosterOn)
 				continue;
 			c->draw(shaderProgramID, isKeyPressed_s);
 		}
