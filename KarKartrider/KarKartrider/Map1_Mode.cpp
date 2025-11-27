@@ -198,11 +198,28 @@ void Map1_Mode::init()
 	cameraPos = glm::vec3(0.0, 6.0, 253.0);
 	updateCameraDirection();
 
-	AABB befor_data_aabb[3];
-	befor_data_aabb[0].maxX = 1.0f;
-	befor_data_aabb[1].maxX = 2.0f;
-	befor_data_aabb[2].maxX = 3.0f;
+	// wall collision
+	AABB befor_data_aabb[5];
 
+	for (auto road1_barricate_ : road1_barricate) {
+		btVector3 aabbMin, aabbMax;
+		road1_barricate_->rigidBody->getAabb(aabbMin, aabbMax);
+
+		std::cout << "AABB Min: " << aabbMin.getX() << ", "
+			<< aabbMin.getY() << ", " << aabbMin.getZ() << std::endl;
+
+		std::cout << "AABB Max: " << aabbMax.getX() << ", "
+			<< aabbMax.getY() << ", " << aabbMax.getZ() << std::endl;
+
+		befor_data_aabb->minX = aabbMin.getX();
+		befor_data_aabb->minY = aabbMin.getY();
+		befor_data_aabb->minZ = aabbMin.getZ();
+
+		befor_data_aabb->maxX = aabbMax.getX();
+		befor_data_aabb->maxY = aabbMax.getY();
+		befor_data_aabb->maxZ = aabbMax.getZ();
+	}
+	
 	networkmgr.SendWallCollisionPacket(befor_data_aabb);
 }
 
@@ -791,14 +808,6 @@ void Map1_Mode::updatePhysics(float deltaTime) {
 
 	UpdateRigidBodyTransforms(karts);
 	UpdateRigidBodyTransforms(road1_barricate);
-
-	btVector3 aabbMin, aabbMax;
-	road1_barricate[0]->rigidBody->getAabb(aabbMin, aabbMax);
-	std::cout << "AABB Min: " << aabbMin.getX() << ", "
-		<< aabbMin.getY() << ", " << aabbMin.getZ() << std::endl;
-
-	std::cout << "AABB Max: " << aabbMax.getX() << ", "
-		<< aabbMax.getY() << ", " << aabbMax.getZ() << std::endl;
 
 	checkCollisionKart();
 }

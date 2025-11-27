@@ -149,14 +149,14 @@ void NetworkMgr::SendBoosterPacket(bool boosterOn, int booster_cnt)
 	delete packet;
 }
 
-void NetworkMgr::SendWallCollisionPacket(AABB aabb[3])
+void NetworkMgr::SendWallCollisionPacket(AABB aabb[5])
 {
-	C2S_Wall_Collision_Packet* packet = new C2S_Wall_Collision_Packet;
-	packet->size = sizeof(C2S_Wall_Collision_Packet);
-	packet->type = C2S_WALL_COLLISION;
-	memcpy(packet->aabbs, aabb, sizeof(AABB) * 3);
+	C2S_Wall_Collision_1_Packet* packet = new C2S_Wall_Collision_1_Packet;
+	packet->size = sizeof(C2S_Wall_Collision_1_Packet);
+	packet->type = C2S_WALL_COLLISION_1;
+	memcpy(packet->aabbs, aabb, sizeof(AABB) * 5);
 
-	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Wall_Collision_Packet));
+	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Wall_Collision_1_Packet));
 	delete packet;
 }
 
@@ -197,9 +197,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 
 
 		for (int i = 0; i < MAX_USER; ++i) {
-
-			std::cout << p->arr[i].z << std::endl;
-
 			g_players[i].m_speed = p->arr[i].speed;
 			g_players[i].m_yaw = p->arr[i].yaw;
 			g_players[i].m_face_rotation = p->arr[i].face_rotation;

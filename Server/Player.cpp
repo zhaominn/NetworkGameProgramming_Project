@@ -253,13 +253,25 @@ void Player::process_packet(char* p)
 		g_room[0].inRoomPlayers[m_id] = this;
 	}
 	break;
-	case C2S_WALL_COLLISION:
+	case C2S_WALL_COLLISION_1:
 	{
-		C2S_Wall_Collision_Packet* packet = reinterpret_cast<C2S_Wall_Collision_Packet*>(p);
+		C2S_Wall_Collision_1_Packet* packet = reinterpret_cast<C2S_Wall_Collision_1_Packet*>(p);
 
-		std::cout << packet->aabbs[0].maxX << std::endl;
-		std::cout << packet->aabbs[1].maxX << std::endl;
-		std::cout << packet->aabbs[2].maxX << std::endl;
+		for (int i = 0; i < 5; ++i) {
+			g_Map1Colliders[i].minX = packet->aabbs[i].minX;
+			g_Map1Colliders[i].minY = packet->aabbs[i].minY;
+			g_Map1Colliders[i].minZ = packet->aabbs[i].minZ;
+
+			g_Map1Colliders[i].maxX = packet->aabbs[i].maxX;
+			g_Map1Colliders[i].maxY = packet->aabbs[i].maxY;
+			g_Map1Colliders[i].maxZ = packet->aabbs[i].maxZ;
+		}
+
+		for (int i = 0; i < 5; ++i) {
+			std::cout << g_Map1Colliders[i].minX << " "
+				<< g_Map1Colliders[i].minY << " "
+				<< g_Map1Colliders[i].minZ << std::endl;
+		}
 
 		break;
 	}
