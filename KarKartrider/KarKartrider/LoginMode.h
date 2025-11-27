@@ -6,41 +6,50 @@ class LoginMode : public Mode
 {
 public:
 
-    glm::vec3 cameraTargetPos = glm::vec3(0.0, 0.0, 5.0);
-    glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 5.0);
-    glm::vec3 cameraDirection = glm::vec3(0.0, 0.0, -1.0);
-    glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0);
+	glm::vec3 cameraTargetPos = glm::vec3(0.0, 0.0, 5.0);
+	glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 5.0);
+	glm::vec3 cameraDirection = glm::vec3(0.0, 0.0, -1.0);
+	glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0);
 
-    glm::mat4 projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f); // 2D 투영
-    glm::mat4 view = glm::mat4(1.0f); // 카메라 변환 없음
+	glm::mat4 projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f); // 2D 투영
+	glm::mat4 view = glm::mat4(1.0f); // 카메라 변환 없음
 
-    LoginMode();
-    ~LoginMode();
+	GLuint login_tex;
+	GLuint before_tex;
+	GLuint after_tex;
+	LoginMode();
+	~LoginMode();
 
-    void init() override;
+	bool startButton = false;
 
-    void mouseClick(int button, int state, int x, int y) override;
+	void init() override;
 
-    void keyboard(unsigned char key, int x, int y) override;
+	GLuint loadTexture(const char* filename);
 
-    void specialKey(int key, int x, int y) override;
+	void draw_login();
 
-    void specialKeyUp(int key, int x, int y) override;
+	void mouseClick(int button, int state, int x, int y) override;
 
-    void draw_model() override;
+	void keyboard(unsigned char key, int x, int y) override;
 
-    void draw_bb() override;
+	void specialKey(int key, int x, int y) override;
 
-    void finish() override;
+	void specialKeyUp(int key, int x, int y) override;
 
-    virtual ModeType GetModeType() const override {
-        return ModeType::LOGIN;
-    }
+	void draw_model() override;
+
+	void draw_bb() override;
+
+	void finish() override;
+
+	virtual ModeType GetModeType() const override {
+		return ModeType::LOGIN;
+	}
 
 private:
-    std::string inputText;
+	std::string inputText;
 
-    bool isRunning;
+	bool isRunning;
 
 };
 

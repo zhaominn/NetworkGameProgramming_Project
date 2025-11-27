@@ -14,6 +14,7 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 
 class btRigidBody;
+class Mode;
 
 struct Vertex {
     float x, y, z;

@@ -195,7 +195,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_players[p->id].m_booster_head_tilt = p->booster_head_tilt;
 		std::cout << "get boooster packet" << std::endl;
 	}
-		break;
+	break;
 	case S2C_RANK:
 	{
 		S2C_Rank_Packet* p = reinterpret_cast<S2C_Rank_Packet*>(buf);
@@ -203,7 +203,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_delta_time = p->finish_time;
 		g_players[g_myid].m_finish_time = g_delta_time;
 	}
-		break;
+	break;
 	case S2C_LOGOUT:
 		break;
 	default:

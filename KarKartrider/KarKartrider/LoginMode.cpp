@@ -11,10 +11,12 @@
 #include "MapModel.h"
 #include "BarricateMap1Model.h"
 #include "Ui_v2.h"
+//
+#include "include/stb_image.h"
 
 LoginMode::LoginMode()
 {
-    inputText = "";
+	inputText = "";
 }
 
 LoginMode::~LoginMode()
@@ -24,115 +26,159 @@ LoginMode::~LoginMode()
 
 void LoginMode::init()
 {
-    loadModelWithProgress<KartModel>("bazzi_face2.obj", "obj/character/", "character_face", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
-    loadModelWithProgress<KartModel>("bazzi_body.obj", "obj/character/", "character_body", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
-    loadModelWithProgress<KartModel>("booster.obj", "obj/car/booster/", "booster", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
-    loadModelWithProgress<KartModel>("kronos.obj", "obj/car/kronos/", "car", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), karts, true, true);
+	loadModelWithProgress<KartModel>("bazzi_face2.obj", "obj/character/", "character_face", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
+	loadModelWithProgress<KartModel>("bazzi_body.obj", "obj/character/", "character_body", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
+	loadModelWithProgress<KartModel>("booster.obj", "obj/car/booster/", "booster", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), character, false, true);
+	loadModelWithProgress<KartModel>("kronos.obj", "obj/car/kronos/", "car", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), karts, true, true);
 
-    loadModelWithProgress<Ui_v2>("booster_ui.obj", "obj/ui/", "booster_ui1", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.90, 0.75, 0.0)), glm::vec3(0.1, 0.1, 0.1)), booster_uis, false, true);
-    loadModelWithProgress<Ui_v2>("booster_ui.obj", "obj/ui/", "booster_ui2", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.78, 0.75, 0.0)), glm::vec3(0.1, 0.1, 0.1)), booster_uis, false, true);
+	loadModelWithProgress<Ui_v2>("booster_ui.obj", "obj/ui/", "booster_ui1", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.90, 0.75, 0.0)), glm::vec3(0.1, 0.1, 0.1)), booster_uis, false, true);
+	loadModelWithProgress<Ui_v2>("booster_ui.obj", "obj/ui/", "booster_ui2", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.78, 0.75, 0.0)), glm::vec3(0.1, 0.1, 0.1)), booster_uis, false, true);
 
-    loadModelWithProgress<Ui_v2>("dashboard.obj", "obj/ui/", "dashboard", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, -0.92, 0.0)), glm::vec3(0.7, 0.6, 0.5)), dashBoards, false, true);
-    loadModelWithProgress<KartModel>("pause.obj", "obj/ui/", "pause", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), pause, true, true);
+	loadModelWithProgress<Ui_v2>("dashboard.obj", "obj/ui/", "dashboard", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, -0.92, 0.0)), glm::vec3(0.7, 0.6, 0.5)), dashBoards, false, true);
+	loadModelWithProgress<KartModel>("pause.obj", "obj/ui/", "pause", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), pause, true, true);
 
-    loadModelWithProgress<RoadModel>("road_all_01.obj", "obj/road/", "road_all_1", "cube", glm::scale(glm::mat4(1.0f), glm::vec3(15.0, 15.0, 15.0)), road1, false, true);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(16.7, 0.0, 0.0)), glm::vec3(15.0, 15.0, 700.0)), road1_barricate, true, false);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-16.7, 0.0, 0.0)), glm::vec3(15.0, 15.0, 700.0)), road1_barricate, true, false);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 304.0)), glm::vec3(40.0, 10.0, 10.0)), road1_barricate, true, true);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -304.0)), glm::vec3(40.0, 10.0, 10.0)), road1_barricate, true, true);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "finish", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -212.0)), glm::vec3(40.0, 10.0, 10.0)), road1_barricate, true, false);
+	loadModelWithProgress<RoadModel>("road_all_01.obj", "obj/road/", "road_all_1", "cube", glm::scale(glm::mat4(1.0f), glm::vec3(15.0, 15.0, 15.0)), road1, false, true);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(16.7, 0.0, 0.0)), glm::vec3(15.0, 15.0, 700.0)), road1_barricate, true, false);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-16.7, 0.0, 0.0)), glm::vec3(15.0, 15.0, 700.0)), road1_barricate, true, false);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 304.0)), glm::vec3(40.0, 10.0, 10.0)), road1_barricate, true, true);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -304.0)), glm::vec3(40.0, 10.0, 10.0)), road1_barricate, true, true);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "finish", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -212.0)), glm::vec3(40.0, 10.0, 10.0)), road1_barricate, true, false);
 
-    loadModelWithProgress<RoadModel>("road_all_02.obj", "obj/road/", "road_all_2", "cube", glm::scale(glm::mat4(1.0f), glm::vec3(20.0, 20.0, 20.0)), road2, false, true);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(184.7, 0.0, 0.0)), glm::vec3(15.0, 15.0, 400.0)), road2_barricate, true, false);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-184.7, 0.0, 0.0)), glm::vec3(15.0, 15.0, 400.0)), road2_barricate, true, false);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 184.7)), glm::vec3(400.0, 15.0, 15.0)), road2_barricate, true, false);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -184.7)), glm::vec3(400.0, 15.0, 15.0)), road2_barricate, true, false);
-    //loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0)), glm::vec3(331.0, 331.0, 331.0)), road2_barricate, true, false); //��� ��ֹ�
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(145.3, 0.0, 0.0)), glm::vec3(15.0, 15.0, 315.0)), road2_barricate, true, false);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-145.3, 0.0, 0.0)), glm::vec3(15.0, 15.0, 315.0)), road2_barricate, true, false);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 145.3)), glm::vec3(315.0, 15.0, 15.0)), road2_barricate, true, false);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -145.3)), glm::vec3(315.0, 15.0, 15.0)), road2_barricate, true, false);
+	loadModelWithProgress<RoadModel>("road_all_02.obj", "obj/road/", "road_all_2", "cube", glm::scale(glm::mat4(1.0f), glm::vec3(20.0, 20.0, 20.0)), road2, false, true);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(184.7, 0.0, 0.0)), glm::vec3(15.0, 15.0, 400.0)), road2_barricate, true, false);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-184.7, 0.0, 0.0)), glm::vec3(15.0, 15.0, 400.0)), road2_barricate, true, false);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 184.7)), glm::vec3(400.0, 15.0, 15.0)), road2_barricate, true, false);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -184.7)), glm::vec3(400.0, 15.0, 15.0)), road2_barricate, true, false);
+	//loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0)), glm::vec3(331.0, 331.0, 331.0)), road2_barricate, true, false); //��� ��ֹ�
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(145.3, 0.0, 0.0)), glm::vec3(15.0, 15.0, 315.0)), road2_barricate, true, false);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-145.3, 0.0, 0.0)), glm::vec3(15.0, 15.0, 315.0)), road2_barricate, true, false);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 145.3)), glm::vec3(315.0, 15.0, 15.0)), road2_barricate, true, false);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -145.3)), glm::vec3(315.0, 15.0, 15.0)), road2_barricate, true, false);
 
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "finish", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(165.0, 0.0, 18.0)), glm::vec3(40.0, 1.0, 1.0)), road2_barricate, true, false);
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "finish_ch", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(165.0, 0.0, 50.0)), glm::vec3(40.0, 1.0, 1.0)), road2_barricate, true, false);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "finish", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(165.0, 0.0, 18.0)), glm::vec3(40.0, 1.0, 1.0)), road2_barricate, true, false);
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "finish_ch", "box", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(165.0, 0.0, 50.0)), glm::vec3(40.0, 1.0, 1.0)), road2_barricate, true, false);
 
-    glm::mat4 m1 = glm::mat4(1.0f);
-    m1 = glm::translate(m1, glm::vec3(174.7, 0.0, -175.3));
-    m1 = glm::rotate(m1, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
-    m1 = glm::scale(m1, glm::vec3(5.0, 15.0, 15.0));
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m1, road2_barricate, true, false);
+	glm::mat4 m1 = glm::mat4(1.0f);
+	m1 = glm::translate(m1, glm::vec3(174.7, 0.0, -175.3));
+	m1 = glm::rotate(m1, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
+	m1 = glm::scale(m1, glm::vec3(5.0, 15.0, 15.0));
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m1, road2_barricate, true, false);
 
-    m1 = glm::mat4(1.0f);
-    m1 = glm::translate(m1, glm::vec3(174.7, 0.0, 175.3));
-    m1 = glm::rotate(m1, glm::radians(-45.0f), glm::vec3(0.0, 1.0, 0.0));
-    m1 = glm::scale(m1, glm::vec3(5.0, 15.0, 15.0));
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m1, road2_barricate, true, false);
+	m1 = glm::mat4(1.0f);
+	m1 = glm::translate(m1, glm::vec3(174.7, 0.0, 175.3));
+	m1 = glm::rotate(m1, glm::radians(-45.0f), glm::vec3(0.0, 1.0, 0.0));
+	m1 = glm::scale(m1, glm::vec3(5.0, 15.0, 15.0));
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m1, road2_barricate, true, false);
 
-    m1 = glm::mat4(1.0f);
-    m1 = glm::translate(m1, glm::vec3(-174.7, 0.0, 175.3));
-    m1 = glm::rotate(m1, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
-    m1 = glm::scale(m1, glm::vec3(5.0, 15.0, 15.0));
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m1, road2_barricate, true, false);
+	m1 = glm::mat4(1.0f);
+	m1 = glm::translate(m1, glm::vec3(-174.7, 0.0, 175.3));
+	m1 = glm::rotate(m1, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
+	m1 = glm::scale(m1, glm::vec3(5.0, 15.0, 15.0));
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m1, road2_barricate, true, false);
 
-    m1 = glm::mat4(1.0f);
-    m1 = glm::translate(m1, glm::vec3(-174.7, 0.0, -175.3));
-    m1 = glm::rotate(m1, glm::radians(-45.0f), glm::vec3(0.0, 1.0, 0.0));
-    m1 = glm::scale(m1, glm::vec3(5.0, 15.0, 15.0));
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m1, road2_barricate, true, false);
+	m1 = glm::mat4(1.0f);
+	m1 = glm::translate(m1, glm::vec3(-174.7, 0.0, -175.3));
+	m1 = glm::rotate(m1, glm::radians(-45.0f), glm::vec3(0.0, 1.0, 0.0));
+	m1 = glm::scale(m1, glm::vec3(5.0, 15.0, 15.0));
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m1, road2_barricate, true, false);
 
-    glm::mat4 m2 = glm::mat4(1.0f);
-    m2 = glm::translate(m2, glm::vec3(146.8, 0.0, -146.8));
-    m2 = glm::rotate(m2, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
-    m2 = glm::scale(m2, glm::vec3(5.0, 15.0, 10.0));
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m2, road2_barricate, true, false);
+	glm::mat4 m2 = glm::mat4(1.0f);
+	m2 = glm::translate(m2, glm::vec3(146.8, 0.0, -146.8));
+	m2 = glm::rotate(m2, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
+	m2 = glm::scale(m2, glm::vec3(5.0, 15.0, 10.0));
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m2, road2_barricate, true, false);
 
-    m2 = glm::mat4(1.0f);
-    m2 = glm::translate(m2, glm::vec3(146.8, 0.0, 146.8));
-    m2 = glm::rotate(m2, glm::radians(-45.0f), glm::vec3(0.0, 1.0, 0.0));
-    m2 = glm::scale(m2, glm::vec3(5.0, 15.0, 10.0));
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m2, road2_barricate, true, false);
+	m2 = glm::mat4(1.0f);
+	m2 = glm::translate(m2, glm::vec3(146.8, 0.0, 146.8));
+	m2 = glm::rotate(m2, glm::radians(-45.0f), glm::vec3(0.0, 1.0, 0.0));
+	m2 = glm::scale(m2, glm::vec3(5.0, 15.0, 10.0));
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m2, road2_barricate, true, false);
 
-    m2 = glm::mat4(1.0f);
-    m2 = glm::translate(m2, glm::vec3(-146.8, 0.0, 146.8));
-    m2 = glm::rotate(m2, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
-    m2 = glm::scale(m2, glm::vec3(5.0, 15.0, 10.0));
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m2, road2_barricate, true, false);
+	m2 = glm::mat4(1.0f);
+	m2 = glm::translate(m2, glm::vec3(-146.8, 0.0, 146.8));
+	m2 = glm::rotate(m2, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
+	m2 = glm::scale(m2, glm::vec3(5.0, 15.0, 10.0));
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m2, road2_barricate, true, false);
 
-    m2 = glm::mat4(1.0f);
-    m2 = glm::translate(m2, glm::vec3(-146.8, 0.0, -146.8));
-    m2 = glm::rotate(m2, glm::radians(-45.0f), glm::vec3(0.0, 1.0, 0.0));
-    m2 = glm::scale(m2, glm::vec3(5.0, 15.0, 10.0));
-    loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m2, road2_barricate, true, false);
+	m2 = glm::mat4(1.0f);
+	m2 = glm::translate(m2, glm::vec3(-146.8, 0.0, -146.8));
+	m2 = glm::rotate(m2, glm::radians(-45.0f), glm::vec3(0.0, 1.0, 0.0));
+	m2 = glm::scale(m2, glm::vec3(5.0, 15.0, 10.0));
+	loadModelWithProgress<BarricateMap1Model>("baricate1.obj", "obj/road/", "baricate", "box", m2, road2_barricate, true, false);
 
-    loadModelWithProgress<KartModel>("3.obj", "obj/ui/", "countDown", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), countDown, true, true);
-    loadModelWithProgress<KartModel>("2.obj", "obj/ui/", "countDown", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), countDown, true, true);
-    loadModelWithProgress<KartModel>("1.obj", "obj/ui/", "countDown", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), countDown, true, true);
-    loadModelWithProgress<KartModel>("start.obj", "obj/ui/", "countDown", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), countDown, true, true);
+	loadModelWithProgress<KartModel>("3.obj", "obj/ui/", "countDown", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), countDown, true, true);
+	loadModelWithProgress<KartModel>("2.obj", "obj/ui/", "countDown", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), countDown, true, true);
+	loadModelWithProgress<KartModel>("1.obj", "obj/ui/", "countDown", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), countDown, true, true);
+	loadModelWithProgress<KartModel>("start.obj", "obj/ui/", "countDown", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), countDown, true, true);
 
-    //loadModelWithProgress<KartModel>("pause.obj", "obj/ui/", "pause", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), pause, true, true);
+	//loadModelWithProgress<KartModel>("pause.obj", "obj/ui/", "pause", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), pause, true, true);
 
-    loadModelWithProgress<MapModel>("village_road.obj", "asset/select_mode/", "village_road", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), selectMaps, false, true);
+	loadModelWithProgress<MapModel>("village_road.obj", "asset/select_mode/", "village_road", "box", glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0)), selectMaps, false, true);
 
-    glm::mat4 map2_matrix = glm::mat4(1.0f);
-    map2_matrix = glm::translate(map2_matrix, glm::vec3(2.5, 0.0, 0.0));
-    map2_matrix = glm::scale(map2_matrix, glm::vec3(1.0, 1.0, 1.0));
-    loadModelWithProgress<MapModel>("villiage_unha.obj", "asset/select_mode/", "villiage_unha", "box", map2_matrix, selectMaps, false, true);
+	glm::mat4 map2_matrix = glm::mat4(1.0f);
+	map2_matrix = glm::translate(map2_matrix, glm::vec3(2.5, 0.0, 0.0));
+	map2_matrix = glm::scale(map2_matrix, glm::vec3(1.0, 1.0, 1.0));
+	loadModelWithProgress<MapModel>("villiage_unha.obj", "asset/select_mode/", "villiage_unha", "box", map2_matrix, selectMaps, false, true);
 
-    glm::mat4 arrow_matrix = glm::mat4(1.0f);
-    arrow_matrix = glm::translate(arrow_matrix, glm::vec3(-0.2, -1.0, 1.0));
-    arrow_matrix = glm::scale(arrow_matrix, glm::vec3(0.5, 0.5, 0.5));
-    arrow_matrix = glm::rotate(arrow_matrix, glm::radians(-80.0f), glm::vec3(1.0, 0.0, 0.0));
-    loadModelWithProgress<MapModel>("arrow_key.obj", "asset/select_mode/", "arrow_key", "box", arrow_matrix, selectMaps, false, true);
+	glm::mat4 arrow_matrix = glm::mat4(1.0f);
+	arrow_matrix = glm::translate(arrow_matrix, glm::vec3(-0.2, -1.0, 1.0));
+	arrow_matrix = glm::scale(arrow_matrix, glm::vec3(0.5, 0.5, 0.5));
+	arrow_matrix = glm::rotate(arrow_matrix, glm::radians(-80.0f), glm::vec3(1.0, 0.0, 0.0));
+	loadModelWithProgress<MapModel>("arrow_key.obj", "asset/select_mode/", "arrow_key", "box", arrow_matrix, selectMaps, false, true);
 
-    glm::mat4 enter_matrix = glm::mat4(1.0f);
-    enter_matrix = glm::translate(enter_matrix, glm::vec3(0.6, -1.0, 1.0));
-    enter_matrix = glm::scale(enter_matrix, glm::vec3(0.4, 0.3, 0.4));
-    enter_matrix = glm::rotate(enter_matrix, glm::radians(-80.0f), glm::vec3(1.0, 0.0, 0.0));
-    loadModelWithProgress<MapModel>("enter_key.obj", "asset/select_mode/", "enter_key", "box", enter_matrix, selectMaps, false, true);
+	glm::mat4 enter_matrix = glm::mat4(1.0f);
+	enter_matrix = glm::translate(enter_matrix, glm::vec3(0.6, -1.0, 1.0));
+	enter_matrix = glm::scale(enter_matrix, glm::vec3(0.4, 0.3, 0.4));
+	enter_matrix = glm::rotate(enter_matrix, glm::radians(-80.0f), glm::vec3(1.0, 0.0, 0.0));
+	loadModelWithProgress<MapModel>("enter_key.obj", "asset/select_mode/", "enter_key", "box", enter_matrix, selectMaps, false, true);
 
+	//-----------------------------------
+	login_tex = loadTexture("asset/login/login_img.png");
+	before_tex = loadTexture("asset/login/game_start_after.png");
+	after_tex = loadTexture("asset/login/game_start_before.png");
 
+	isRunning = false;
+}
 
-    isRunning = false;
+GLuint LoginMode::loadTexture(const char* filename) {
+	int width, height, channel;
+	unsigned char* data = stbi_load(filename, &width, &height, &channel, 4);
+
+	if (!data) {
+		printf("ERROR: Fail to load image %s\n", filename);
+		return 0;
+	}
+
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+	stbi_image_free(data);
+	return texture;
+}
+
+void LoginMode::draw_login()
+{
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, login_tex);
+	glColor3f(1.0f, 1.0f, 1.0f); // 색상 초기화
+
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 0.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 0.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, 0.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 0.0f);
+	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void LoginMode::mouseClick(int button, int state, int x, int y)
@@ -143,13 +189,17 @@ void LoginMode::keyboard(unsigned char key, int x, int y)
 {
 	// Enter 키 처리
 	if (key == '\r') {
-		std::cout << "입력 완료: " << inputText << std::endl;
+		if (startButton) {
+			std::cout << "입력 완료: " << inputText << std::endl;
 
-        networkmgr.SendLoginPacket(inputText);
+			networkmgr.SendLoginPacket(inputText);
 
-		SelectMapMode* selectMapMode = new SelectMapMode();
-		//selectMapMode->goSelectMode = [this]() { goSelectMode(); };
-		MM.SetMode(selectMapMode);
+			SelectMapMode* selectMapMode = new SelectMapMode();
+			//selectMapMode->goSelectMode = [this]() { goSelectMode(); };
+			MM.SetMode(selectMapMode);
+		}
+		else
+			startButton = true;
 
 		return;
 	}
@@ -166,7 +216,7 @@ void LoginMode::keyboard(unsigned char key, int x, int y)
 	}
 
 	glutPostRedisplay(); // 다시 그리기 요청
-} 
+}
 
 void LoginMode::specialKey(int key, int x, int y)
 {
@@ -178,25 +228,65 @@ void LoginMode::specialKeyUp(int key, int x, int y)
 
 void LoginMode::draw_model()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// ---------------------------------------------------------
+	// 1. 3D 렌더링 설정 강제 초기화 (이 부분이 핵심!)
+	// ---------------------------------------------------------
+	glUseProgram(0);          // ★ 쉐이더 끄기 (가장 유력한 원인)
+	glDisable(GL_LIGHTING);   // 조명 끄기
+	glDisable(GL_DEPTH_TEST); // 깊이 테스트 끄기 (맨 앞에 그리기)
+	glDisable(GL_CULL_FACE);  // ★ 뒷면 제거 끄기 (이거 때문에 안 보일 수 있음)
 
-	glUseProgram(0);
+	// 혼합(Blending) 설정 (PNG 투명도 지원을 위해 켜두는 게 좋음)
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// ---------------------------------------------------------
+	// 2. 2D 카메라(좌표계) 설정
+	// ---------------------------------------------------------
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
+	gluOrtho2D(-1.0, 1.0, -1.0, 1.0); // 화면 가득 채우는 좌표계 (-1 ~ 1)
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glRasterPos2f(-0.6f, 0.2f);
-	for (char c : std::string("Enter text:"))
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+	// ---------------------------------------------------------
+	// 3. 그리기 로직
+	// ---------------------------------------------------------
+	if (startButton == false)
+	{
+		// [상태 1] 이미지 모드
+		// 색상이 섞이지 않게 순수 흰색으로 설정
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		draw_login();
+	}
+	else
+	{
+		// [상태 2] 입력 모드
 
-	glColor3f(0.2f, 0.2f, 0.8f);
-	glRasterPos2f(-0.6f, -0.3f);
-	for (char c : inputText)
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		// 배경 이미지를 흐릿하게 깔고 싶으면 여기서 draw_login 호출
+		// glColor4f(0.5f, 0.5f, 0.5f, 1.0f); // 약간 어둡게
+		// draw_login(); 
 
+		// 텍스트 그리기
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f); // 검은색
+		glRasterPos2f(-0.4f, 0.1f);
+		for (char c : std::string("Please Enter ID :"))
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f); // 파란색
+		glRasterPos2f(-0.1f, 0.1f);
+		for (char c : inputText)
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+	}
+
+	// ---------------------------------------------------------
+	// 4. 설정 복구 (다른 3D 객체를 위해)
+	// ---------------------------------------------------------
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_CULL_FACE); // 3D 모델링을 위해 다시 켜줌
+	glDisable(GL_BLEND);
 }
 
 void LoginMode::draw_bb()

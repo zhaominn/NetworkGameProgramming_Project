@@ -32,6 +32,8 @@ void SelectMapMode::init() {
 	soundThread = std::thread(&SelectMapMode::runSound, this);
 	targetCameraPos = cameraPosMapMode;
 	glutTimerFunc(0, SelectMap_timer, 0);
+
+	
 }
 
 void SelectMapMode::mouseClick(int button, int state, int x, int y) {}

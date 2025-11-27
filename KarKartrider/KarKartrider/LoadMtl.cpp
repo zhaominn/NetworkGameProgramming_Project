@@ -1,14 +1,12 @@
-#include "Pch.h"
+ï»¿#include "Pch.h"
 #include "loadmtl.h"
-#include "LoadTexture.h"
-
-
+#include "LoadTexture.h"  
 
 void read_mtl_file(const std::string& filename,
     const std::string path,
     std::unordered_map<std::string, Material>& materials) {
-    std::ifstream file(path + filename);  // MTL ÆÄÀÏ ¿­±â
-    if (!file.is_open()) {  // ÆÄÀÏ ¿­±â ½ÇÆĞ ½Ã ¿¹¿Ü Ã³¸®
+    std::ifstream file(path + filename);  // MTL íŒŒì¼ ì—´ê¸°
+    if (!file.is_open()) {  // íŒŒì¼ ì—´ê¸° ì‹¤íŒ¨ ì‹œ ì˜ˆì™¸ ì²˜ë¦¬
         std::cerr << "[ERROR] Failed to open MTL file: " << filename << std::endl;
         return;
     }
@@ -20,30 +18,30 @@ void read_mtl_file(const std::string& filename,
         ss >> prefix;
 
         if (prefix == "newmtl") {
-            // »õ·Î¿î ÀçÁú ½ÃÀÛ
+            // ìƒˆë¡œìš´ ì¬ì§ˆ ì‹œì‘
             ss >> currentMaterial;
             materials[currentMaterial] = Material();
             materials[currentMaterial].name = currentMaterial;
         }
-        else if (prefix == "Ka") {  // È¯°æ±¤ »ö»ó
+        else if (prefix == "Ka") {  // í™˜ê²½ê´‘ ìƒ‰ìƒ
             ss >> materials[currentMaterial].Ka.x
                 >> materials[currentMaterial].Ka.y
                 >> materials[currentMaterial].Ka.z;
         }
-        else if (prefix == "Kd") {  // ³­¹İ»ç±¤ »ö»ó
+        else if (prefix == "Kd") {  // ë‚œë°˜ì‚¬ê´‘ ìƒ‰ìƒ
             ss >> materials[currentMaterial].Kd.x
                 >> materials[currentMaterial].Kd.y
                 >> materials[currentMaterial].Kd.z;
         }
-        else if (prefix == "Ks") {  // ¹İ»ç±¤ »ö»ó
+        else if (prefix == "Ks") {  // ë°˜ì‚¬ê´‘ ìƒ‰ìƒ
             ss >> materials[currentMaterial].Ks.x
                 >> materials[currentMaterial].Ks.y
                 >> materials[currentMaterial].Ks.z;
         }
-        else if (prefix == "Ns") {  // ¹İÂ¦ÀÓ °­µµ
+        else if (prefix == "Ns") {  // ë°˜ì§ì„ ê°•ë„
             ss >> materials[currentMaterial].Ns;
         }
-        else if (prefix == "map_Ka") {  // È¯°æ±¤ ÅØ½ºÃ³
+        else if (prefix == "map_Ka") {  // í™˜ê²½ê´‘ í…ìŠ¤ì²˜
             std::string texturePath;
             ss >> texturePath;
             Texture ambientTexture = load_texture(path + texturePath, "ambient");
@@ -56,7 +54,7 @@ void read_mtl_file(const std::string& filename,
                     << texturePath << std::endl;
             }
         }
-        else if (prefix == "map_Kd") {  // ³­¹İ»ç±¤ ÅØ½ºÃ³
+        else if (prefix == "map_Kd") {  // ë‚œë°˜ì‚¬ê´‘ í…ìŠ¤ì²˜
             std::string texturePath;
             ss >> texturePath;
             std::cout << texturePath << std::endl;
@@ -70,7 +68,7 @@ void read_mtl_file(const std::string& filename,
                     << texturePath << std::endl;
             }
         }
-        else if (prefix == "map_Ks") {  // ¹İ»ç±¤ ÅØ½ºÃ³
+        else if (prefix == "map_Ks") {  // ë°˜ì‚¬ê´‘ í…ìŠ¤ì²˜
             std::string texturePath;
             ss >> texturePath;
             Texture specularTexture = load_texture(path + texturePath, "specular");
@@ -85,7 +83,7 @@ void read_mtl_file(const std::string& filename,
         }
     }
 
-    // ¸ğµç ÀçÁú¿¡ ´ëÇØ ÅØ½ºÃ³ »óÅÂ È®ÀÎ
+    // ëª¨ë“  ì¬ì§ˆì— ëŒ€í•´ í…ìŠ¤ì²˜ ìƒíƒœ í™•ì¸
     for (auto& [name, material] : materials) {
         material.hasTexture_s = !material.textures.empty();
     }
