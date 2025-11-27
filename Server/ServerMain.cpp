@@ -2,38 +2,42 @@
 #include <iostream>
 
 
-bool PlayerCollisionCheck(int myId)
+bool PlayerCollisionCheck(int a, int b, float& pushX, float& pushZ)
 {
-	// 내 위치/크기 가져오기
-	float x1 = g_users[myId].m_posX;
-	float z1 = g_users[myId].m_posZ;
+	float x1 = g_users[a].m_posX;
+	float z1 = g_users[a].m_posZ;
 
-	float halfX1 = g_users[myId].m_colliderHalfX;
-	float halfZ1 = g_users[myId].m_colliderHalfZ;
+	float x2 = g_users[b].m_posX;
+	float z2 = g_users[b].m_posZ;
 
-	// 다른 플레이어와 비교
-	for (int i = 0; i < MAX_USER; i++)
+	float hx1 = g_users[a].m_colliderHalfX;
+	float hz1 = g_users[a].m_colliderHalfZ;
+
+	float hx2 = g_users[b].m_colliderHalfX;
+	float hz2 = g_users[b].m_colliderHalfZ;
+
+	float dx = x1 - x2;
+	float dz = z1 - z2;
+
+	float overlapX = (hx1 + hx2) - fabs(dx);
+	float overlapZ = (hz1 + hz2) - fabs(dz);
+
+	if (overlapX > 0 && overlapZ > 0)
 	{
-		if (i == myId) continue;                  // 자기 자신 제외
-		if (!g_users[i].GetOnline()) continue;    // 접속 안한 플레이어 제외
-
-		float x2 = g_users[i].m_posX;
-		float z2 = g_users[i].m_posZ;
-
-		float halfX2 = g_users[i].m_colliderHalfX;
-		float halfZ2 = g_users[i].m_colliderHalfZ;
-
-		// AABB 충돌 체크
-		bool overlapX = fabs(x1 - x2) < (halfX1 + halfX2);
-		bool overlapZ = fabs(z1 - z2) < (halfZ1 + halfZ2);
-
-		if (overlapX && overlapZ)
+		if (overlapX < overlapZ)
 		{
-			return true; // 충돌 발생
+			pushX = (dx > 0 ? overlapX : -overlapX);
+			pushZ = 0;
 		}
+		else
+		{
+			pushX = 0;
+			pushZ = (dz > 0 ? overlapZ : -overlapZ);
+		}
+		return true;
 	}
 
-	return false; // 충돌 없음
+	return false;
 }
 
 DWORD WINAPI ClientThread(LPVOID socket)
@@ -55,10 +59,8 @@ DWORD WINAPI ClientThread(LPVOID socket)
 	return 0;
 }
 
-DWORD WINAPI UpdatePositon(LPVOID lpParam)
+DWORD WINAPI UpdatePosition(LPVOID lpParam)
 {
-
-	// Collect the state of all players and send it to every player
 	std::chrono::steady_clock::time_point last_send_time = std::chrono::steady_clock::now();
 	auto startTime = std::chrono::steady_clock::now();
 
@@ -70,34 +72,78 @@ DWORD WINAPI UpdatePositon(LPVOID lpParam)
 		}
 
 		auto current_time = std::chrono::steady_clock::now();
-		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_send_time).count();
+		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(
+			current_time - last_send_time
+		).count();
 
 		g_ElapsedTime = std::chrono::duration<float>(current_time - startTime).count();
 
 		float dt = static_cast<float>(elapsed_time) / 1000.0f;
 
-		if (elapsed_time >= 1000 / 60) {
+		if (elapsed_time >= (1000 / 60))
+		{
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (!g_users[i].GetOnline()) continue;
 
-			for (int i = 0; i < MAX_USER; ++i) {
+				float oldX = g_users[i].m_posX;
+				float oldZ = g_users[i].m_posZ;
+
+				float px = 0.f, pz = 0.f;
+
+				for (int j = 0; j < MAX_USER; ++j)
 				{
-					if (!g_users[i].GetOnline()) continue;
+					if (i == j) continue;
+					if (!g_users[j].GetOnline()) continue;
 
-					float oldZ = g_users[i].m_posZ;
-
-					if (PlayerCollisionCheck(i))
+					float pushX, pushZ;
+					if (PlayerCollisionCheck(i, j, pushX, pushZ))
 					{
-						g_users[i].m_posZ = oldZ; 
-						g_users[i].SetSpeed(g_users[i].GetSpeed() * 0.3f);
+						px += pushX;
+						pz += pushZ;
 					}
-
-					g_users[i].CheckBoosterState();
-					g_users[i].send_move_Packet();
 				}
+
+				if (px != 0 || pz != 0)
+				{
+					g_users[i].m_posX += px * 0.5f;
+					g_users[i].m_posZ += pz * 0.5f;
+
+					float nx = 0.f, nz = 0.f;
+					if (px != 0) nx = (px > 0 ? 1.0f : -1.0f);
+					if (pz != 0) nz = (pz > 0 ? 1.0f : -1.0f);
+
+					float yaw = g_users[i].GetYaw();
+					float speed = g_users[i].GetSpeed();
+
+					// local speed vector
+					float vx = cosf(yaw) * speed;
+					float vz = sinf(yaw) * speed;
+
+					float dot = vx * nx + vz * nz;
+
+					float rvx = vx - 2 * dot * nx;
+					float rvz = vz - 2 * dot * nz;
+
+					const float bounce = 0.7f;
+
+					rvx *= bounce;
+					rvz *= bounce;
+
+					float newSpeed = sqrtf(rvx * rvx + rvz * rvz);
+					float newYaw = atan2f(rvz, rvx);
+
+					g_users[i].SetSpeed(newSpeed);
+					g_users[i].SetYaw(newYaw);
+				}
+
+				g_users[i].CheckBoosterState();
+				g_users[i].send_move_Packet();
 				g_users[i].checkIsFinished();
 			}
+
 			last_send_time = current_time;
 		}
-
 	}
 }
 
@@ -123,7 +169,7 @@ int main()
 		std::cout << "listen error" << std::endl;
 
 	HANDLE SendThread;
-	SendThread = CreateThread(NULL, 0, UpdatePositon, 0, 0, 0);
+	SendThread = CreateThread(NULL, 0, UpdatePosition, 0, 0, 0);
 	if (SendThread == NULL) {
 		std::cout << "closesocket()" << std::endl;
 		closesocket(listen_sock);
