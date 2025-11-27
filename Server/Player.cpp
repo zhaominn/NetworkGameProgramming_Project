@@ -253,6 +253,16 @@ void Player::process_packet(char* p)
 		g_room[0].inRoomPlayers[m_id] = this;
 	}
 	break;
+	case C2S_WALL_COLLISION:
+	{
+		C2S_Wall_Collision_Packet* packet = reinterpret_cast<C2S_Wall_Collision_Packet*>(p);
+
+		std::cout << packet->aabbs[0].maxX << std::endl;
+		std::cout << packet->aabbs[1].maxX << std::endl;
+		std::cout << packet->aabbs[2].maxX << std::endl;
+
+		break;
+	}
 	default:
 		std::cout << "Error Invalid Packet Type\n";
 	}

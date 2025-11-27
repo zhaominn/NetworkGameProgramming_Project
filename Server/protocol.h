@@ -209,7 +209,7 @@ struct C2S_Wall_Collision_Packet {
 	unsigned char size;
 	char type;
 
-	AABB aabb;
+	AABB aabbs[3];
 };
 
 #pragma pack (pop)

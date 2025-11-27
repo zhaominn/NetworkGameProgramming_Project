@@ -149,18 +149,14 @@ void NetworkMgr::SendBoosterPacket(bool boosterOn, int booster_cnt)
 	delete packet;
 }
 
-void NetworkMgr::SendWallCollisionPacket(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
+void NetworkMgr::SendWallCollisionPacket(AABB aabb[3])
 {
 	C2S_Wall_Collision_Packet* packet = new C2S_Wall_Collision_Packet;
+	packet->size = sizeof(C2S_Wall_Collision_Packet);
 	packet->type = C2S_WALL_COLLISION;
-	packet->aabb.minX = minX;
-	packet->aabb.minY = minY;
-	packet->aabb.minZ = minZ;
-	packet->aabb.maxX = maxX;
-	packet->aabb.maxY = maxY;
-	packet->aabb.maxZ = maxZ;
+	memcpy(packet->aabbs, aabb, sizeof(AABB) * 3);
 
-	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_WALL_COLLISION));
+	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Wall_Collision_Packet));
 	delete packet;
 }
 

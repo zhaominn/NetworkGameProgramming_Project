@@ -197,6 +197,13 @@ void Map1_Mode::init()
 
 	cameraPos = glm::vec3(0.0, 6.0, 253.0);
 	updateCameraDirection();
+
+	AABB befor_data_aabb[3];
+	befor_data_aabb[0].maxX = 1.0f;
+	befor_data_aabb[1].maxX = 2.0f;
+	befor_data_aabb[2].maxX = 3.0f;
+
+	networkmgr.SendWallCollisionPacket(befor_data_aabb);
 }
 
 void Map1_Mode::playCountdown(int count) {
