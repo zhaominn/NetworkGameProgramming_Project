@@ -203,6 +203,7 @@ struct C2S_Move_Packet
 struct AABB {
 	float minX, minY, minZ;
 	float maxX, maxY, maxZ;
+	bool rigid_status;
 };
 
 struct C2S_Wall_Collision_1_Packet {

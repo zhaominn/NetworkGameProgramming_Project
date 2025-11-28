@@ -3,6 +3,8 @@
 
 bool WallCollisionCheck(const AABB& box, int id, float& pushX, float& pushZ)
 {
+	if (!box.rigid_status)
+		return false;
 	pushX = pushZ = 0;
 
 	float px = g_users[id].m_posX;

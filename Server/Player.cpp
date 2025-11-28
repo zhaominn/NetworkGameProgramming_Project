@@ -265,6 +265,7 @@ void Player::process_packet(char* p)
 			g_Map1Colliders[i].maxX = packet->aabbs[i].maxX;
 			g_Map1Colliders[i].maxY = packet->aabbs[i].maxY;
 			g_Map1Colliders[i].maxZ = packet->aabbs[i].maxZ;
+			g_Map1Colliders[i].rigid_status = packet->aabbs[i].rigid_status;
 		}
 
 		/*for (int i = 0; i < 5; ++i) {
@@ -274,6 +275,10 @@ void Player::process_packet(char* p)
 
 			std::cout << "AABB Max: " << g_Map1Colliders[i].maxX << ", " << g_Map1Colliders[i].maxY << ", "
 				<< g_Map1Colliders[i].maxZ << std::endl;
+		}
+
+		for (int i = 0; i < 5; ++i) {
+			std::cout << "충돌 상태 : " << g_Map1Colliders[i].rigid_status << std::endl;
 		}*/
 
 		break;

@@ -205,6 +205,8 @@ void Map1_Mode::init()
 		btVector3 aabbMin, aabbMax;
 		road1_barricate[i]->rigidBody->getAabb(aabbMin, aabbMax);
 
+		std::cout << "이름 : " << road1_barricate[i]->name << std::endl;
+
 		/*std::cout << "AABB Min: " << aabbMin.getX() << ", "
 			<< aabbMin.getY() << ", " << aabbMin.getZ() << std::endl;
 
@@ -218,6 +220,11 @@ void Map1_Mode::init()
 		befor_data_aabb[i].maxX = aabbMax.getX();
 		befor_data_aabb[i].maxY = aabbMax.getY();
 		befor_data_aabb[i].maxZ = aabbMax.getZ();
+
+		if (road1_barricate[i]->name == "finish")
+			befor_data_aabb[i].rigid_status = false;
+		else
+			befor_data_aabb[i].rigid_status = true;
 	}
 	
 	networkmgr.SendWallCollisionPacket(befor_data_aabb);
