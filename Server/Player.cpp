@@ -235,22 +235,32 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_ENTER_ROOM:
 	{
-		std::cout << "[Player : " << m_name << " enter room]" << std::endl;
+		C2S_Enter_Room_Packet* packet = reinterpret_cast<C2S_Enter_Room_Packet*>(p);
 
-		// TEMP
-		bool entered = false;
-		for (int i = 0; i < 2; ++i)
+		int roomIdx = packet->map;          // STRAIGHT=0, RECTANGLE=1
+		Room& room = g_room[roomIdx];
+
+		std::cout << "[Player : " << m_name << " enter room " << roomIdx << "]" << std::endl;
+
+		// 이미 방에 들어온 적 있는지 확인
+		if (room.inRoomPlayers[m_id] != nullptr)
 		{
-			Player* roomPlayer = g_room[i].inRoomPlayers[m_id];
-			if (roomPlayer != nullptr && roomPlayer->GetID() != -1) {
-				entered = true;
-				break;
-			}
+			// 이미 들어온 유저 → 그냥 무시
+			std::cout << m_name << " already in room" << std::endl;
+			break;
 		}
-		if (!entered)
-			g_room[0].roomManagerID = m_id;
 
-		g_room[0].inRoomPlayers[m_id] = this;
+		// 방장 없는 경우 지정
+		if (room.roomManagerID == -1)
+			room.roomManagerID = m_id;
+
+		// 방에 유저 등록
+		room.inRoomPlayers[m_id] = this;
+
+		// 방 타입 저장
+		room.mapType = packet->map;
+
+		break;
 	}
 	break;
 	case C2S_WALL_COLLISION_1:
@@ -365,6 +375,10 @@ void Player::send_Game_Start_Packet()
 	S2C_GameStart_Packet* game_start = new S2C_GameStart_Packet;
 	game_start->size = sizeof(S2C_GameStart_Packet);
 	game_start->type = S2C_GAME_START;
+
+	for (int i = 0; i < 2; ++i) {
+		std::cout << g_room[i].inRoomPlayers << " : " << g_room[i].mapType << std::endl;
+	}
 
 	send_packet(reinterpret_cast<char*>(game_start), sizeof(S2C_GameStart_Packet));
 
