@@ -118,6 +118,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +140,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -175,6 +177,7 @@
     <ClInclude Include="LoadTexture.h" />
     <ClInclude Include="DefaultModel.h" />
     <ClInclude Include="LoadVideo.h" />
+    <ClInclude Include="LoginMode.h" />
     <ClInclude Include="LogoMode.h" />
     <ClInclude Include="Map1_Mode.h" />
     <ClInclude Include="Map2_Mode.h" />
@@ -182,10 +185,12 @@
     <ClInclude Include="Mode.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModeManager.h" />
+    <ClInclude Include="NetGlobal.h" />
     <ClInclude Include="NetworkMgr.h" />
     <ClInclude Include="Pch.h" />
     <ClInclude Include="protocol.h" />
     <ClInclude Include="RoadModel.h" />
+    <ClInclude Include="RoomMode.h" />
     <ClInclude Include="root.h" />
     <ClInclude Include="SelectMapMode.h" />
     <ClInclude Include="shaderMaker.h" />
@@ -208,6 +213,7 @@
     <ClCompile Include="LoadObj.cpp" />
     <ClCompile Include="LoadProgress.cpp" />
     <ClCompile Include="LoadSound.cpp" />
+    <ClCompile Include="LoginMode.cpp" />
     <ClCompile Include="LogoMode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map1_Mode.cpp" />
@@ -216,6 +222,7 @@
     <ClCompile Include="Mode.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModeManager.cpp" />
+    <ClCompile Include="NetGlobal.cpp" />
     <ClCompile Include="NetworkMgr.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -223,8 +230,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="protocol.cpp" />
     <ClCompile Include="RoadModel.cpp" />
+    <ClCompile Include="RoomMode.cpp" />
     <ClCompile Include="root.cpp" />
     <ClCompile Include="SelectMapMode.cpp" />
     <ClCompile Include="shaderMaker.cpp" />

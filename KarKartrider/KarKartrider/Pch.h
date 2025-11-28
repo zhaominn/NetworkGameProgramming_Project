@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 #include <algorithm>
@@ -9,6 +9,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <array>
 
 #include <irrKlang.h>
 #include <thread>
@@ -22,3 +23,8 @@
 
 #include <glew.h>
 #include <freeglut.h>
+
+#include "Mode.h"
+#include "NetGlobal.h"
+
+extern float g_delta_time;

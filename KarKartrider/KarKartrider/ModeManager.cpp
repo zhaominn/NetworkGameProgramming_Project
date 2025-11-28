@@ -1,4 +1,4 @@
-#include "Pch.h"
+﻿#include "Pch.h"
 #include "ModeManager.h"
 
 void ModeManager::SetMode(Mode* m)
@@ -44,4 +44,10 @@ void ModeManager::specialKeyUp(int key, int x, int y) {
 void ModeManager::mouseClick(int button, int state, int x, int y) {
 	if (mode)
 		mode->mouseClick(button, state, x, y);
+}
+
+void ModeManager::passiveMotion(int x, int y) {
+	if (mode) {
+		mode->passiveMotion(x, y);
+	}
 }

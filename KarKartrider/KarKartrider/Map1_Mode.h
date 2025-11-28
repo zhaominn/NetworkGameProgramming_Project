@@ -1,10 +1,11 @@
-#pragma once
+﻿#pragma once
 
 #include <thread>
 #include <glm/glm/gtc/quaternion.hpp>
 #include <glm/glm/gtx/quaternion.hpp>
 #include <unordered_map> 
-#include <functional>  
+#include <functional> 
+#include "protocol.h"
 
 
 class Map1_Mode : public Mode {
@@ -17,24 +18,22 @@ public:
 	GLfloat kart_speed = 0.0f;
 
 	enum Move { NONE_M, UP, DOWN, LEFT, RIGHT, CTRL };
-	float ACCELERATION = 0.004f;
-	float DECELERATION = 0.003f;
-	float LIMIT_SPEED = 1.0;
-	float BOOSTER_SPEED = 2.0;
-	float MAX_SPEED = 1.0;
+
 
 	int start_count;
 
 	bool Pause=false;
 
-	//Ű
 	std::unordered_map<Move, bool> kart_keyState;
 
 	bool up = false;
 	bool down = false;
 	bool left = false;
 	bool right = false;
+	bool booster = true;
+	bool ctrl = false;
 
+	// camera
 	glm::vec3 cameraTargetPos = glm::vec3(0.0, 0.0, 5.0); 
 	glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 5.0);       
 	glm::vec3 cameraDirection = glm::vec3(0.0, 0.0, -1.0);
@@ -42,9 +41,20 @@ public:
 	glm::mat4 projection = glm::mat4(1.0f);
 	glm::mat4 view = glm::mat4(1.0f);
 
+	glm::vec3 smoothedCarPos = glm::vec3(0.0f);
+	glm::quat smoothedCarRot = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+	float    smoothedSpeed = 0.0f;
+	bool     bFirstCameraFrame = true;
+
+	glm::vec3 g_kartRenderPos = glm::vec3(0.0, 0.0, 0.0);  
+	bool g_firstRenderFrame = true;
+
+	float carPosLerp = 0.2f;
+	float carRotLerp = 0.2f;
+	float speedLerp = 0.3f;
+
 	float yaw = -90.0f; 
 	float pitch = 0.0f; 
-	float TURN_ANGLE = 1.0f; 
 
 	bool isBackgroundSound = false;
 	std::thread backgroundSoundThread;
@@ -69,18 +79,12 @@ public:
 	bool isBoosterRegenActive = true;    
 	std::thread boosterRegenThread;       
 	bool isBoosterActive = false; 
-	bool isGameOver = false; 
-	int game_timer = 30;
+	bool isGameOver = false;
 
 
-	float character_face_rotation = 0.0f; 
-	const float MAX_FACE_ROTATION = 25.0f;
-	const float ROTATION_SPEED = 5.0f;     
-	const float RETURN_SPEED = 2.0f;       
+	// 내 카트 위치
+	glm::mat4 myKartMatrix = glm::mat4(1.0f);
 
-	float booster_head_tilt = 0.0f; 
-	const float MAX_HEAD_TILT = 20.0f; 
-	const float TILT_SPEED = 2.0f;   
 
 	Map1_Mode();
 	~Map1_Mode() {
@@ -94,7 +98,7 @@ public:
 
 	void draw_ui();
 
-	void draw_timer();
+	void draw_timer(float deltaTime);
 
 	void init() override;
 
@@ -110,7 +114,7 @@ public:
 
 	void finish_game();
 
-	void draw_finish_time();
+	void draw_finish_time(float deltaTime);
 
 	void lose_game();
 
@@ -118,13 +122,17 @@ public:
 
 	void checkEngineSound();
 
+	void RenderPlayer();
+
 	void timer();
 
 	void mouseClick(int button, int state, int x, int y) override;
+
+	void passiveMotion(int x, int y) override {}
 	
 	void keyboard(unsigned char key, int x, int y) override;
 
-	void activateBooster();
+	void activateBoosterSound();
 
 	void specialKey(int key, int x, int y) override;
 
@@ -135,6 +143,10 @@ public:
 	void draw_bb() override;
 
 	void finish() override;
+
+	virtual ModeType GetModeType() const override {
+		return ModeType::INGAME;
+	}
 private:
 
 	void updatePhysics(float deltaTime);

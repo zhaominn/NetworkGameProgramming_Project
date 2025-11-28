@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -14,6 +14,7 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 
 class btRigidBody;
+class Mode;
 
 struct Vertex {
     float x, y, z;
@@ -102,4 +103,22 @@ public:
     virtual void initBuffer() = 0;
 
     virtual ~Model() = default; 
+
+    glm::vec3 getPosition() const {
+        return glm::vec3(translateMatrix[3]);
+    }
+
+    void setPosition(const glm::vec3& pos) {
+        translateMatrix[3] = glm::vec4(pos, 1.0f);
+    }
+
+    void setRotation(float yaw)
+    {
+        rotateMatrix = glm::mat4(1.0f);
+        rotateMatrix = glm::rotate(
+            rotateMatrix,
+            glm::radians(yaw),
+            glm::vec3(0.0f, 1.0f, 0.0f)
+        );
+    }
 };

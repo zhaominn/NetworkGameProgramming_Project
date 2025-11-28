@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // global definition
 constexpr short NAME_SIZE = 256;
@@ -9,7 +9,20 @@ constexpr float TIME_PER_ACTION = 0.25f;
 constexpr float ACTION_PER_TIME = 1.0f / TIME_PER_ACTION;
 
 constexpr float PLAYER_SPEED = 1.0f;
-constexpr float BOOSTER_SPEED = 2.0f;
+
+constexpr float ACCELERATION = 0.004f;
+constexpr float DECELERATION = 0.003f;
+constexpr float LIMIT_SPEED = 1.0;
+constexpr float BOOSTER_SPEED = 2.0;
+constexpr float MAX_SPEED = 0.5;
+constexpr float TURN_ANGLE = 1.0;
+
+constexpr float MAX_FACE_ROTATION = 25.0f;
+constexpr float ROTATION_SPEED = 5.0f;
+constexpr float RETURN_SPEED = 2.0f;
+
+constexpr float MAX_HEAD_TILT = 20.0f;
+constexpr float TILT_SPEED = 2.0f;
 
 constexpr unsigned short WINDOW_WIDTH = 980;
 constexpr unsigned short WINDOW_HEIGHT = 780;
@@ -20,24 +33,28 @@ constexpr int  MAX_USER = 3;
 // C2S
 constexpr char C2S_LOGIN = 0;
 constexpr char C2S_IS_READY = 1;
-constexpr char C2S_MOVE = 2;
-constexpr char C2S_BOOSTER = 3;
-constexpr char C2S_LOGOUT = 4;
+constexpr char C2S_ENTER_ROOM = 2;
+constexpr char C2S_MOVE = 3;
+constexpr char C2S_BOOSTER = 4;
+constexpr char C2S_LOGOUT = 5;
 // S2C
-constexpr char S2C_PLAYER_INFO = 5;
-constexpr char S2C_LOGIN_FAIL = 5;
-constexpr char S2C_ENTER_ROOM = 5;
-constexpr char S2C_IS_READY = 5;
-constexpr char S2C_GAME_START = 5;
-constexpr char S2C_MOVE = 5;
-constexpr char S2C_BOOSTER = 5;
-constexpr char S2C_WORLD_UPDATE = 5;
-constexpr char S2C_RANK = 5;
-constexpr char S2C_LOGOUT = 5;
+constexpr char S2C_PLAYER_INFO = 6;
+constexpr char S2C_LOGIN_FAIL = 7;
+constexpr char S2C_ENTER_ROOM = 8;
+constexpr char S2C_IS_READY = 9;
+constexpr char S2C_GAME_START = 10;
+constexpr char S2C_MOVE = 11;
+constexpr char S2C_BOOSTER = 12;
+// constexpr char S2C_WORLD_UPDATE = 13;
+constexpr char S2C_RANK = 14;
+constexpr char S2C_LOGOUT = 15;
+//wall collision
+constexpr char C2S_WALL_COLLISION_1 = 16;
 
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
 enum DATA_TYPE { ACCEPT, SEND, RECV };
+enum GAME_STATE { LOBBY, ROOM, INGAME };
 
 #pragma pack (push, 1)
 
@@ -55,6 +72,13 @@ struct S2C_Login_Fail_Packet
 	char type;
 };
 
+struct S2C_EnterRoom_Packet
+{
+	unsigned char size;
+	char type;
+	char id;
+};
+
 struct S2C_Ready_Packet
 {
 	unsigned char size;
@@ -63,11 +87,52 @@ struct S2C_Ready_Packet
 	bool is_ready;
 };
 
+struct S2C_GameStart_Packet
+{
+	unsigned char size;
+	char type;
+};
+
+struct S2C_Move_All_Packet {
+	char id;
+	float speed;
+	float yaw;
+	float face_rotation;
+	float body_rotation;
+	float booster_head_tilt;
+	bool boosterOn;
+
+	float x;
+	float y;
+	float z;
+};
+
+struct S2C_Move_Packet
+{
+	unsigned char size;
+	char type;
+	char id;
+	int booster_cnt;
+	float speed;
+	float yaw;
+	float face_rotation;
+	float body_rotation;
+	float booster_head_tilt;
+
+	float x;
+	float y;
+	float z;
+
+	S2C_Move_All_Packet arr[MAX_USER];
+};
+
 struct S2C_Booster_Packet
 {
 	unsigned char size;
 	char type;
 	char id;
+	bool boosterOn;
+	int booster_cnt;
 };
 
 struct S2C_Rank_Packet
@@ -75,31 +140,7 @@ struct S2C_Rank_Packet
 	unsigned char size;
 	char type;
 	char rank;
-};
-
-struct S2C_EnterRoom_Packet
-{
-	unsigned char size;
-	char type;
-	char id;
-};
-
-struct S2C_GameStart_Packet
-{
-	unsigned char size;
-	char type;
-};
-
-class btRigidBody {}; // 나중에 수정..
-struct S2C_Move_Packet
-{
-	unsigned char size;
-	char type;
-	char id;
-	float x;
-	float y;
-	float z;
-	btRigidBody rigidBody;
+	float finish_time;
 };
 
 struct S2C_Finish_Packet
@@ -121,13 +162,16 @@ struct C2S_Change_Ready_Packet
 {
 	unsigned char size;
 	char type;
+	float x, y, z;
 	bool is_ready;
 };
 
-struct C2S__Booster_Packet
+struct C2S_Booster_Packet
 {
 	unsigned char size;
 	char type;
+	bool boosterOn;
+	int booster_cnt;
 };
 
 struct C2S_Change_Map_Packet
@@ -141,17 +185,32 @@ struct C2S_Enter_Room_Packet
 {
 	unsigned char size;
 	char type;
-	int room_key;
+	MAP_TYPE map;
 };
 
 struct C2S_Move_Packet
 {
 	unsigned char size;
 	char type;
-	float x;
-	float y;
-	float z;
-	btRigidBody rigidBody;
+
+	bool up;
+	bool down;
+	bool left;
+	bool right;
+	//btRigidBody rigidBody;
+};
+
+struct AABB {
+	float minX, minY, minZ;
+	float maxX, maxY, maxZ;
+	bool rigid_status;
+};
+
+struct C2S_Wall_Collision_1_Packet {
+	unsigned char size;
+	char type;
+
+	AABB aabbs[5];
 };
 
 #pragma pack (pop)

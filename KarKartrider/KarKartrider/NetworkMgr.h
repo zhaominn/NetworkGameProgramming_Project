@@ -1,31 +1,55 @@
-#pragma once
+ï»¿#pragma once
 
-#define _CRT_SECURE_NO_WARNINGS // ±¸Çü C ÇÔ¼ö »ç¿ë ½Ã °æ°í ²ô±â
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ±¸Çü ¼ÒÄÏ API »ç¿ë ½Ã °æ°í ²ô±â
+#define _CRT_SECURE_NO_WARNINGS // êµ¬í˜• C í•¨ìˆ˜ ì‚¬ìš© ì‹œ ê²½ê³  ë„ê¸°
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // êµ¬í˜• ì†Œì¼“ API ì‚¬ìš© ì‹œ ê²½ê³  ë„ê¸°
 
-#include <winsock2.h> // À©¼Ó2 ¸ŞÀÎ Çì´õ
-#include <ws2tcpip.h> // À©¼Ó2 È®Àå Çì´õ
+#include <winsock2.h> // ìœˆì†2 ë©”ì¸ í—¤ë”
+#include <ws2tcpip.h> // ìœˆì†2 í™•ì¥ í—¤ë”
 
 #include <tchar.h> // _T(), ...
 #include <stdio.h> // printf(), ...
 #include <stdlib.h> // exit(), ...
 #include <string.h> // strncpy(), ...
 
-#pragma comment(lib, "ws2_32") // ws2_32.lib ¸µÅ©
+#pragma comment(lib, "ws2_32") // ws2_32.lib ë§í¬
 #include "protocol.h"
 
 class NetworkMgr
 {
 private:
-	SOCKET sock;
+	SOCKET m_sock;
+	char m_id;
+	bool m_running;
+	Mode* m_currentMode;
+	float m_deltaTime;
 
 public:
 	NetworkMgr();
 	~NetworkMgr();
 
-	bool Initialize();
+	bool Init();
+
+	SOCKET GetSocket() { return m_sock; }
+
+	ModeType GetCurrentModeType() const;
 
 public:
-	// void SendPacket();
-};
+	void StartRunning();
+	void StopRunning();
+	bool IsRunning() const;
 
+public:
+	void SendPacket(char* packet, int size);
+
+	void SendEnterRoomPacket(MAP_TYPE map);
+	void SendLoginPacket(std::string name);
+
+	void SendChangeReadyPacket(bool status);
+	void SendMovePacket(bool up, bool down, bool left, bool right);
+	void SendBoosterPacket(bool boosterOn, int booster_cnt);
+
+	void SendWallCollisionPacket(AABB aabb[5]);
+
+public:
+	void ProcessPacket(char* buf);
+};

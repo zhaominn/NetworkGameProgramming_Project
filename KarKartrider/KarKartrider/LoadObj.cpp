@@ -1,17 +1,15 @@
-#include "Pch.h"
+﻿#include "Pch.h"
 #include "loadobj.h"
 #include "LoadMtl.h"
 #include <vector>
 
-
-// OBJ ������ �о�ͼ� �� �����͸� �Ľ��ϴ� �Լ� (����)
 void read_obj_file(const std::string& filename,
     const std::string path,
     Model* model,
     const std::string& name,
     const std::string& type)
 {
-    std::ifstream file(path + filename);  // ���� �б� ���� ����
+    std::ifstream file(path + filename);  
     if (!file.is_open()) {
         std::cerr << "Error opening file: " << filename << std::endl;
         return;

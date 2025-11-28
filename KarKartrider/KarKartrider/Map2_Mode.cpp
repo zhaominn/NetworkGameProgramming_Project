@@ -1,4 +1,4 @@
-#include "Pch.h"
+﻿#include "Pch.h"
 #include "RoadModel.h"
 #include "KartModel.h"
 #include "shaderMaker.h"
@@ -59,7 +59,7 @@ void Map2_Mode::draw_speed() {
 	glPushMatrix();
 	glPixelZoom(5.0f, 5.0f);
 
-	std::string speedText = std::to_string(static_cast<int>(kart_speed * 100));
+	std::string speedText = std::to_string(static_cast<int>(g_players[g_myid].m_speed * 100));
 
 	glRasterPos2f(0.0f, -0.97f);
 	for (char c : speedText) {
@@ -97,13 +97,13 @@ void Map2_Mode::draw_ui() {
 	glUseProgram(0);
 }
 
-void Map2_Mode::draw_timer() {
+void Map2_Mode::draw_timer(float deltaTime) {
 	glUseProgram(shaderProgramID_UI);
 
 	GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isTimer");
 	glUniform1i(isTimerLocation, true);
 
-	std::string timerText = "Time: " + std::to_string(game_timer);
+	std::string timerText = "Time: " + std::to_string(deltaTime);
 	glRasterPos2f(-0.95f, 0.9f);
 	for (char c : timerText) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
@@ -255,18 +255,32 @@ void Map2_Mode::finish_game() {
 	}
 }
 
-void Map2_Mode::draw_finish_time() {
+void Map2_Mode::draw_finish_time(float deltaTime) {
 	glUseProgram(shaderProgramID_UI);
 
 	GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isRed");
 	glUniform1i(isTimerLocation, true);
 
-	std::string Text = "Time: " + std::to_string(30 - game_timer);
+	std::string Text = "Time: " + std::to_string(deltaTime);
 
-	glRasterPos2f(0.0f, 0.0f);
+	/*glRasterPos2f(0.0f, 0.0f);
 	for (char c : Text) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-	}
+	}*/
+
+	auto RenderText = [](float x, float y, std::string text) {
+		glRasterPos2f(x, y);
+		for (char c : text) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		}
+		};
+
+	std::string dtText = "Time: " + std::to_string(deltaTime);
+	RenderText(0.0f, 0.0f, dtText);
+
+	std::string rankText = "Rank: " + std::to_string(g_players[g_myid].m_rank) + " / " + std::to_string(MAX_USER);
+	RenderText(0.0f, 0.1f, rankText);
+
 	glUniform1i(isTimerLocation, false);
 
 	glUseProgram(0);
@@ -513,6 +527,9 @@ void Map2_Mode::timer() {
 				}
 			}
 
+			networkmgr.SendMovePacket(up, down, left, right);
+
+
 			setCamera();
 			float cameraFollowSpeed = 0.1f;
 			cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
@@ -615,24 +632,22 @@ void Map2_Mode::specialKey(int key, int x, int y)  {
 
 
 	switch (key) {
-	case GLUT_KEY_UP:
-		kart_keyState[UP] = true;
-		break;
-	case GLUT_KEY_DOWN:
-		kart_keyState[DOWN] = true;
-		break;
-	case GLUT_KEY_LEFT:
-		kart_keyState[LEFT] = true;
-		if (character_face_rotation > -MAX_FACE_ROTATION) {
-			character_face_rotation -= ROTATION_SPEED;
-		}
-		break;
-	case GLUT_KEY_RIGHT:
-		kart_keyState[RIGHT] = true;
-		if (character_face_rotation < MAX_FACE_ROTATION) {
-			character_face_rotation += ROTATION_SPEED;
-		}
-		break;
+	case GLUT_KEY_UP: {
+		up = true;
+	}
+					break;
+	case GLUT_KEY_DOWN: {
+		down = true;
+	}
+					  break;
+	case GLUT_KEY_LEFT: {
+		left = true;
+	}
+					  break;
+	case GLUT_KEY_RIGHT: {
+		right = true;
+	}
+					   break;
 	}
 
 	int modifiers = glutGetModifiers();
@@ -657,17 +672,25 @@ void Map2_Mode::specialKey(int key, int x, int y)  {
 void Map2_Mode::specialKeyUp(int key, int x, int y)  {
 	switch (key) {
 	case GLUT_KEY_UP:
-		kart_keyState[UP] = false;
-		break;
+	{
+		up = false;
+	}
+	break;
 	case GLUT_KEY_DOWN:
-		kart_keyState[DOWN] = false;
-		break;
+	{
+		down = false;
+	}
+	break;
 	case GLUT_KEY_LEFT:
-		kart_keyState[LEFT] = false;
-		break;
+	{
+		left = false;
+	}
+	break;
 	case GLUT_KEY_RIGHT:
-		kart_keyState[RIGHT] = false;
-		break;
+	{
+		right = false;
+	}
+	break;
 	}
 }
 
@@ -727,12 +750,12 @@ void Map2_Mode::draw_model()  {
 
 	// Draw Timer
 	glDisable(GL_DEPTH_TEST);
-	draw_timer();
+	draw_timer(g_delta_time);
 	draw_ui();
 	draw_dashBoard();
 	draw_speed();
 	if (isGameOver)
-		draw_finish_time();
+		draw_finish_time(g_delta_time);
 	glEnable(GL_DEPTH_TEST);
 
 	glDisable(GL_DEPTH_TEST);
@@ -768,19 +791,6 @@ void Map2_Mode::updatePhysics(float deltaTime) {
 
 		instance->updatePhysics(deltaTime);
 		instance->timer();
-
-		if (!instance->isGameOver) {
-			static float elapsedTime = 0.0f;
-			elapsedTime += deltaTime;
-			if (elapsedTime >= 1.0f) {
-				elapsedTime = 0.0f;
-				instance->game_timer--;
-				if (instance->game_timer <= 0) {
-					instance->game_timer = 0;
-					instance->lose_game();
-				}
-			}
-		}
 	}
 
 	glutPostRedisplay();

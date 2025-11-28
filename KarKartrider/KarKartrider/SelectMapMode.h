@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 #include <thread>
@@ -8,7 +8,7 @@
 #include "KeyBoard.h"
 #include "LoadSound.h"
 
-// 전역 변수 선언 (링커 충돌 방지)
+// ?꾩뿭 蹂???좎뼵 (留곸빱 異⑸룎 諛⑹?)
 extern bool isAnimating;
 extern float animationSpeed;
 extern glm::vec3 cameraPosMapMode;
@@ -39,6 +39,7 @@ public:
     void goSelectMode();
     void init() override;
     void mouseClick(int button, int state, int x, int y) override;
+    void passiveMotion(int x, int y) override {}
     void keyboard(unsigned char key, int x, int y) override;
     void updateTargetCameraPos();
     void specialKey(int key, int x, int y) override;
@@ -47,6 +48,9 @@ public:
     void draw_bb() override;
     void finish() override;
 
+    virtual ModeType GetModeType() const override {
+        return ModeType::SELECT_MAP;
+    }
 private:
     void runSound();
     void clickSound();

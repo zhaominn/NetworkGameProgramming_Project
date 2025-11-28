@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "shaderMaker.h"
 #include "ModeManager.h"
