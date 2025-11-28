@@ -54,7 +54,7 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 				if (!g_users[i].GetOnline()) continue;
 				Player& p = g_users[i];
 
-				// ---- 벽 충돌 ----
+				// ---- wall collision ----
 				float wpx, wpz;
 				ProcessWallCollision(p, wpx, wpz);
 
@@ -65,7 +65,7 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 					ApplyBounceReflection(p, wpx, wpz, 0.0f);
 				}
 
-				// ---- 플레이어 충돌 ----
+				// ---- player collision ----
 				float ppx, ppz;
 				ProcessPlayerCollision(i, ppx, ppz);
 
@@ -73,7 +73,7 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 				{
 					p.m_posX += ppx * 0.5f;
 					p.m_posZ += ppz * 0.5f;
-					ApplyBounceReflection(p, ppx, ppz, 0.7f);
+					//ApplyBounceReflection(p, ppx, ppz, 0.7f);
 				}
 
 				p.CheckBoosterState();
