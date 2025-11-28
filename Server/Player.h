@@ -18,6 +18,8 @@ private:
 	bool isFinished;
 	bool isBoosterActive;
 
+	MAP_TYPE select_map;
+
 	SOCKET m_socket;
 
 	std::chrono::steady_clock::time_point m_boosterEndTime;
@@ -56,7 +58,7 @@ public:
 	void send_Player_Info_Packet();
 	void send_Login_Fail_Packet();
 	void send_Ready_Packet();
-	void send_Game_Start_Packet();
+	void send_Game_Start_Packet(MAP_TYPE m);
 	void send_move_Packet();
 	void send_booster_packet();
 

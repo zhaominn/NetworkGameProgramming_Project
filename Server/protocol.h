@@ -28,6 +28,7 @@ constexpr unsigned short WINDOW_WIDTH = 980;
 constexpr unsigned short WINDOW_HEIGHT = 780;
 
 constexpr int  MAX_USER = 3;
+constexpr int  MIN_PLAYERS_TO_START = 1;
 
 // packet
 // C2S
@@ -91,6 +92,7 @@ struct S2C_GameStart_Packet
 {
 	unsigned char size;
 	char type;
+	MAP_TYPE map;
 };
 
 struct S2C_Move_All_Packet {

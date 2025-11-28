@@ -254,6 +254,8 @@ void Player::process_packet(char* p)
 		if (room.roomManagerID == -1)
 			room.roomManagerID = m_id;
 
+		this->select_map = packet->map;
+
 		// 방에 유저 등록
 		room.inRoomPlayers[m_id] = this;
 
@@ -370,15 +372,12 @@ void Player::send_Ready_Packet()
 	delete ready_pkt;
 }
 
-void Player::send_Game_Start_Packet()
+void Player::send_Game_Start_Packet(MAP_TYPE m)
 {
 	S2C_GameStart_Packet* game_start = new S2C_GameStart_Packet;
 	game_start->size = sizeof(S2C_GameStart_Packet);
 	game_start->type = S2C_GAME_START;
-
-	for (int i = 0; i < 2; ++i) {
-		std::cout << g_room[i].inRoomPlayers << " : " << g_room[i].mapType << std::endl;
-	}
+	game_start->map = m;
 
 	send_packet(reinterpret_cast<char*>(game_start), sizeof(S2C_GameStart_Packet));
 

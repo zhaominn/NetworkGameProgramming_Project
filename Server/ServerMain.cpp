@@ -3,6 +3,30 @@
 
 #include <iostream>
 
+bool IsRoomReady(Room& room)
+{
+	int playerCount = 0;
+	int readyCount = 0;
+
+	for (int i = 0; i < MAX_USER; i++)
+	{
+		Player* p = room.inRoomPlayers[i];
+		if (p != nullptr && p->GetID() != -1)
+		{
+			playerCount++;
+
+			if (p->GetReady())
+				readyCount++;
+		}
+	}
+
+	// 플레이어가 최소 1명 이상 있어야 함
+	if (playerCount == 0)
+		return false;
+
+	// 방에 있는 모든 플레이어가 READY면 true
+	return (readyCount == playerCount);
+}
 
 DWORD WINAPI ClientThread(LPVOID socket)
 {
@@ -30,10 +54,6 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 
 	while (true)
 	{
-		if (!g_GameStart) {
-			Sleep(1);
-			continue;
-		}
 
 		auto current_time = std::chrono::steady_clock::now();
 		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -170,11 +190,10 @@ int main()
 					CloseHandle(hThread);
 				}
 
-				//if (g_usersNum == 1)
-				if (g_usersNum == MAX_USER)
+				if (g_usersNum >= MIN_PLAYERS_TO_START)
 				{
 					g_AllPlayerLogin = true;
-					/*temp*/g_game_state = INGAME;
+					g_game_state = INGAME;
 				}
 			}
 
@@ -189,27 +208,34 @@ int main()
 			// in game
 			// ------------------------------------------------------------------------------------------------------
 			while (!g_GameStart) {
-				int readyClient = 0;
+				for (int roomIdx = 0; roomIdx < 2; roomIdx++)
+				{
+					Room& room = g_room[roomIdx];
 
-				if (g_GameStart) break;
+					// 이미 시작한 방은 패스
+					if (room.gameStart)
+						continue;
 
-				for (int i = 0; i < MAX_USER; ++i) {
-					if (g_users[i].GetReady()) {
-						readyClient++;
+					// 방의 모든 유저가 레디인지 체크
+					if (IsRoomReady(room))
+					{
+						std::cout << "Room " << roomIdx << " start!" << std::endl;
+
+						// 그 방에 있는 플레이어들에게만 Start 패킷 보내기
+						for (int i = 0; i < MAX_USER; i++)
+						{
+							Player* p = room.inRoomPlayers[i];
+							if (p != nullptr)
+							{
+								p->send_Game_Start_Packet(room.mapType);
+							}
+						}
+
+						room.gameStart = true;
+						room.elapsedTime = 0.0f;
 					}
 				}
-				//if (readyClient == 1) {
-				if (readyClient == MAX_USER) {
-					for (int i = 0; i < MAX_USER; ++i) {
-						g_users[i].send_Game_Start_Packet();
-					}
-
-					EnterCriticalSection(&g_CS);
-					g_GameStart = true;
-					LeaveCriticalSection(&g_CS);
-
-					g_ElapsedTime = 0.f;
-				}
+				break;
 			}
 			break;
 		}
