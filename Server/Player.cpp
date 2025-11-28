@@ -385,7 +385,7 @@ void Player::send_move_Packet()
 		move_pkt->arr[i].yaw = g_users[i].GetYaw();
 		move_pkt->arr[i].face_rotation = g_users[i].GetFaceRotation();
 		move_pkt->arr[i].body_rotation = g_users[i].GetBodyRotation();
-		move_pkt->arr[i].booster_head_tilt = GetHeadtilt();
+		move_pkt->arr[i].booster_head_tilt = g_users[i].GetHeadtilt();
 		move_pkt->arr[i].x = g_users[i].m_posX;
 		move_pkt->arr[i].y = g_users[i].m_posY;
 		move_pkt->arr[i].z = g_users[i].m_posZ;
