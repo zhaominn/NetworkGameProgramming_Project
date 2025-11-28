@@ -91,6 +91,8 @@ struct S2C_GameStart_Packet
 {
 	unsigned char size;
 	char type;
+
+	MAP_TYPE map;
 };
 
 struct S2C_Move_All_Packet {
