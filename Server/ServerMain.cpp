@@ -1,91 +1,8 @@
 #include "Player.h"
+#include "collision.h"
+
 #include <iostream>
 
-bool WallCollisionCheck(const AABB& box, int id, float& pushX, float& pushZ)
-{
-	if (!box.rigid_status)
-		return false;
-	pushX = pushZ = 0;
-
-	float px = g_users[id].m_posX;
-	float pz = g_users[id].m_posZ;
-
-	float hx = g_users[id].m_colliderHalfX;
-	float hz = g_users[id].m_colliderHalfZ;
-
-	// �÷��̾� AABB
-	float pMinX = px - hx;
-	float pMaxX = px + hx;
-	float pMinZ = pz - hz;
-	float pMaxZ = pz + hz;
-
-	// �浹 üũ
-	if (pMaxX < box.minX || pMinX > box.maxX) return false;
-	if (pMaxZ < box.minZ || pMinZ > box.maxZ) return false;
-
-	// �� �� penetration ���
-	float penLeft = box.maxX - pMinX;   // �÷��̾ ���������� �о�� ��
-	float penRight = pMaxX - box.minX;   // �÷��̾ ��������
-	float penFront = box.maxZ - pMinZ;   // �÷��̾ �ڷ�
-	float penBack = pMaxZ - box.minZ;   // �÷��̾ ������
-
-	float pushXAmount, pushZAmount;
-
-	// ���� penetration ����
-	pushXAmount = (penLeft < penRight ? penLeft : -penRight);
-	pushZAmount = (penFront < penBack ? penFront : -penBack);
-
-	// X ���� �� ������ X�θ� �̵�
-	if (fabs(pushXAmount) < fabs(pushZAmount))
-	{
-		pushX = pushXAmount;
-	}
-	else
-	{
-		pushZ = pushZAmount;
-	}
-
-	return true;
-}
-
-
-bool PlayerCollisionCheck(int a, int b, float& pushX, float& pushZ)
-{
-	float x1 = g_users[a].m_posX;
-	float z1 = g_users[a].m_posZ;
-
-	float x2 = g_users[b].m_posX;
-	float z2 = g_users[b].m_posZ;
-
-	float hx1 = g_users[a].m_colliderHalfX;
-	float hz1 = g_users[a].m_colliderHalfZ;
-
-	float hx2 = g_users[b].m_colliderHalfX;
-	float hz2 = g_users[b].m_colliderHalfZ;
-
-	float dx = x1 - x2;
-	float dz = z1 - z2;
-
-	float overlapX = (hx1 + hx2) - fabs(dx);
-	float overlapZ = (hz1 + hz2) - fabs(dz);
-
-	if (overlapX > 0 && overlapZ > 0)
-	{
-		if (overlapX < overlapZ)
-		{
-			pushX = (dx > 0 ? overlapX : -overlapX);
-			pushZ = 0;
-		}
-		else
-		{
-			pushX = 0;
-			pushZ = (dz > 0 ? overlapZ : -overlapZ);
-		}
-		return true;
-	}
-
-	return false;
-}
 
 DWORD WINAPI ClientThread(LPVOID socket)
 {
@@ -129,116 +46,38 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 
 		if (elapsed_time >= (1000 / 60))
 		{
-			std::lock_guard<std::mutex> lock1(g_UserMutex);	// ���⼭����ȭ���ϸ�������
+			std::lock_guard<std::mutex> lock1(g_UserMutex);
 
 			// check and update
 			for (int i = 0; i < MAX_USER; ++i)
 			{
 				if (!g_users[i].GetOnline()) continue;
+				Player& p = g_users[i];
 
-				float wpx = 0.f, wpz = 0.f;
+				// ---- 벽 충돌 ----
+				float wpx, wpz;
+				ProcessWallCollision(p, wpx, wpz);
 
-				// =============
-				// 1) �� �浹 ����
-				// =============
-				for (auto& box : g_users[i].g_Map1Colliders)
-				{
-					float pushX, pushZ;
-					if (WallCollisionCheck(box, i, pushX, pushZ))
-					{
-						wpx += pushX;
-						wpz += pushZ;
-					}
-				}
-
-				// ���� �����̶� �������� "�� �ڸ����� �ٷ� �����ϰ� �о��"
 				if (wpx != 0 || wpz != 0)
 				{
-					// --- ��ġ ���� ���� ---
-					g_users[i].m_posX += wpx;
-					g_users[i].m_posZ += wpz;
-
-					// ---- ��ħ ���� ��, �ӵ�/���� ����(�ݻ�) ----
-					float nx = (wpx > 0 ? 1.0f : (wpx < 0 ? -1.0f : 0));
-					float nz = (wpz > 0 ? 1.0f : (wpz < 0 ? -1.0f : 0));
-
-					float yaw = g_users[i].GetYaw();
-					float speed = g_users[i].GetSpeed();
-
-					float vx = cosf(yaw) * speed;
-					float vz = sinf(yaw) * speed;
-
-					float dot = vx * nx + vz * nz;
-
-					float rvx = vx - 2 * dot * nx;
-					float rvz = vz - 2 * dot * nz;
-
-					const float bounce = 0.0f;   // �� ���� ƨ���� �ʰ� �� 0 ��õ
-					rvx *= bounce;
-					rvz *= bounce;
-
-					float newSpeed = sqrtf(rvx * rvx + rvz * rvz);
-					float newYaw = atan2f(rvz, rvx);
-
-					g_users[i].SetSpeed(newSpeed);
-					g_users[i].SetYaw(newYaw);
+					p.m_posX += wpx;
+					p.m_posZ += wpz;
+					ApplyBounceReflection(p, wpx, wpz, 0.0f);
 				}
 
+				// ---- 플레이어 충돌 ----
+				float ppx, ppz;
+				ProcessPlayerCollision(i, ppx, ppz);
 
-				float oldX = g_users[i].m_posX;
-				float oldZ = g_users[i].m_posZ;
-
-				float px = 0.f, pz = 0.f;
-
-				for (int j = 0; j < MAX_USER; ++j)
+				if (ppx != 0 || ppz != 0)
 				{
-					if (i == j) continue;
-					if (!g_users[j].GetOnline()) continue;
-
-					float pushX, pushZ;
-					if (PlayerCollisionCheck(i, j, pushX, pushZ))
-					{
-						px += pushX;
-						pz += pushZ;
-					}
+					p.m_posX += ppx * 0.5f;
+					p.m_posZ += ppz * 0.5f;
+					ApplyBounceReflection(p, ppx, ppz, 0.7f);
 				}
 
-				if (px != 0 || pz != 0)
-				{
-					g_users[i].m_posX += px * 0.5f;
-					g_users[i].m_posZ += pz * 0.5f;
-
-					float nx = 0.f, nz = 0.f;
-					if (px != 0) nx = (px > 0 ? 1.0f : -1.0f);
-					if (pz != 0) nz = (pz > 0 ? 1.0f : -1.0f);
-
-					float yaw = g_users[i].GetYaw();
-					float speed = g_users[i].GetSpeed();
-
-					// local speed vector
-					float vx = cosf(yaw) * speed;
-					float vz = sinf(yaw) * speed;
-
-					float dot = vx * nx + vz * nz;
-
-					float rvx = vx - 2 * dot * nx;
-					float rvz = vz - 2 * dot * nz;
-
-					const float bounce = 0.7f;
-
-					rvx *= bounce;
-					rvz *= bounce;
-
-					float newSpeed = sqrtf(rvx * rvx + rvz * rvz);
-					float newYaw = atan2f(rvz, rvx);
-
-					g_users[i].SetSpeed(newSpeed);
-					g_users[i].SetYaw(newYaw);
-				}
-
-				g_users[i].CheckBoosterState();
-				g_users[i].checkIsFinished();
-
+				p.CheckBoosterState();
+				p.checkIsFinished();
 			}
 
 			// send
@@ -321,8 +160,8 @@ int main()
 					CloseHandle(hThread);
 				}
 
-				if (g_usersNum == 1)
-				//if (g_usersNum == MAX_USER)
+				//if (g_usersNum == 1)
+				if (g_usersNum == MAX_USER)
 				{
 					g_AllPlayerLogin = true;
 					/*temp*/g_game_state = INGAME;
@@ -349,9 +188,8 @@ int main()
 						readyClient++;
 					}
 				}
-				if (readyClient == 1) {
-				//if (readyClient == MAX_USER) {
-					std::cout << "���ӿ� �����մϴ�." << std::endl;
+				//if (readyClient == 1) {
+				if (readyClient == MAX_USER) {
 					for (int i = 0; i < MAX_USER; ++i) {
 						g_users[i].send_Game_Start_Packet();
 					}

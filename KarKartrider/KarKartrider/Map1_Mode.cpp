@@ -205,8 +205,6 @@ void Map1_Mode::init()
 		btVector3 aabbMin, aabbMax;
 		road1_barricate[i]->rigidBody->getAabb(aabbMin, aabbMax);
 
-		std::cout << "이름 : " << road1_barricate[i]->name << std::endl;
-
 		/*std::cout << "AABB Min: " << aabbMin.getX() << ", "
 			<< aabbMin.getY() << ", " << aabbMin.getZ() << std::endl;
 
