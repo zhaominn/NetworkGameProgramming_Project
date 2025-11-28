@@ -110,7 +110,7 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 
 				// ---- player collision ----
 				float ppx, ppz;
-				ProcessPlayerCollision(i, ppx, ppz);
+				ProcessPlayerCollisionRoom(room, p.GetID(), ppx, ppz);
 
 				if (ppx != 0 || ppz != 0)
 				{
