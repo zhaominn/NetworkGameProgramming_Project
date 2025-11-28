@@ -61,6 +61,9 @@ public:
 	void ActiveBooster();
 	void CheckBoosterState();
 
+	void CheckCollision();
+	bool PlayerCollisionCheck(int a, int b, float& pushX, float& pushZ);
+
 	// ingame
 	void send_Rank_Packet();
 	void checkIsFinished();

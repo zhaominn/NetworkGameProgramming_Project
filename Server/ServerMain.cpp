@@ -1,45 +1,6 @@
 #include "Player.h"
 #include <iostream>
 
-
-bool PlayerCollisionCheck(int a, int b, float& pushX, float& pushZ)
-{
-	float x1 = g_users[a].m_posX;
-	float z1 = g_users[a].m_posZ;
-
-	float x2 = g_users[b].m_posX;
-	float z2 = g_users[b].m_posZ;
-
-	float hx1 = g_users[a].m_colliderHalfX;
-	float hz1 = g_users[a].m_colliderHalfZ;
-
-	float hx2 = g_users[b].m_colliderHalfX;
-	float hz2 = g_users[b].m_colliderHalfZ;
-
-	float dx = x1 - x2;
-	float dz = z1 - z2;
-
-	float overlapX = (hx1 + hx2) - fabs(dx);
-	float overlapZ = (hz1 + hz2) - fabs(dz);
-
-	if (overlapX > 0 && overlapZ > 0)
-	{
-		if (overlapX < overlapZ)
-		{
-			pushX = (dx > 0 ? overlapX : -overlapX);
-			pushZ = 0;
-		}
-		else
-		{
-			pushX = 0;
-			pushZ = (dz > 0 ? overlapZ : -overlapZ);
-		}
-		return true;
-	}
-
-	return false;
-}
-
 DWORD WINAPI ClientThread(LPVOID socket)
 {
 	Player* player = reinterpret_cast<Player*>(socket);
@@ -82,68 +43,28 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 
 		if (elapsed_time >= (1000 / 60))
 		{
+			std::lock_guard<std::mutex> lock1(g_UserMutex);	// 여기서동기화안하면터지긔
+
+			// check and update
 			for (int i = 0; i < MAX_USER; ++i)
 			{
 				if (!g_users[i].GetOnline()) continue;
-
-				float oldX = g_users[i].m_posX;
-				float oldZ = g_users[i].m_posZ;
-
-				float px = 0.f, pz = 0.f;
-
-				for (int j = 0; j < MAX_USER; ++j)
-				{
-					if (i == j) continue;
-					if (!g_users[j].GetOnline()) continue;
-
-					float pushX, pushZ;
-					if (PlayerCollisionCheck(i, j, pushX, pushZ))
-					{
-						px += pushX;
-						pz += pushZ;
-					}
-				}
-
-				if (px != 0 || pz != 0)
-				{
-					g_users[i].m_posX += px * 0.5f;
-					g_users[i].m_posZ += pz * 0.5f;
-
-					float nx = 0.f, nz = 0.f;
-					if (px != 0) nx = (px > 0 ? 1.0f : -1.0f);
-					if (pz != 0) nz = (pz > 0 ? 1.0f : -1.0f);
-
-					float yaw = g_users[i].GetYaw();
-					float speed = g_users[i].GetSpeed();
-
-					// local speed vector
-					float vx = cosf(yaw) * speed;
-					float vz = sinf(yaw) * speed;
-
-					float dot = vx * nx + vz * nz;
-
-					float rvx = vx - 2 * dot * nx;
-					float rvz = vz - 2 * dot * nz;
-
-					const float bounce = 0.7f;
-
-					rvx *= bounce;
-					rvz *= bounce;
-
-					float newSpeed = sqrtf(rvx * rvx + rvz * rvz);
-					float newYaw = atan2f(rvz, rvx);
-
-					g_users[i].SetSpeed(newSpeed);
-					g_users[i].SetYaw(newYaw);
-				}
-
+				g_users[i].CheckCollision();
 				g_users[i].CheckBoosterState();
-				g_users[i].send_move_Packet();
 				g_users[i].checkIsFinished();
+
+			}
+
+			// send
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				g_users[i].send_move_Packet();
 			}
 
 			last_send_time = current_time;
 		}
+
+
 	}
 }
 
