@@ -18,8 +18,6 @@ private:
 	bool isFinished;
 	bool isBoosterActive;
 
-	MAP_TYPE select_map;
-
 	SOCKET m_socket;
 
 	std::chrono::steady_clock::time_point m_boosterEndTime;
@@ -43,6 +41,7 @@ public:
 
 	AABB g_Map1Colliders[5];
 
+	MAP_TYPE select_map;
 public:
 	Player() : m_id(-1), m_name(), m_booster_cnt(2), m_yaw(0), m_speed(0), m_face_rotation(0), m_booster_head_tilt(0),
 		isBoosterActive(false), isReady(false), isOnline(false), isFinished(false), m_socket(INVALID_SOCKET) {

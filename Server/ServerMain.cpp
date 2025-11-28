@@ -55,6 +55,23 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 	while (true)
 	{
 
+		// 적어도 한 방이라도 시작되었는지 확인
+		bool anyRoomStarted = false;
+		for (int roomIdx = 0; roomIdx < 2; roomIdx++)
+		{
+			if (g_room[roomIdx].gameStart)
+			{
+				anyRoomStarted = true;
+				break;
+			}
+		}
+
+		if (!anyRoomStarted)
+		{
+			Sleep(1);
+			continue;
+		}
+
 		auto current_time = std::chrono::steady_clock::now();
 		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(
 			current_time - last_send_time
@@ -73,6 +90,11 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 			{
 				if (!g_users[i].GetOnline()) continue;
 				Player& p = g_users[i];
+
+				int roomIdx = p.select_map;
+				Room& room = g_room[roomIdx];
+
+				if (!room.gameStart) continue;
 
 				// ---- wall collision ----
 				float wpx, wpz;
