@@ -1,22 +1,49 @@
 #include "Player.h"
 #include <iostream>
 
-
-bool CheckAABB(const AABB& box, float px, float py, float pz,
-	float halfX, float halfY, float halfZ)
+bool WallCollisionCheck(const AABB& box, int id, float& pushX, float& pushZ)
 {
-	float minX = px - halfX;
-	float maxX = px + halfX;
-	float minY = py - halfY;
-	float maxY = py + halfY;
-	float minZ = pz - halfZ;
-	float maxZ = pz + halfZ;
+	pushX = pushZ = 0;
 
-	bool overlapX = !(maxX < box.minX || minX > box.maxX);
-	bool overlapY = !(maxY < box.minY || minY > box.maxY);
-	bool overlapZ = !(maxZ < box.minZ || minZ > box.maxZ);
+	float px = g_users[id].m_posX;
+	float pz = g_users[id].m_posZ;
 
-	return overlapX && overlapY && overlapZ;
+	float hx = g_users[id].m_colliderHalfX;
+	float hz = g_users[id].m_colliderHalfZ;
+
+	// 플레이어 AABB
+	float pMinX = px - hx;
+	float pMaxX = px + hx;
+	float pMinZ = pz - hz;
+	float pMaxZ = pz + hz;
+
+	// 충돌 체크
+	if (pMaxX < box.minX || pMinX > box.maxX) return false;
+	if (pMaxZ < box.minZ || pMinZ > box.maxZ) return false;
+
+	// 축 별 penetration 계산
+	float penLeft = box.maxX - pMinX;   // 플레이어를 오른쪽으로 밀어야 함
+	float penRight = pMaxX - box.minX;   // 플레이어를 왼쪽으로
+	float penFront = box.maxZ - pMinZ;   // 플레이어를 뒤로
+	float penBack = pMaxZ - box.minZ;   // 플레이어를 앞으로
+
+	float pushXAmount, pushZAmount;
+
+	// 작은 penetration 선택
+	pushXAmount = (penLeft < penRight ? penLeft : -penRight);
+	pushZAmount = (penFront < penBack ? penFront : -penBack);
+
+	// X 축이 더 작으면 X로만 이동
+	if (fabs(pushXAmount) < fabs(pushZAmount))
+	{
+		pushX = pushXAmount;
+	}
+	else
+	{
+		pushZ = pushZAmount;
+	}
+
+	return true;
 }
 
 
@@ -104,24 +131,57 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 			{
 				if (!g_users[i].GetOnline()) continue;
 
-				float oldX = g_users[i].m_posX;
-				float oldZ = g_users[i].m_posZ;
+				float wpx = 0.f, wpz = 0.f;
 
+				// =============
+				// 1) 벽 충돌 보정
+				// =============
 				for (auto& box : g_users[i].g_Map1Colliders)
 				{
-					if (CheckAABB(box,
-						g_users[i].m_posX,
-						g_users[i].m_posY,
-						g_users[i].m_posZ,
-						g_users[i].m_colliderHalfX,
-						g_users[i].m_colliderHalfY,
-						g_users[i].m_colliderHalfZ))
+					float pushX, pushZ;
+					if (WallCollisionCheck(box, i, pushX, pushZ))
 					{
-						// 충돌!
-						g_users[i].m_posZ = oldZ; // 되돌리기
-						g_users[i].SetSpeed(-g_users[i].GetSpeed() * 0.3f);
+						wpx += pushX;
+						wpz += pushZ;
 					}
 				}
+
+				// 만약 조금이라도 겹쳤으면 "그 자리에서 바로 완전하게 밀어내기"
+				if (wpx != 0 || wpz != 0)
+				{
+					// --- 위치 완전 보정 ---
+					g_users[i].m_posX += wpx;
+					g_users[i].m_posZ += wpz;
+
+					// ---- 겹침 제거 후, 속도/각도 보정(반사) ----
+					float nx = (wpx > 0 ? 1.0f : (wpx < 0 ? -1.0f : 0));
+					float nz = (wpz > 0 ? 1.0f : (wpz < 0 ? -1.0f : 0));
+
+					float yaw = g_users[i].GetYaw();
+					float speed = g_users[i].GetSpeed();
+
+					float vx = cosf(yaw) * speed;
+					float vz = sinf(yaw) * speed;
+
+					float dot = vx * nx + vz * nz;
+
+					float rvx = vx - 2 * dot * nx;
+					float rvz = vz - 2 * dot * nz;
+
+					const float bounce = 0.0f;   // ※ 벽은 튕기지 않게 → 0 추천
+					rvx *= bounce;
+					rvz *= bounce;
+
+					float newSpeed = sqrtf(rvx * rvx + rvz * rvz);
+					float newYaw = atan2f(rvz, rvx);
+
+					g_users[i].SetSpeed(newSpeed);
+					g_users[i].SetYaw(newYaw);
+				}
+
+
+				float oldX = g_users[i].m_posX;
+				float oldZ = g_users[i].m_posZ;
 
 				float px = 0.f, pz = 0.f;
 

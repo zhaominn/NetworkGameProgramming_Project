@@ -522,9 +522,8 @@ void Map1_Mode::timer() {
 	setCamera();
 
 	// ================
-	// 4) 충돌, 사운드 처리
+	// 4) 사운드 처리
 	// ================
-	checkCollisionKart();
 	checkEngineSound();
 }
 
@@ -804,12 +803,12 @@ void Map1_Mode::finish() {
 }
 
 void Map1_Mode::updatePhysics(float deltaTime) {
-	dynamicsWorld->stepSimulation(deltaTime);
+	/*dynamicsWorld->stepSimulation(deltaTime);
 
 	UpdateRigidBodyTransforms(karts);
 	UpdateRigidBodyTransforms(road1_barricate);
 
-	checkCollisionKart();
+	checkCollisionKart();*/
 }
 
 void Map1_Mode::timerHelper(int value) {
