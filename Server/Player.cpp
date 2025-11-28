@@ -378,23 +378,19 @@ void Player::send_move_Packet()
 	move_pkt->size = sizeof(S2C_Move_Packet);
 	move_pkt->type = S2C_MOVE;
 
-	{
-		std::lock_guard<std::mutex> lock2(g_Sendmutex);
+	for (int i = 0; i < MAX_USER; ++i) {
 
-		for (int i = 0; i < MAX_USER; ++i) {
-
-			move_pkt->arr[i].id = g_users[i].GetID();
-			move_pkt->arr[i].speed = g_users[i].GetSpeed();
-			move_pkt->arr[i].yaw = g_users[i].GetYaw();
-			move_pkt->arr[i].face_rotation = g_users[i].GetFaceRotation();
-			move_pkt->arr[i].body_rotation = g_users[i].GetBodyRotation();
-			move_pkt->arr[i].booster_head_tilt = GetHeadtilt();
-			move_pkt->arr[i].x = g_users[i].m_posX;
-			move_pkt->arr[i].y = g_users[i].m_posY;
-			move_pkt->arr[i].z = g_users[i].m_posZ;
-			move_pkt->arr[i].z = g_users[i].m_posZ;
-			move_pkt->arr[i].boosterOn = g_users[i].isBoosterActive;
-		}
+		move_pkt->arr[i].id = g_users[i].GetID();
+		move_pkt->arr[i].speed = g_users[i].GetSpeed();
+		move_pkt->arr[i].yaw = g_users[i].GetYaw();
+		move_pkt->arr[i].face_rotation = g_users[i].GetFaceRotation();
+		move_pkt->arr[i].body_rotation = g_users[i].GetBodyRotation();
+		move_pkt->arr[i].booster_head_tilt = GetHeadtilt();
+		move_pkt->arr[i].x = g_users[i].m_posX;
+		move_pkt->arr[i].y = g_users[i].m_posY;
+		move_pkt->arr[i].z = g_users[i].m_posZ;
+		move_pkt->arr[i].z = g_users[i].m_posZ;
+		move_pkt->arr[i].boosterOn = g_users[i].isBoosterActive;
 	}
 
 	move_pkt->id = GetID();
@@ -402,7 +398,7 @@ void Player::send_move_Packet()
 	move_pkt->speed = GetSpeed();
 	move_pkt->yaw = GetYaw();
 	move_pkt->x = m_posX;
-	move_pkt->y = m_posY;                                       
+	move_pkt->y = m_posY;
 	move_pkt->z = m_posZ;
 	move_pkt->face_rotation = GetFaceRotation();
 	move_pkt->body_rotation = GetBodyRotation();
@@ -446,7 +442,7 @@ void Player::CheckBoosterState()
 {
 	if (!isBoosterActive) return;
 
-	if (std::chrono::steady_clock::now() >= m_boosterEndTime) 
+	if (std::chrono::steady_clock::now() >= m_boosterEndTime)
 	{
 		++m_booster_cnt;
 		isBoosterActive = false;
@@ -454,6 +450,98 @@ void Player::CheckBoosterState()
 	}
 
 	send_booster_packet();
+}
+
+void Player::CheckCollision()
+{
+	float oldX = m_posX;
+	float oldZ = m_posZ;
+
+	float px = 0.f, pz = 0.f;
+
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		if (i == m_id) continue;
+		if (!g_users[i].GetOnline()) continue;
+
+		float pushX, pushZ;
+		if (PlayerCollisionCheck(m_id, i, pushX, pushZ))
+		{
+			px += pushX;
+			pz += pushZ;
+		}
+	}
+
+	if (px != 0 || pz != 0)
+	{
+		m_posX += px * 0.5f;
+		m_posZ += pz * 0.5f;
+
+		float nx = 0.f, nz = 0.f;
+		if (px != 0) nx = (px > 0 ? 1.0f : -1.0f);
+		if (pz != 0) nz = (pz > 0 ? 1.0f : -1.0f);
+
+		float yaw = GetYaw();
+		float speed = GetSpeed();
+
+		// local speed vector
+		float vx = cosf(yaw) * speed;
+		float vz = sinf(yaw) * speed;
+
+		float dot = vx * nx + vz * nz;
+
+		float rvx = vx - 2 * dot * nx;
+		float rvz = vz - 2 * dot * nz;
+
+		const float bounce = 0.7f;
+
+		rvx *= bounce;
+		rvz *= bounce;
+
+		float newSpeed = sqrtf(rvx * rvx + rvz * rvz);
+		float newYaw = atan2f(rvz, rvx);
+
+		SetSpeed(newSpeed);
+		SetYaw(newYaw);
+	}
+}
+
+bool Player::PlayerCollisionCheck(int a, int b, float& pushX, float& pushZ)
+{
+	float x1 = g_users[a].m_posX;
+	float z1 = g_users[a].m_posZ;
+
+	float x2 = g_users[b].m_posX;
+	float z2 = g_users[b].m_posZ;
+
+	float hx1 = g_users[a].m_colliderHalfX;
+	float hz1 = g_users[a].m_colliderHalfZ;
+
+	float hx2 = g_users[b].m_colliderHalfX;
+	float hz2 = g_users[b].m_colliderHalfZ;
+
+	float dx = x1 - x2;
+	float dz = z1 - z2;
+
+	float overlapX = (hx1 + hx2) - fabs(dx);
+	float overlapZ = (hz1 + hz2) - fabs(dz);
+
+	if (overlapX > 0 && overlapZ > 0)
+	{
+		if (overlapX < overlapZ)
+		{
+			pushX = (dx > 0 ? overlapX : -overlapX);
+			pushZ = 0;
+		}
+		else
+		{
+			pushX = 0;
+			pushZ = (dz > 0 ? overlapZ : -overlapZ);
+		}
+		return true;
+	}
+
+	return false;
 }
 
 void Player::send_Rank_Packet()

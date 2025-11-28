@@ -13,29 +13,29 @@ bool WallCollisionCheck(const AABB& box, int id, float& pushX, float& pushZ)
 	float hx = g_users[id].m_colliderHalfX;
 	float hz = g_users[id].m_colliderHalfZ;
 
-	// ÇÃ·¹ÀÌ¾î AABB
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ AABB
 	float pMinX = px - hx;
 	float pMaxX = px + hx;
 	float pMinZ = pz - hz;
 	float pMaxZ = pz + hz;
 
-	// Ãæµ¹ Ã¼Å©
+	// ï¿½æµ¹ Ã¼Å©
 	if (pMaxX < box.minX || pMinX > box.maxX) return false;
 	if (pMaxZ < box.minZ || pMinZ > box.maxZ) return false;
 
-	// Ãà º° penetration °è»ê
-	float penLeft = box.maxX - pMinX;   // ÇÃ·¹ÀÌ¾î¸¦ ¿À¸¥ÂÊÀ¸·Î ¹Ð¾î¾ß ÇÔ
-	float penRight = pMaxX - box.minX;   // ÇÃ·¹ÀÌ¾î¸¦ ¿ÞÂÊÀ¸·Î
-	float penFront = box.maxZ - pMinZ;   // ÇÃ·¹ÀÌ¾î¸¦ µÚ·Î
-	float penBack = pMaxZ - box.minZ;   // ÇÃ·¹ÀÌ¾î¸¦ ¾ÕÀ¸·Î
+	// ï¿½ï¿½ ï¿½ï¿½ penetration ï¿½ï¿½ï¿½
+	float penLeft = box.maxX - pMinX;   // ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ï¿½ ï¿½ï¿½
+	float penRight = pMaxX - box.minX;   // ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	float penFront = box.maxZ - pMinZ;   // ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½Ú·ï¿½
+	float penBack = pMaxZ - box.minZ;   // ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	float pushXAmount, pushZAmount;
 
-	// ÀÛÀº penetration ¼±ÅÃ
+	// ï¿½ï¿½ï¿½ï¿½ penetration ï¿½ï¿½ï¿½ï¿½
 	pushXAmount = (penLeft < penRight ? penLeft : -penRight);
 	pushZAmount = (penFront < penBack ? penFront : -penBack);
 
-	// X ÃàÀÌ ´õ ÀÛÀ¸¸é X·Î¸¸ ÀÌµ¿
+	// X ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Xï¿½Î¸ï¿½ ï¿½Ìµï¿½
 	if (fabs(pushXAmount) < fabs(pushZAmount))
 	{
 		pushX = pushXAmount;
@@ -129,6 +129,9 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 
 		if (elapsed_time >= (1000 / 60))
 		{
+			std::lock_guard<std::mutex> lock1(g_UserMutex);	// ï¿½ï¿½ï¿½â¼­ï¿½ï¿½ï¿½ï¿½È­ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+
+			// check and update
 			for (int i = 0; i < MAX_USER; ++i)
 			{
 				if (!g_users[i].GetOnline()) continue;
@@ -136,7 +139,7 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 				float wpx = 0.f, wpz = 0.f;
 
 				// =============
-				// 1) º® Ãæµ¹ º¸Á¤
+				// 1) ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½
 				// =============
 				for (auto& box : g_users[i].g_Map1Colliders)
 				{
@@ -148,14 +151,14 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 					}
 				}
 
-				// ¸¸¾à Á¶±ÝÀÌ¶óµµ °ãÃÆÀ¸¸é "±× ÀÚ¸®¿¡¼­ ¹Ù·Î ¿ÏÀüÇÏ°Ô ¹Ð¾î³»±â"
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ "ï¿½ï¿½ ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ð¾î³»ï¿½ï¿½"
 				if (wpx != 0 || wpz != 0)
 				{
-					// --- À§Ä¡ ¿ÏÀü º¸Á¤ ---
+					// --- ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ---
 					g_users[i].m_posX += wpx;
 					g_users[i].m_posZ += wpz;
 
-					// ---- °ãÄ§ Á¦°Å ÈÄ, ¼Óµµ/°¢µµ º¸Á¤(¹Ý»ç) ----
+					// ---- ï¿½ï¿½Ä§ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½Óµï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ý»ï¿½) ----
 					float nx = (wpx > 0 ? 1.0f : (wpx < 0 ? -1.0f : 0));
 					float nz = (wpz > 0 ? 1.0f : (wpz < 0 ? -1.0f : 0));
 
@@ -170,7 +173,7 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 					float rvx = vx - 2 * dot * nx;
 					float rvz = vz - 2 * dot * nz;
 
-					const float bounce = 0.0f;   // ¡Ø º®Àº Æ¨±âÁö ¾Ê°Ô ¡æ 0 ÃßÃµ
+					const float bounce = 0.0f;   // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Æ¨ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½ï¿½ 0 ï¿½ï¿½Ãµ
 					rvx *= bounce;
 					rvz *= bounce;
 
@@ -234,12 +237,20 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 				}
 
 				g_users[i].CheckBoosterState();
-				g_users[i].send_move_Packet();
 				g_users[i].checkIsFinished();
+
+			}
+
+			// send
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				g_users[i].send_move_Packet();
 			}
 
 			last_send_time = current_time;
 		}
+
+
 	}
 }
 
@@ -340,7 +351,7 @@ int main()
 				}
 				if (readyClient == 1) {
 				//if (readyClient == MAX_USER) {
-					std::cout << "°ÔÀÓ¿¡ ÀÔÀåÇÕ´Ï´Ù." << std::endl;
+					std::cout << "ï¿½ï¿½ï¿½Ó¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½." << std::endl;
 					for (int i = 0; i < MAX_USER; ++i) {
 						g_users[i].send_Game_Start_Packet();
 					}
