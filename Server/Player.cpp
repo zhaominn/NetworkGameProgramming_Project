@@ -267,11 +267,14 @@ void Player::process_packet(char* p)
 			g_Map1Colliders[i].maxZ = packet->aabbs[i].maxZ;
 		}
 
-		for (int i = 0; i < 5; ++i) {
-			std::cout << g_Map1Colliders[i].minX << " "
-				<< g_Map1Colliders[i].minY << " "
+		/*for (int i = 0; i < 5; ++i) {
+			std::cout << "AABB Min: " << g_Map1Colliders[i].minX << ", "
+				<< g_Map1Colliders[i].minY << ", "
 				<< g_Map1Colliders[i].minZ << std::endl;
-		}
+
+			std::cout << "AABB Max: " << g_Map1Colliders[i].maxX << ", " << g_Map1Colliders[i].maxY << ", "
+				<< g_Map1Colliders[i].maxZ << std::endl;
+		}*/
 
 		break;
 	}

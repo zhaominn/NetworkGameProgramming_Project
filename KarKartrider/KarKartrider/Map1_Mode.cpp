@@ -201,23 +201,23 @@ void Map1_Mode::init()
 	// wall collision
 	AABB befor_data_aabb[5];
 
-	for (auto road1_barricate_ : road1_barricate) {
+	for (int i = 0; i < 5; ++i) {
 		btVector3 aabbMin, aabbMax;
-		road1_barricate_->rigidBody->getAabb(aabbMin, aabbMax);
+		road1_barricate[i]->rigidBody->getAabb(aabbMin, aabbMax);
 
-		std::cout << "AABB Min: " << aabbMin.getX() << ", "
+		/*std::cout << "AABB Min: " << aabbMin.getX() << ", "
 			<< aabbMin.getY() << ", " << aabbMin.getZ() << std::endl;
 
 		std::cout << "AABB Max: " << aabbMax.getX() << ", "
-			<< aabbMax.getY() << ", " << aabbMax.getZ() << std::endl;
+			<< aabbMax.getY() << ", " << aabbMax.getZ() << std::endl;*/
 
-		befor_data_aabb->minX = aabbMin.getX();
-		befor_data_aabb->minY = aabbMin.getY();
-		befor_data_aabb->minZ = aabbMin.getZ();
+		befor_data_aabb[i].minX = aabbMin.getX();
+		befor_data_aabb[i].minY = aabbMin.getY();
+		befor_data_aabb[i].minZ = aabbMin.getZ();
 
-		befor_data_aabb->maxX = aabbMax.getX();
-		befor_data_aabb->maxY = aabbMax.getY();
-		befor_data_aabb->maxZ = aabbMax.getZ();
+		befor_data_aabb[i].maxX = aabbMax.getX();
+		befor_data_aabb[i].maxY = aabbMax.getY();
+		befor_data_aabb[i].maxZ = aabbMax.getZ();
 	}
 	
 	networkmgr.SendWallCollisionPacket(befor_data_aabb);
