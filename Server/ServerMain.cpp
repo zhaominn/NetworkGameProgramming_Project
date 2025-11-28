@@ -2,6 +2,24 @@
 #include <iostream>
 
 
+bool CheckAABB(const AABB& box, float px, float py, float pz,
+	float halfX, float halfY, float halfZ)
+{
+	float minX = px - halfX;
+	float maxX = px + halfX;
+	float minY = py - halfY;
+	float maxY = py + halfY;
+	float minZ = pz - halfZ;
+	float maxZ = pz + halfZ;
+
+	bool overlapX = !(maxX < box.minX || minX > box.maxX);
+	bool overlapY = !(maxY < box.minY || minY > box.maxY);
+	bool overlapZ = !(maxZ < box.minZ || minZ > box.maxZ);
+
+	return overlapX && overlapY && overlapZ;
+}
+
+
 bool PlayerCollisionCheck(int a, int b, float& pushX, float& pushZ)
 {
 	float x1 = g_users[a].m_posX;
@@ -88,6 +106,22 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 
 				float oldX = g_users[i].m_posX;
 				float oldZ = g_users[i].m_posZ;
+
+				for (auto& box : g_users[i].g_Map1Colliders)
+				{
+					if (CheckAABB(box,
+						g_users[i].m_posX,
+						g_users[i].m_posY,
+						g_users[i].m_posZ,
+						g_users[i].m_colliderHalfX,
+						g_users[i].m_colliderHalfY,
+						g_users[i].m_colliderHalfZ))
+					{
+						// 충돌!
+						g_users[i].m_posZ = oldZ; // 되돌리기
+						g_users[i].SetSpeed(-g_users[i].GetSpeed() * 0.3f);
+					}
+				}
 
 				float px = 0.f, pz = 0.f;
 
