@@ -54,16 +54,11 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 
 	while (true)
 	{
-
-		// 적어도 한 방이라도 시작되었는지 확인
 		bool anyRoomStarted = false;
-		for (int roomIdx = 0; roomIdx < 2; roomIdx++)
+		for (int r = 0; r < 2; r++)
 		{
-			if (g_room[roomIdx].gameStart)
-			{
+			if (g_room[r].gameStart)
 				anyRoomStarted = true;
-				break;
-			}
 		}
 
 		if (!anyRoomStarted)
@@ -77,64 +72,59 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 			current_time - last_send_time
 		).count();
 
-		g_ElapsedTime = std::chrono::duration<float>(current_time - startTime).count();
-
-		float dt = static_cast<float>(elapsed_time) / 1000.0f;
-
 		if (elapsed_time >= (1000 / 60))
 		{
 			std::lock_guard<std::mutex> lock1(g_UserMutex);
 
-			// check and update
-			for (int i = 0; i < MAX_USER; ++i)
+			for (int roomIdx = 0; roomIdx < 2; roomIdx++)
 			{
-				if (!g_users[i].GetOnline()) continue;
-				Player& p = g_users[i];
-
-				int roomIdx = p.select_map;
 				Room& room = g_room[roomIdx];
-
 				if (!room.gameStart) continue;
 
-				// ---- wall collision ----
-				float wpx, wpz;
-				ProcessWallCollision(p, wpx, wpz);
-
-				if (wpx != 0 || wpz != 0)
+				for (int i = 0; i < MAX_USER; i++)
 				{
-					p.m_posX += wpx;
-					p.m_posZ += wpz;
-					//ApplyBounceReflection(p, wpx, wpz, 0.0f);
-					p.SetSpeed(max(0.0f, p.GetSpeed() - 0.005f));
+					Player* p = room.inRoomPlayers[i];
+					if (!p) continue;
+
+					// ---- wall collision ----
+					float wpx, wpz;
+					ProcessWallCollision(*p, wpx, wpz);
+
+					if (wpx != 0 || wpz != 0)
+					{
+						p->m_posX += wpx;
+						p->m_posZ += wpz;
+						p->SetSpeed(max(0.0f, p->GetSpeed() - 0.005f));
+					}
+
+					// ---- player collision ----
+					float ppx, ppz;
+					ProcessPlayerCollisionRoom(room, p->GetID(), ppx, ppz);
+
+					if (ppx != 0 || ppz != 0)
+					{
+						p->m_posX += ppx * 0.5f;
+						p->m_posZ += ppz * 0.5f;
+					}
+
+					p->CheckBoosterState();
+					p->checkIsFinished();
 				}
 
-				// ---- player collision ----
-				float ppx, ppz;
-				ProcessPlayerCollisionRoom(room, p.GetID(), ppx, ppz);
-
-				if (ppx != 0 || ppz != 0)
+				for (int i = 0; i < MAX_USER; i++)
 				{
-					p.m_posX += ppx * 0.5f;
-					p.m_posZ += ppz * 0.5f;
-					//ApplyBounceReflection(p, ppx, ppz, 0.7f);
+					Player* p = room.inRoomPlayers[i];
+					if (!p) continue;
+
+					p->send_move_Packet();
 				}
-
-				p.CheckBoosterState();
-				p.checkIsFinished();
-			}
-
-			// send
-			for (int i = 0; i < MAX_USER; ++i)
-			{
-				g_users[i].send_move_Packet();
 			}
 
 			last_send_time = current_time;
 		}
-
-
 	}
 }
+
 
 int main()
 {
