@@ -126,6 +126,15 @@ int main()
 					continue;
 				}
 
+				BOOL optVal = TRUE;
+				setsockopt(
+					g_users[new_player_id].GetSocket(), 
+					IPPROTO_TCP,
+					TCP_NODELAY,
+					(const char*)&optVal,
+					sizeof(optVal)
+				);
+
 				g_users[new_player_id].SetId(new_player_id);
 				g_usersNum++;
 

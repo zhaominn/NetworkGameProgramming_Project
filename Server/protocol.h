@@ -27,7 +27,7 @@ constexpr float TILT_SPEED = 2.0f;
 constexpr unsigned short WINDOW_WIDTH = 980;
 constexpr unsigned short WINDOW_HEIGHT = 780;
 
-constexpr int  MAX_USER = 3;
+constexpr int  MAX_USER = 1;
 
 // packet
 // C2S

@@ -49,6 +49,9 @@ bool NetworkMgr::Init()
 		return false;
 	}
 
+	BOOL optVal = TRUE;
+	setsockopt(m_sock, IPPROTO_TCP, TCP_NODELAY, (const char*)&optVal, sizeof(optVal));
+
 	std::cout << "success to connect! (server: " << SERVERIP << ")" << std::endl;
 	return true;
 }
