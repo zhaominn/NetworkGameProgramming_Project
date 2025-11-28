@@ -62,7 +62,8 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 				{
 					p.m_posX += wpx;
 					p.m_posZ += wpz;
-					ApplyBounceReflection(p, wpx, wpz, 0.0f);
+					//ApplyBounceReflection(p, wpx, wpz, 0.0f);
+					p.SetSpeed(max(0.0f, p.GetSpeed() - 0.005f));
 				}
 
 				// ---- player collision ----
