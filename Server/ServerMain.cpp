@@ -157,6 +157,9 @@ int main()
 	if (listen(listen_sock, SOMAXCONN) == SOCKET_ERROR)
 		std::cout << "listen error" << std::endl;
 
+	u_long on = 1;
+	ioctlsocket(listen_sock, FIONBIO, &on);
+
 	HANDLE SendThread;
 	SendThread = CreateThread(NULL, 0, UpdatePosition, 0, 0, 0);
 	if (SendThread == NULL) {
@@ -171,96 +174,75 @@ int main()
 	int addrlen{};
 	HANDLE hThread;
 
-	while (true) {
-		switch (g_game_state) {
-		case LOBBY:
+	while (true)
+	{
+		// 1) 넌블로킹 accept 시도
+		addrlen = sizeof clientaddr;
+		SOCKET clientSock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
+
+
+		if (clientSock != INVALID_SOCKET)
 		{
-			// Login
-			// ------------------------------------------------------------------------------------------------------
+
+			u_long off = 0;
+			ioctlsocket(clientSock, FIONBIO, &off);
 
 			int new_player_id = -1;
-			while (!g_AllPlayerLogin) {
-				for (int i = 0; i < MAX_USER; ++i) {
-					if (g_users[i].GetID() == -1) {
-						new_player_id = i;
-						break;
-					}
+
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_users[i].GetID() == -1) {
+					new_player_id = i;
+					break;
 				}
+			}
 
-				addrlen = sizeof clientaddr;
-				g_users[new_player_id].SetSocket(accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen));
-				if (g_users[new_player_id].GetSocket() == INVALID_SOCKET) {
-					std::cout << "accept error" << std::endl;
-					continue;
-				}
-
-				BOOL optVal = TRUE;
-				setsockopt(
-					g_users[new_player_id].GetSocket(), 
-					IPPROTO_TCP,
-					TCP_NODELAY,
-					(const char*)&optVal,
-					sizeof(optVal)
-				);
-
+			if (new_player_id != -1)
+			{
+				g_users[new_player_id].SetSocket(clientSock);
 				g_users[new_player_id].SetId(new_player_id);
 				g_usersNum++;
 
-				hThread = CreateThread(NULL, 0, &ClientThread, (LPVOID)&g_users[new_player_id], 0, NULL);
-
-				if (hThread != NULL) {
-					CloseHandle(hThread);
-				}
-
-				if (g_usersNum >= MIN_PLAYERS_TO_START)
-				{
-					g_AllPlayerLogin = true;
-					g_game_state = INGAME;
-				}
+				CreateThread(NULL, 0, ClientThread, (LPVOID)&g_users[new_player_id], 0, NULL);
 			}
-
-			// Lobby
-			// ------------------------------------------------------------------------------------------------------
-			while (!g_AllPlayerReady) {
-				break;
+			else
+			{
+				closesocket(clientSock); // 자리 없으면 거절
 			}
 		}
-		break;
-		case INGAME:
-			// in game
-			// ------------------------------------------------------------------------------------------------------
-			while (!g_GameStart) {
-				for (int roomIdx = 0; roomIdx < 2; roomIdx++)
+		else
+		{
+			int err = WSAGetLastError();
+			if (err != WSAEWOULDBLOCK)
+			{
+				std::cout << "accept error: " << err << std::endl;
+				// 필요하면 break; 로 서버 종료
+			}
+		}
+
+		// 2) Room 별로 READY 검사 → 시작 여부 판단
+		for (int roomIdx = 0; roomIdx < 2; roomIdx++)
+		{
+			Room& room = g_room[roomIdx];
+
+			if (!room.gameStart && IsRoomReady(room))
+			{
+				std::cout << "Room " << roomIdx << " start!" << std::endl;
+
+				for (int i = 0; i < MAX_USER; i++)
 				{
-					Room& room = g_room[roomIdx];
-
-					// 이미 시작한 방은 패스
-					if (room.gameStart)
-						continue;
-
-					// 방의 모든 유저가 레디인지 체크
-					if (IsRoomReady(room))
+					Player* p = room.inRoomPlayers[i];
+					if (p != nullptr)
 					{
-						std::cout << "Room " << roomIdx << " start!" << std::endl;
-
-						// 그 방에 있는 플레이어들에게만 Start 패킷 보내기
-						for (int i = 0; i < MAX_USER; i++)
-						{
-							Player* p = room.inRoomPlayers[i];
-							if (p != nullptr)
-							{
-								p->send_Game_Start_Packet(room.mapType);
-							}
-						}
-
-						room.gameStart = true;
-						room.elapsedTime = 0.0f;
+						p->send_Game_Start_Packet(room.mapType);
 					}
 				}
-				break;
+
+				room.gameStart = true;
+				room.elapsedTime = 0.0f;
 			}
-			break;
 		}
+
+		Sleep(1); // CPU 너무 안 태우게 살짝 쉼
 	}
 
 	closesocket(listen_sock);
