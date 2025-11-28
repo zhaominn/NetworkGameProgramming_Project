@@ -48,6 +48,8 @@ constexpr char S2C_BOOSTER = 12;
 // constexpr char S2C_WORLD_UPDATE = 13;
 constexpr char S2C_RANK = 14;
 constexpr char S2C_LOGOUT = 15;
+//wall collision
+constexpr char C2S_WALL_COLLISION_1 = 16;
 
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
@@ -196,6 +198,19 @@ struct C2S_Move_Packet
 	bool left;
 	bool right;
 	//btRigidBody rigidBody;
+};
+
+struct AABB {
+	float minX, minY, minZ;
+	float maxX, maxY, maxZ;
+	bool rigid_status;
+};
+
+struct C2S_Wall_Collision_1_Packet {
+	unsigned char size;
+	char type;
+
+	AABB aabbs[5];
 };
 
 #pragma pack (pop)

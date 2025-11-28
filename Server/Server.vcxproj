@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="collision.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="protocol.h">
@@ -144,6 +145,7 @@
     <ClInclude Include="Room.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="collision.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Room.cpp" />

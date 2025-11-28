@@ -197,6 +197,35 @@ void Map1_Mode::init()
 
 	cameraPos = glm::vec3(0.0, 6.0, 253.0);
 	updateCameraDirection();
+
+	// wall collision
+	AABB befor_data_aabb[5];
+
+	for (int i = 0; i < 5; ++i) {
+		btVector3 aabbMin, aabbMax;
+		road1_barricate[i]->rigidBody->getAabb(aabbMin, aabbMax);
+
+		/*std::cout << "AABB Min: " << aabbMin.getX() << ", "
+			<< aabbMin.getY() << ", " << aabbMin.getZ() << std::endl;
+
+		std::cout << "AABB Max: " << aabbMax.getX() << ", "
+			<< aabbMax.getY() << ", " << aabbMax.getZ() << std::endl;*/
+
+		befor_data_aabb[i].minX = aabbMin.getX();
+		befor_data_aabb[i].minY = aabbMin.getY();
+		befor_data_aabb[i].minZ = aabbMin.getZ();
+
+		befor_data_aabb[i].maxX = aabbMax.getX();
+		befor_data_aabb[i].maxY = aabbMax.getY();
+		befor_data_aabb[i].maxZ = aabbMax.getZ();
+
+		if (road1_barricate[i]->name == "finish")
+			befor_data_aabb[i].rigid_status = false;
+		else
+			befor_data_aabb[i].rigid_status = true;
+	}
+	
+	networkmgr.SendWallCollisionPacket(befor_data_aabb);
 }
 
 void Map1_Mode::playCountdown(int count) {
@@ -498,9 +527,8 @@ void Map1_Mode::timer() {
 	setCamera();
 
 	// ================
-	// 4) 충돌, 사운드 처리
+	// 4) 사운드 처리
 	// ================
-	checkCollisionKart();
 	checkEngineSound();
 }
 
@@ -780,24 +808,20 @@ void Map1_Mode::finish() {
 }
 
 void Map1_Mode::updatePhysics(float deltaTime) {
-	// ���� ���� ������Ʈ (deltaTime�� ���� ��Ȯ�� ����)
-	dynamicsWorld->stepSimulation(deltaTime);
+	/*dynamicsWorld->stepSimulation(deltaTime);
 
-	// ���� �������� ��ü�� Transform ������Ʈ
 	UpdateRigidBodyTransforms(karts);
 	UpdateRigidBodyTransforms(road1_barricate);
 
-	// �浹 ó�� (���� ���� ������Ʈ �� ����)
-	checkCollisionKart();
+	checkCollisionKart();*/
 }
 
 void Map1_Mode::timerHelper(int value) {
 	if (Map1_Mode* instance = dynamic_cast<Map1_Mode*>(Mode::currentInstance)) {
-		const float deltaTime = 1.0f / 60.0f; // 60FPS ����, �� �������� �ð�
+		const float deltaTime = 1.0f / 60.0f;
 
-		// ���� ���� �� ���� ���� ������Ʈ (���� ���� ���¿����� ��� ����)
-		instance->updatePhysics(deltaTime); // ���� ���� ������Ʈ
-		instance->timer(); // ������ �� ���� ���� ������Ʈ
+		instance->updatePhysics(deltaTime);
+		instance->timer();
 
 	}
 

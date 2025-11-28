@@ -48,6 +48,8 @@ public:
 	void SendMovePacket(bool up, bool down, bool left, bool right);
 	void SendBoosterPacket(bool boosterOn, int booster_cnt);
 
+	void SendWallCollisionPacket(AABB aabb[5]);
+
 public:
 	void ProcessPacket(char* buf);
 };

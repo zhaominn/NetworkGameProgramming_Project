@@ -1,5 +1,8 @@
 #include "Player.h"
+#include "collision.h"
+
 #include <iostream>
+
 
 DWORD WINAPI ClientThread(LPVOID socket)
 {
@@ -43,16 +46,38 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 
 		if (elapsed_time >= (1000 / 60))
 		{
-			std::lock_guard<std::mutex> lock1(g_UserMutex);	// ø©±‚º≠µø±‚»≠æ»«œ∏È≈Õ¡ˆ±·
+			std::lock_guard<std::mutex> lock1(g_UserMutex);
 
 			// check and update
 			for (int i = 0; i < MAX_USER; ++i)
 			{
 				if (!g_users[i].GetOnline()) continue;
-				g_users[i].CheckCollision();
-				g_users[i].CheckBoosterState();
-				g_users[i].checkIsFinished();
+				Player& p = g_users[i];
 
+				// ---- Î≤Ω Ï∂©Îèå ----
+				float wpx, wpz;
+				ProcessWallCollision(p, wpx, wpz);
+
+				if (wpx != 0 || wpz != 0)
+				{
+					p.m_posX += wpx;
+					p.m_posZ += wpz;
+					ApplyBounceReflection(p, wpx, wpz, 0.0f);
+				}
+
+				// ---- ÌîåÎ†àÏù¥Ïñ¥ Ï∂©Îèå ----
+				float ppx, ppz;
+				ProcessPlayerCollision(i, ppx, ppz);
+
+				if (ppx != 0 || ppz != 0)
+				{
+					p.m_posX += ppx * 0.5f;
+					p.m_posZ += ppz * 0.5f;
+					ApplyBounceReflection(p, ppx, ppz, 0.7f);
+				}
+
+				p.CheckBoosterState();
+				p.checkIsFinished();
 			}
 
 			// send
@@ -174,7 +199,6 @@ int main()
 				}
 				//if (readyClient == 1) {
 				if (readyClient == MAX_USER) {
-					std::cout << "∞‘¿”ø° ¿‘¿Â«’¥œ¥Ÿ." << std::endl;
 					for (int i = 0; i < MAX_USER; ++i) {
 						g_users[i].send_Game_Start_Packet();
 					}

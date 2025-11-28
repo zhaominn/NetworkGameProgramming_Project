@@ -253,6 +253,36 @@ void Player::process_packet(char* p)
 		g_room[0].inRoomPlayers[m_id] = this;
 	}
 	break;
+	case C2S_WALL_COLLISION_1:
+	{
+		C2S_Wall_Collision_1_Packet* packet = reinterpret_cast<C2S_Wall_Collision_1_Packet*>(p);
+
+		for (int i = 0; i < 5; ++i) {
+			g_Map1Colliders[i].minX = packet->aabbs[i].minX;
+			g_Map1Colliders[i].minY = packet->aabbs[i].minY;
+			g_Map1Colliders[i].minZ = packet->aabbs[i].minZ;
+
+			g_Map1Colliders[i].maxX = packet->aabbs[i].maxX;
+			g_Map1Colliders[i].maxY = packet->aabbs[i].maxY;
+			g_Map1Colliders[i].maxZ = packet->aabbs[i].maxZ;
+			g_Map1Colliders[i].rigid_status = packet->aabbs[i].rigid_status;
+		}
+
+		/*for (int i = 0; i < 5; ++i) {
+			std::cout << "AABB Min: " << g_Map1Colliders[i].minX << ", "
+				<< g_Map1Colliders[i].minY << ", "
+				<< g_Map1Colliders[i].minZ << std::endl;
+
+			std::cout << "AABB Max: " << g_Map1Colliders[i].maxX << ", " << g_Map1Colliders[i].maxY << ", "
+				<< g_Map1Colliders[i].maxZ << std::endl;
+		}
+
+		for (int i = 0; i < 5; ++i) {
+			std::cout << "충돌 상태 : " << g_Map1Colliders[i].rigid_status << std::endl;
+		}*/
+
+		break;
+	}
 	default:
 		std::cout << "Error Invalid Packet Type\n";
 	}

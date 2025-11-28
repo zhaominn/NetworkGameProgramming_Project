@@ -27,6 +27,9 @@
     <ClInclude Include="global.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="collision.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ServerMain.cpp">
@@ -39,6 +42,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="global.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="collision.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
