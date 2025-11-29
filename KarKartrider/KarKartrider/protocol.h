@@ -87,12 +87,20 @@ struct S2C_Ready_Packet
 	bool is_ready;
 };
 
+struct RoomPlayer
+{
+	char id;
+	MAP_TYPE mapType;
+};
+
 struct S2C_GameStart_Packet
 {
 	unsigned char size;
 	char type;
 
-	MAP_TYPE map;
+	char roomId;
+	char playerCount;
+	RoomPlayer players[MAX_USER];
 };
 
 struct S2C_Move_All_Packet {

@@ -372,16 +372,32 @@ void Player::send_Ready_Packet()
 	delete ready_pkt;
 }
 
-void Player::send_Game_Start_Packet(MAP_TYPE m)
+void Player::send_Game_Start_Packet(Room rooms[2])
 {
-	S2C_GameStart_Packet* game_start = new S2C_GameStart_Packet;
-	game_start->size = sizeof(S2C_GameStart_Packet);
-	game_start->type = S2C_GAME_START;
-	game_start->map = m;
+	int roomId = this->select_map;
+	Room& room = rooms[roomId];
 
-	send_packet(reinterpret_cast<char*>(game_start), sizeof(S2C_GameStart_Packet));
+	S2C_GameStart_Packet pkt;
+	pkt.type = S2C_GAME_START;
 
-	delete game_start;
+	pkt.roomId = roomId;
+
+	int count = 0;
+	for (int i = 0; i < MAX_USER; i++)
+	{
+		Player* p = room.inRoomPlayers[i];
+		if (!p) continue;
+
+		pkt.players[count].id = p->GetID();
+		pkt.players[count].mapType = p->select_map;
+		count++;
+	}
+
+	pkt.playerCount = count;
+
+	pkt.size = sizeof(S2C_GameStart_Packet) - (sizeof(RoomPlayer) * (MAX_USER - count));
+
+	send_packet(reinterpret_cast<char*>(&pkt), pkt.size);
 }
 
 void Player::send_move_Packet()

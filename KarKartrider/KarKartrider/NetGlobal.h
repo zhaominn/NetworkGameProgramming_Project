@@ -22,6 +22,8 @@ struct PlayerKart {
 	float x;
 	float y;
 	float z;
+
+	MAP_TYPE select_map = MAP_TYPE::STRAIGHT;
 };
 
 extern NetworkMgr networkmgr;
@@ -34,6 +36,10 @@ extern bool g_gameStart;
 extern bool g_GameEnd;
 extern bool g_setItem;
 extern bool g_loginOk;
+
+extern std::vector<int> g_roomPlayers;
+extern char g_myRoomId;
+
 
 
 

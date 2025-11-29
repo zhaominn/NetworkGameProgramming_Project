@@ -11,3 +11,6 @@ bool g_gameStart = false;
 bool g_GameEnd = false;
 bool g_setItem = false;
 bool g_loginOk = false;
+
+std::vector<int> g_roomPlayers;
+char g_myRoomId;
