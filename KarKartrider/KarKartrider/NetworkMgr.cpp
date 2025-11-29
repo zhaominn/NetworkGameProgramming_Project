@@ -186,18 +186,41 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_IS_READY:
 		break;
 	case S2C_GAME_START: {
-		std::cout << "Game Start@@@@@@@@@@@@@@@@@@@@" << std::endl;
+		S2C_GameStart_Packet* pkt = reinterpret_cast<S2C_GameStart_Packet*>(buf);
 
-		S2C_GameStart_Packet* packet = reinterpret_cast<S2C_GameStart_Packet*>(buf);
-		if (packet->map == MAP_TYPE::STRAIGHT) {
-			Map1_Mode* map1Mode = new Map1_Mode();
-			MM.SetMode(map1Mode);
-		}
-		else if (packet->map == MAP_TYPE::RECTANGLE) {
-			Map2_Mode* map2Mode = new Map2_Mode();
-			MM.SetMode(map2Mode);
+		std::cout << "==== Game Start ====" << std::endl;
+		std::cout << "roomId = " << (int)pkt->roomId << std::endl;
+		std::cout << "playerCount = " << (int)pkt->playerCount << std::endl;
+
+		// 1. 내가 속한 방 번호 저장
+		g_myRoomId = pkt->roomId;
+
+		// 2. 같은 방 플레이어 목록 저장
+		g_roomPlayers.clear();
+
+		for (int i = 0; i < pkt->playerCount; i++)
+		{
+			int id = pkt->players[i].id;
+			MAP_TYPE mapType = (MAP_TYPE)pkt->players[i].mapType;
+
+			g_players[id].select_map = mapType; // 각 플레이어의 맵 정보 저장
+			g_roomPlayers.push_back(id);
+
+			std::cout << "방 플레이어: " << id
+				<< " , map = " << (int)mapType << std::endl;
 		}
 
+		// 3. 내 맵 타입 기준으로 맵 모드 선택
+		MAP_TYPE myMap = g_players[g_myid].select_map;
+
+		if (myMap == MAP_TYPE::STRAIGHT)
+		{
+			MM.SetMode(new Map1_Mode());
+		}
+		else if (myMap == MAP_TYPE::RECTANGLE)
+		{
+			MM.SetMode(new Map2_Mode());
+		}
 	}
 	break;
 	case S2C_MOVE:

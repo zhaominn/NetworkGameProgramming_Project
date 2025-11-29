@@ -223,7 +223,7 @@ int main()
 					Player* p = room.inRoomPlayers[i];
 					if (p != nullptr)
 					{
-						p->send_Game_Start_Packet(room.mapType);
+						p->send_Game_Start_Packet(g_room);
 					}
 				}
 

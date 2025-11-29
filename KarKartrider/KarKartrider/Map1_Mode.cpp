@@ -676,6 +676,20 @@ void Map1_Mode::RenderPlayer() {
 		/*if (!g_players[pid].isOnline)
 			continue;*/
 
+		bool isInMyRoom = false;
+
+		for (int id : g_roomPlayers)
+		{
+			if (pid == id)
+			{
+				isInMyRoom = true;
+				break;
+			}
+		}
+
+		if (!isInMyRoom)
+			continue;
+
 		float px = g_players[pid].x;
 		float py = g_players[pid].y;
 		float pz = g_players[pid].z;
