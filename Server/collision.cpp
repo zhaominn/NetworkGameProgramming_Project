@@ -112,16 +112,31 @@ bool PlayerCollisionCheck(int a, int b, float& pushX, float& pushZ)
 void ProcessWallCollision(Player& p, float& outPushX, float& outPushZ)
 {
 	outPushX = outPushZ = 0.0f;
-
-	for (auto& box : p.g_Map1Colliders)
-	{
-		float px, pz;
-		if (WallCollisionCheck(box, p.GetID(), px, pz))
+	
+	if (p.select_map == MAP_TYPE::STRAIGHT) {
+		for (auto& box : p.g_Map1Colliders)
 		{
-			outPushX += px;
-			outPushZ += pz;
+			float px, pz;
+			if (WallCollisionCheck(box, p.GetID(), px, pz))
+			{
+				outPushX += px;
+				outPushZ += pz;
+			}
 		}
 	}
+
+	if (p.select_map == MAP_TYPE::RECTANGLE) {
+		for (auto& box : p.g_Map2Colliders)
+		{
+			float px, pz;
+			if (WallCollisionCheck(box, p.GetID(), px, pz))
+			{
+				outPushX += px;
+				outPushZ += pz;
+			}
+		}
+	}
+	
 }
 
 void ProcessPlayerCollisionRoom(Room& room, int myPlayerId, float& outX, float& outZ)

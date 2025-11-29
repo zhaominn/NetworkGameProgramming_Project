@@ -40,6 +40,7 @@ public:
 	float m_colliderHalfZ = 1.526595f;
 
 	AABB g_Map1Colliders[5];
+	AABB g_Map2Colliders[18];
 
 	MAP_TYPE select_map;
 public:

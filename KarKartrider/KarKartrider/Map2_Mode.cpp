@@ -154,6 +154,34 @@ void Map2_Mode::init() {
 	cameraPos = glm::vec3(165.0, 4.4, 45.0);
 	updateCameraDirection();
 
+	// wall collision
+	AABB befor_data_aabb[18];
+
+	for (int i = 0; i < 18; ++i) {
+		btVector3 aabbMin, aabbMax;
+		road2_barricate[i]->rigidBody->getAabb(aabbMin, aabbMax);
+
+		/*std::cout << "AABB Min: " << aabbMin.getX() << ", "
+			<< aabbMin.getY() << ", " << aabbMin.getZ() << std::endl;
+
+		std::cout << "AABB Max: " << aabbMax.getX() << ", "
+			<< aabbMax.getY() << ", " << aabbMax.getZ() << std::endl;*/
+
+		befor_data_aabb[i].minX = aabbMin.getX();
+		befor_data_aabb[i].minY = aabbMin.getY();
+		befor_data_aabb[i].minZ = aabbMin.getZ();
+
+		befor_data_aabb[i].maxX = aabbMax.getX();
+		befor_data_aabb[i].maxY = aabbMax.getY();
+		befor_data_aabb[i].maxZ = aabbMax.getZ();
+
+		if (road2_barricate[i]->name == "finish" || road2_barricate[i]->name == "finish_ch")
+			befor_data_aabb[i].rigid_status = false;
+		else
+			befor_data_aabb[i].rigid_status = true;
+	}
+
+	networkmgr.SendWallCollisionPacket_2(befor_data_aabb);
 
 }
 
@@ -723,13 +751,13 @@ void Map2_Mode::draw_model()  {
 
 void Map2_Mode::draw_bb()  {
 	/*if (!bb_status)
-		return;
+		return;*/
 	for (const auto& model : karts) {
 		model->draw_rigidBody(shaderProgramID);
 	}
 	for (const auto& barricate : road2_barricate) {
 		barricate->draw_rigidBody(shaderProgramID);
-	}*/
+	}
 }
 
 void Map2_Mode::finish()  {
