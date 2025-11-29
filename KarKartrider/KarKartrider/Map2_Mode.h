@@ -36,6 +36,8 @@ public:
 	bool down = false;
 	bool left = false;
 	bool right = false;
+	bool booster = true;
+	bool ctrl = false;
 
 	glm::vec3 cameraTargetPos = glm::vec3(0.0, 0.0, 5.0);
 	glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 5.0);
@@ -43,6 +45,18 @@ public:
 	glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0);
 	glm::mat4 projection = glm::mat4(1.0f);
 	glm::mat4 view = glm::mat4(1.0f);
+
+	glm::vec3 smoothedCarPos = glm::vec3(0.0f);
+	glm::quat smoothedCarRot = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+	float    smoothedSpeed = 0.0f;
+	bool     bFirstCameraFrame = true;
+
+	glm::vec3 g_kartRenderPos = glm::vec3(0.0, 0.0, 0.0);
+	bool g_firstRenderFrame = true;
+
+	float carPosLerp = 0.2f;
+	float carRotLerp = 0.2f;
+	float speedLerp = 0.3f;
 
 	float yaw = -90.0f;
 	float pitch = 0.0f;
@@ -83,6 +97,9 @@ public:
 	const float MAX_HEAD_TILT = 20.0f;
 	const float TILT_SPEED = 2.0f;
 
+	// 내 카트 위치
+	glm::mat4 myKartMatrix = glm::mat4(1.0f);
+
 	Map2_Mode();
 	~Map2_Mode() {}
 
@@ -116,6 +133,8 @@ public:
 
 	void checkEngineSound();
 
+	void RenderPlayer();
+
 	void timer();
 
 	void mouseClick(int button, int state, int x, int y) override;
@@ -124,7 +143,7 @@ public:
 
 	void keyboard(unsigned char key, int x, int y) override;
 
-	void activateBooster();
+	void activateBoosterSound();
 
 	void specialKey(int key, int x, int y) override;
 

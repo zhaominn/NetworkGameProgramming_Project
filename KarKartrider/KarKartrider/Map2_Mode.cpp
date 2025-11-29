@@ -21,7 +21,7 @@ Map2_Mode::Map2_Mode()
 }
 
 void Map2_Mode::startBoosterRegen() {
-	while (isBoosterRegenActive) {
+	/*while (isBoosterRegenActive) {
 		if (booster_cnt < MAX_BOOSTER_CNT) {
 			std::this_thread::sleep_for(std::chrono::seconds(6));
 
@@ -33,7 +33,7 @@ void Map2_Mode::startBoosterRegen() {
 		else {
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
-	}
+	}*/
 }
 
 void Map2_Mode::draw_dashBoard() {
@@ -103,11 +103,12 @@ void Map2_Mode::draw_timer(float deltaTime) {
 	GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isTimer");
 	glUniform1i(isTimerLocation, true);
 
-	std::string timerText = "Time: " + std::to_string(deltaTime);
+	/*std::string timerText = "Time: " + std::to_string(deltaTime);
 	glRasterPos2f(-0.95f, 0.9f);
 	for (char c : timerText) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-	}
+	}*/
+
 	glUniform1i(isTimerLocation, false);
 
 	glUseProgram(0);
@@ -152,6 +153,8 @@ void Map2_Mode::init() {
 	}
 	cameraPos = glm::vec3(165.0, 4.4, 45.0);
 	updateCameraDirection();
+
+
 }
 
 void Map2_Mode::playCountdown(int count) {
@@ -193,26 +196,42 @@ void Map2_Mode::updateCameraDirection() {
 }
 
 void Map2_Mode::setCamera() {
-	glm::vec3 carPosition = glm::vec3(karts[0]->translateMatrix[3]);
-
-	glm::mat3 carRotationMatrix = glm::mat3(karts[0]->translateMatrix);
-
+	glm::vec3 carPosition = glm::vec3(myKartMatrix[3]);
+	glm::mat3 carRotationMatrix = glm::mat3(myKartMatrix);
 	glm::quat carRotationQuat = glm::quat_cast(carRotationMatrix);
 
-	glm::quat interpolatedRotation = glm::slerp(cameraRotationQuat, carRotationQuat, reducedRotationInfluence);
-	cameraRotationQuat = interpolatedRotation;
+	float rawSpeed = g_players[g_myid].m_speed;
 
-	glm::mat3 adjustedRotationMatrix = glm::mat3_cast(interpolatedRotation);
+	if (bFirstCameraFrame)
+	{
+		smoothedCarPos = carPosition;
+		smoothedCarRot = carRotationQuat;
+		smoothedSpeed = rawSpeed;
+		cameraPos = carPosition + carRotationQuat * glm::vec3(0.0f, 6.0f, 14.0f);
+		cameraRotationQuat = carRotationQuat;
+		bFirstCameraFrame = false;
+	}
 
-	glm::vec3 baseOffset = glm::vec3(0.0f, 6.0f + (kart_speed * 2.0f), 14.0f + (kart_speed * 10.0f));
-	glm::vec3 rotatedOffset = adjustedRotationMatrix * baseOffset;
+	smoothedCarPos = glm::mix(smoothedCarPos, carPosition, carPosLerp);
+	smoothedCarRot = glm::slerp(smoothedCarRot, carRotationQuat, carRotLerp);
+	smoothedCarRot = glm::normalize(smoothedCarRot);
 
-	cameraTargetPos = carPosition + rotatedOffset;
+	smoothedSpeed = glm::mix(smoothedSpeed, rawSpeed, speedLerp);
+
+	glm::vec3 baseOffset = glm::vec3(
+		0.0f,
+		6.0f + (smoothedSpeed * 2.0f),
+		14.0f + (smoothedSpeed * 10.0f)
+	);
+
+	glm::vec3 rotatedOffset = smoothedCarRot * baseOffset;
+
+	cameraTargetPos = smoothedCarPos + rotatedOffset;
 
 	float cameraFollowSpeed = 0.1f;
 	cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
 
-	cameraDirection = carPosition;
+	cameraDirection = smoothedCarPos;
 }
 
 void Map2_Mode::goSelectMode_() {
@@ -398,146 +417,38 @@ void Map2_Mode::checkEngineSound() {
 }
 
 void Map2_Mode::timer() {
-	if (!Pause) {
-		if (start_count < 4) {
-			if (start_count >= 0)
-				playCountdown(start_count);
-			++start_count;
-		}
-		else {
+	// ================
+   // 1) 내 위치 보간
+   // ================
+	float x = g_players[g_myid].x;
+	float y = g_players[g_myid].y;
+	float z = g_players[g_myid].z;
 
-			if (kart_keyState[UP]) {
-				if (kart_speed < MAX_SPEED) {
-					kart_speed += ACCELERATION;
-					if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED;
-				}
-			}
-			else if (kart_keyState[DOWN]) {
-				if (kart_speed > -MAX_SPEED / 2.0f) {
-					kart_speed -= ACCELERATION;
-					if (kart_speed < -MAX_SPEED / 2.0f) kart_speed = -MAX_SPEED / 2.0f;
-				}
-			}
-			else {
-				if (kart_speed > 0.0f) {
-					kart_speed -= DECELERATION;
-					if (kart_speed < 0.0f) kart_speed = 0.0f;
-				}
-				else if (kart_speed < 0.0f) {
-					kart_speed += DECELERATION;
-					if (kart_speed > 0.0f) kart_speed = 0.0f;
-				}
-			}
+	glm::vec3 targetPos(x, y, z);
 
-			if (kart_speed > MAX_SPEED) kart_speed = MAX_SPEED;
-
-			if (kart_speed > 0.0f) {
-				for (const auto& kart : karts) {
-					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
-				}
-			}
-			else if (kart_speed < 0.0f) {
-				for (const auto& kart : karts) {
-					kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -kart_speed));
-				}
-			}
-
-			if (kart_keyState[LEFT]) {
-				if (kart_speed != 0.0f) {
-					for (const auto& kart : karts) {
-						kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
-						kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(TURN_ANGLE), glm::vec3(0.0f, 1.0f, 0.0f));
-						kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
-					}
-				}
-			}
-
-			if (kart_keyState[RIGHT]) {
-				if (kart_speed != 0.0f) {
-					for (const auto& kart : karts) {
-						kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, -1.5));
-						kart->translateMatrix = glm::rotate(kart->translateMatrix, glm::radians(-TURN_ANGLE), glm::vec3(0.0f, 1.0f, 0.0f));
-						kart->translateMatrix = glm::translate(kart->translateMatrix, glm::vec3(0.0, 0.0, 1.5));
-					}
-				}
-			}
-
-			for (const auto& c : character) {
-				c->translateMatrix = karts[0]->translateMatrix;
-			}
-
-			if (kart_speed != 0.0f) {
-				reducedRotationInfluence = 0.1f + (std::abs(kart_speed) / MAX_SPEED) * 0.4f;
-			}
-			else {
-				reducedRotationInfluence += 0.01f;
-				if (reducedRotationInfluence > 1.0f) reducedRotationInfluence = 1.0f;
-			}
-
-			if (!kart_keyState[LEFT] && !kart_keyState[RIGHT]) {
-				if (character_face_rotation > 0.0f) {
-					character_face_rotation -= RETURN_SPEED;
-					if (character_face_rotation < 0.0f) {
-						character_face_rotation = 0.0f;
-					}
-				}
-				else if (character_face_rotation < 0.0f) {
-					character_face_rotation += RETURN_SPEED;
-					if (character_face_rotation > 0.0f) {
-						character_face_rotation = 0.0f;
-					}
-				}
-			}
-
-			if (isBoosterActive) {
-				if (booster_head_tilt < MAX_HEAD_TILT) {
-					booster_head_tilt += TILT_SPEED;
-					if (booster_head_tilt > MAX_HEAD_TILT) {
-						booster_head_tilt = MAX_HEAD_TILT;
-					}
-				}
-			}
-			else {
-				if (booster_head_tilt > 0.0f) {
-					booster_head_tilt -= TILT_SPEED;
-					if (booster_head_tilt < 0.0f) {
-						booster_head_tilt = 0.0f;
-					}
-				}
-			}
-
-			for (const auto& c : character) {
-				if (c->name == "character_face") {
-					glm::mat4 headRotation = glm::rotate(
-						glm::mat4(1.0f),
-						glm::radians(-character_face_rotation),
-						glm::vec3(0.0f, 0.0f, 1.0f)
-					);
-
-					headRotation = glm::rotate(
-						headRotation,
-						glm::radians(booster_head_tilt),
-						glm::vec3(1.0f, 0.0f, 0.0f)
-					);
-
-					c->translateMatrix = karts[0]->translateMatrix * headRotation;
-				}
-				else {
-					c->translateMatrix = karts[0]->translateMatrix;
-				}
-			}
-
-			networkmgr.SendMovePacket(up, down, left, right);
-
-
-			setCamera();
-			float cameraFollowSpeed = 0.1f;
-			cameraPos = glm::mix(cameraPos, cameraTargetPos, cameraFollowSpeed);
-
-			checkCollisionKart();
-			checkEngineSound();
-		}
+	if (g_firstRenderFrame)
+	{
+		g_kartRenderPos = targetPos;
+		g_firstRenderFrame = false;
 	}
+
+	const float posLerp = 0.3f;
+	g_kartRenderPos = glm::mix(g_kartRenderPos, targetPos, posLerp);
+
+	// ================
+	// 2) 네트워크 입력 송신
+	// ================
+	networkmgr.SendMovePacket(up, down, left, right);
+
+	// ================
+	// 3) 카메라 추적 계산
+	// ================
+	setCamera();
+
+	// ================
+	// 4) 사운드 처리
+	// ================
+	checkEngineSound();
 }
 
 void Map2_Mode::mouseClick(int button, int state, int x, int y)  {
@@ -596,36 +507,13 @@ void Map2_Mode::keyboard(unsigned char key, int x, int y)  {
 	}
 }
 
-void Map2_Mode::activateBooster() {
-
-	if (isBoosterActive) {
-		std::cout << "Booster is already active!" << std::endl;
-		return;
-	}
-
-	isBoosterActive = true;
-
-	std::cout << "Booster activated! Remaining boosters: " << booster_cnt << std::endl;
-
-	float originalMaxSpeed = MAX_SPEED;
-	float originalAcceleration = ACCELERATION;
-
-	MAX_SPEED = BOOSTER_SPEED;
-	ACCELERATION *= 1.05f;
+void Map2_Mode::activateBoosterSound() {
 
 	if (!isBoosterSound) {
 		isBoosterSound = true;
 		boosterSoundThread = std::thread(&Map2_Mode::booster_sound, this);
 		boosterSoundThread.detach();
 	}
-
-	std::thread([this, originalMaxSpeed, originalAcceleration]() {
-		std::this_thread::sleep_for(std::chrono::duration<double>(4.4));
-		MAX_SPEED = originalMaxSpeed;
-		ACCELERATION = originalAcceleration;
-		isBoosterActive = false;
-		std::cout << "Booster ended. MAX_SPEED and ACCELERATION restored." << std::endl;
-		}).detach();
 }
 
 void Map2_Mode::specialKey(int key, int x, int y)  {
@@ -653,14 +541,15 @@ void Map2_Mode::specialKey(int key, int x, int y)  {
 	int modifiers = glutGetModifiers();
 
 	if (modifiers & GLUT_ACTIVE_CTRL) {
-		if (isBoosterActive) {
-			std::cout << "Booster is already active!" << std::endl;
-			return;
+		if (!ctrl)
+		{
+			ctrl = true;
 		}
 
-		if (booster_cnt > 0) {
-			booster_cnt--;
-			activateBooster();
+		if (g_players[g_myid].m_booster_cnt > 0) {
+			g_players[g_myid].isBoosterOn = true;
+			networkmgr.SendBoosterPacket(g_players[g_myid].isBoosterOn, g_players[g_myid].m_booster_cnt);
+			activateBoosterSound();
 		}
 		else {
 			std::cout << "No boosters left!" << std::endl;
@@ -691,6 +580,78 @@ void Map2_Mode::specialKeyUp(int key, int x, int y)  {
 		right = false;
 	}
 	break;
+	}
+}
+
+void Map2_Mode::RenderPlayer() {
+	for (int pid = 0; pid < MAX_USER; pid++)
+	{
+		/*if (!g_players[pid].isOnline)
+			continue;*/
+
+		bool isInMyRoom = false;
+
+		for (int id : g_roomPlayers)
+		{
+			if (pid == id)
+			{
+				isInMyRoom = true;
+				break;
+			}
+		}
+
+		if (!isInMyRoom)
+			continue;
+
+		float px = g_players[pid].x;
+		float py = g_players[pid].y;
+		float pz = g_players[pid].z;
+		float pyaw = g_players[pid].m_yaw;
+		float pbody = g_players[pid].m_body_rotation;
+
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(px, py, pz));
+		model = glm::rotate(model, glm::radians(pyaw), glm::vec3(0, 1, 0));
+		model = glm::rotate(model, glm::radians(pbody), glm::vec3(0, 0, 1));
+
+		if (pid == g_myid)
+			myKartMatrix = model;
+
+		// --- 카트 파츠 ---
+		for (auto& part : karts)
+		{
+			part->translateMatrix = model;
+			part->draw(shaderProgramID, isKeyPressed_s);
+		}
+
+		// --- 캐릭터 파츠 ---
+		for (auto& c : character)
+		{
+			glm::mat4 cm = model;
+
+			if (c->name == "character_face")
+			{
+				glm::mat4 headRot = glm::rotate(
+					glm::mat4(1.0f),
+					glm::radians(-g_players[pid].m_face_rotation),
+					glm::vec3(0, 0, 1)
+				);
+
+				headRot = glm::rotate(
+					headRot,
+					glm::radians(g_players[pid].m_booster_head_tilt),
+					glm::vec3(1, 0, 0)
+				);
+
+				cm = model * headRot;
+			}
+
+			c->translateMatrix = cm;
+
+			if (c->name == "booster" && !g_players[pid].isBoosterOn)
+				continue;
+			c->draw(shaderProgramID, isKeyPressed_s);
+		}
 	}
 }
 
@@ -727,9 +688,8 @@ void Map2_Mode::draw_model()  {
 
 	glEnable(GL_DEPTH_TEST);
 
-	for (const auto& kart : karts) {
-		kart->draw(shaderProgramID, isKeyPressed_s);
-	}
+	RenderPlayer();
+
 	for (const auto& road : road2) {
 		road->draw(shaderProgramID, isKeyPressed_s);
 	}
@@ -762,14 +722,14 @@ void Map2_Mode::draw_model()  {
 }
 
 void Map2_Mode::draw_bb()  {
-	if (!bb_status)
+	/*if (!bb_status)
 		return;
 	for (const auto& model : karts) {
 		model->draw_rigidBody(shaderProgramID);
 	}
 	for (const auto& barricate : road2_barricate) {
 		barricate->draw_rigidBody(shaderProgramID);
-	}
+	}*/
 }
 
 void Map2_Mode::finish()  {
@@ -777,12 +737,12 @@ void Map2_Mode::finish()  {
 }
 
 void Map2_Mode::updatePhysics(float deltaTime) {
-	dynamicsWorld->stepSimulation(deltaTime);
+	/*dynamicsWorld->stepSimulation(deltaTime);
 
 	UpdateRigidBodyTransforms(karts);
 	UpdateRigidBodyTransforms(road2_barricate);
 
-	checkCollisionKart();
+	checkCollisionKart();*/
 }
 
  void Map2_Mode::timerHelper(int value) {
