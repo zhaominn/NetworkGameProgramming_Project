@@ -3,6 +3,30 @@
 
 #include <iostream>
 
+bool IsRoomReady(Room& room)
+{
+	int playerCount = 0;
+	int readyCount = 0;
+
+	for (int i = 0; i < MAX_USER; i++)
+	{
+		Player* p = room.inRoomPlayers[i];
+		if (p != nullptr && p->GetID() != -1)
+		{
+			playerCount++;
+
+			if (p->GetReady())
+				readyCount++;
+		}
+	}
+
+	// 플레이어가 최소 1명 이상 있어야 함
+	if (playerCount == 0)
+		return false;
+
+	// 방에 있는 모든 플레이어가 READY면 true
+	return (readyCount == playerCount);
+}
 
 DWORD WINAPI ClientThread(LPVOID socket)
 {
@@ -30,7 +54,15 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 
 	while (true)
 	{
-		if (!g_GameStart) {
+		bool anyRoomStarted = false;
+		for (int r = 0; r < 2; r++)
+		{
+			if (g_room[r].gameStart)
+				anyRoomStarted = true;
+		}
+
+		if (!anyRoomStarted)
+		{
 			Sleep(1);
 			continue;
 		}
@@ -40,59 +72,59 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 			current_time - last_send_time
 		).count();
 
-		g_ElapsedTime = std::chrono::duration<float>(current_time - startTime).count();
-
-		float dt = static_cast<float>(elapsed_time) / 1000.0f;
-
 		if (elapsed_time >= (1000 / 60))
 		{
 			std::lock_guard<std::mutex> lock1(g_UserMutex);
 
-			// check and update
-			for (int i = 0; i < MAX_USER; ++i)
+			for (int roomIdx = 0; roomIdx < 2; roomIdx++)
 			{
-				if (!g_users[i].GetOnline()) continue;
-				Player& p = g_users[i];
+				Room& room = g_room[roomIdx];
+				if (!room.gameStart) continue;
 
-				// ---- wall collision ----
-				float wpx, wpz;
-				ProcessWallCollision(p, wpx, wpz);
-
-				if (wpx != 0 || wpz != 0)
+				for (int i = 0; i < MAX_USER; i++)
 				{
-					p.m_posX += wpx;
-					p.m_posZ += wpz;
-					//ApplyBounceReflection(p, wpx, wpz, 0.0f);
-					p.SetSpeed(max(0.0f, p.GetSpeed() - 0.005f));
+					Player* p = room.inRoomPlayers[i];
+					if (!p) continue;
+
+					// ---- wall collision ----
+					float wpx, wpz;
+					ProcessWallCollision(*p, wpx, wpz);
+
+					if (wpx != 0 || wpz != 0)
+					{
+						p->m_posX += wpx;
+						p->m_posZ += wpz;
+						p->SetSpeed(max(0.0f, p->GetSpeed() - 0.005f));
+					}
+
+					// ---- player collision ----
+					float ppx, ppz;
+					ProcessPlayerCollisionRoom(room, p->GetID(), ppx, ppz);
+
+					if (ppx != 0 || ppz != 0)
+					{
+						p->m_posX += ppx * 0.5f;
+						p->m_posZ += ppz * 0.5f;
+					}
+
+					p->CheckBoosterState();
+					p->checkIsFinished();
 				}
 
-				// ---- player collision ----
-				float ppx, ppz;
-				ProcessPlayerCollision(i, ppx, ppz);
-
-				if (ppx != 0 || ppz != 0)
+				for (int i = 0; i < MAX_USER; i++)
 				{
-					p.m_posX += ppx * 0.5f;
-					p.m_posZ += ppz * 0.5f;
-					//ApplyBounceReflection(p, ppx, ppz, 0.7f);
+					Player* p = room.inRoomPlayers[i];
+					if (!p) continue;
+
+					p->send_move_Packet();
 				}
-
-				p.CheckBoosterState();
-				p.checkIsFinished();
-			}
-
-			// send
-			for (int i = 0; i < MAX_USER; ++i)
-			{
-				g_users[i].send_move_Packet();
 			}
 
 			last_send_time = current_time;
 		}
-
-
 	}
 }
+
 
 int main()
 {
@@ -115,6 +147,9 @@ int main()
 	if (listen(listen_sock, SOMAXCONN) == SOCKET_ERROR)
 		std::cout << "listen error" << std::endl;
 
+	u_long on = 1;
+	ioctlsocket(listen_sock, FIONBIO, &on);
+
 	HANDLE SendThread;
 	SendThread = CreateThread(NULL, 0, UpdatePosition, 0, 0, 0);
 	if (SendThread == NULL) {
@@ -129,90 +164,75 @@ int main()
 	int addrlen{};
 	HANDLE hThread;
 
-	while (true) {
-		switch (g_game_state) {
-		case LOBBY:
+	while (true)
+	{
+		// 1) 넌블로킹 accept 시도
+		addrlen = sizeof clientaddr;
+		SOCKET clientSock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
+
+
+		if (clientSock != INVALID_SOCKET)
 		{
-			// Login
-			// ------------------------------------------------------------------------------------------------------
+
+			u_long off = 0;
+			ioctlsocket(clientSock, FIONBIO, &off);
 
 			int new_player_id = -1;
-			while (!g_AllPlayerLogin) {
-				for (int i = 0; i < MAX_USER; ++i) {
-					if (g_users[i].GetID() == -1) {
-						new_player_id = i;
-						break;
-					}
+
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_users[i].GetID() == -1) {
+					new_player_id = i;
+					break;
 				}
+			}
 
-				addrlen = sizeof clientaddr;
-				g_users[new_player_id].SetSocket(accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen));
-				if (g_users[new_player_id].GetSocket() == INVALID_SOCKET) {
-					std::cout << "accept error" << std::endl;
-					continue;
-				}
-
-				BOOL optVal = TRUE;
-				setsockopt(
-					g_users[new_player_id].GetSocket(), 
-					IPPROTO_TCP,
-					TCP_NODELAY,
-					(const char*)&optVal,
-					sizeof(optVal)
-				);
-
+			if (new_player_id != -1)
+			{
+				g_users[new_player_id].SetSocket(clientSock);
 				g_users[new_player_id].SetId(new_player_id);
 				g_usersNum++;
 
-				hThread = CreateThread(NULL, 0, &ClientThread, (LPVOID)&g_users[new_player_id], 0, NULL);
+				CreateThread(NULL, 0, ClientThread, (LPVOID)&g_users[new_player_id], 0, NULL);
+			}
+			else
+			{
+				closesocket(clientSock); // 자리 없으면 거절
+			}
+		}
+		else
+		{
+			int err = WSAGetLastError();
+			if (err != WSAEWOULDBLOCK)
+			{
+				std::cout << "accept error: " << err << std::endl;
+				// 필요하면 break; 로 서버 종료
+			}
+		}
 
-				if (hThread != NULL) {
-					CloseHandle(hThread);
-				}
+		// 2) Room 별로 READY 검사 → 시작 여부 판단
+		for (int roomIdx = 0; roomIdx < 2; roomIdx++)
+		{
+			Room& room = g_room[roomIdx];
 
-				//if (g_usersNum == 1)
-				if (g_usersNum == MAX_USER)
+			if (!room.gameStart && IsRoomReady(room))
+			{
+				std::cout << "Room " << roomIdx << " start!" << std::endl;
+
+				for (int i = 0; i < MAX_USER; i++)
 				{
-					g_AllPlayerLogin = true;
-					/*temp*/g_game_state = INGAME;
-				}
-			}
-
-			// Lobby
-			// ------------------------------------------------------------------------------------------------------
-			while (!g_AllPlayerReady) {
-				break;
-			}
-		}
-		break;
-		case INGAME:
-			// in game
-			// ------------------------------------------------------------------------------------------------------
-			while (!g_GameStart) {
-				int readyClient = 0;
-
-				if (g_GameStart) break;
-
-				for (int i = 0; i < MAX_USER; ++i) {
-					if (g_users[i].GetReady()) {
-						readyClient++;
+					Player* p = room.inRoomPlayers[i];
+					if (p != nullptr)
+					{
+						p->send_Game_Start_Packet(room.mapType);
 					}
 				}
-				//if (readyClient == 1) {
-				if (readyClient == MAX_USER) {
-					for (int i = 0; i < MAX_USER; ++i) {
-						g_users[i].send_Game_Start_Packet();
-					}
 
-					EnterCriticalSection(&g_CS);
-					g_GameStart = true;
-					LeaveCriticalSection(&g_CS);
-
-					g_ElapsedTime = 0.f;
-				}
+				room.gameStart = true;
+				room.elapsedTime = 0.0f;
 			}
-			break;
 		}
+
+		Sleep(1); // CPU 너무 안 태우게 살짝 쉼
 	}
 
 	closesocket(listen_sock);

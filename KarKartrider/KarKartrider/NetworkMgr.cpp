@@ -188,12 +188,18 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_GAME_START: {
 		std::cout << "Game Start@@@@@@@@@@@@@@@@@@@@" << std::endl;
 
-		Map1_Mode* map1Mode = new Map1_Mode();
-		//map1Mode->goSelectMode = [this]() { goSelectMode(); };
-		MM.SetMode(map1Mode);
+		S2C_GameStart_Packet* packet = reinterpret_cast<S2C_GameStart_Packet*>(buf);
+		if (packet->map == MAP_TYPE::STRAIGHT) {
+			Map1_Mode* map1Mode = new Map1_Mode();
+			MM.SetMode(map1Mode);
+		}
+		else if (packet->map == MAP_TYPE::RECTANGLE) {
+			Map2_Mode* map2Mode = new Map2_Mode();
+			MM.SetMode(map2Mode);
+		}
 
 	}
-					   break;
+	break;
 	case S2C_MOVE:
 	{
 		S2C_Move_Packet* p = reinterpret_cast<S2C_Move_Packet*>(buf);

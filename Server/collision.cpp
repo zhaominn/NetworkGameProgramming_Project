@@ -124,20 +124,29 @@ void ProcessWallCollision(Player& p, float& outPushX, float& outPushZ)
 	}
 }
 
-void ProcessPlayerCollision(int myId, float& outPushX, float& outPushZ)
+void ProcessPlayerCollisionRoom(Room& room, int myPlayerId, float& outX, float& outZ)
 {
-	outPushX = outPushZ = 0.0f;
+	outX = 0.0f;
+	outZ = 0.0f;
 
-	for (int j = 0; j < MAX_USER; ++j)
+	Player* me = g_users[myPlayerId].GetOnline() ? &g_users[myPlayerId] : nullptr;
+	if (!me) return;
+
+	for (int i = 0; i < MAX_USER; i++)
 	{
-		if (myId == j) continue;
-		if (!g_users[j].GetOnline()) continue;
+		Player* other = room.inRoomPlayers[i];
 
-		float px, pz;
-		if (PlayerCollisionCheck(myId, j, px, pz))
+		if (!other) continue;
+		if (other->GetID() == -1) continue; // 안전
+		if (other->GetID() == myPlayerId) continue; // 나 자신 제외
+
+		float px = 0, pz = 0;
+
+		// myPlayerId vs other->GetID()
+		if (PlayerCollisionCheck(myPlayerId, other->GetID(), px, pz))
 		{
-			outPushX += px;
-			outPushZ += pz;
+			outX += px * 0.5f;
+			outZ += pz * 0.5f;
 		}
 	}
 }

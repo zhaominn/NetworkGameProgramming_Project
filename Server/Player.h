@@ -41,6 +41,7 @@ public:
 
 	AABB g_Map1Colliders[5];
 
+	MAP_TYPE select_map;
 public:
 	Player() : m_id(-1), m_name(), m_booster_cnt(2), m_yaw(0), m_speed(0), m_face_rotation(0), m_booster_head_tilt(0),
 		isBoosterActive(false), isReady(false), isOnline(false), isFinished(false), m_socket(INVALID_SOCKET) {
@@ -56,7 +57,7 @@ public:
 	void send_Player_Info_Packet();
 	void send_Login_Fail_Packet();
 	void send_Ready_Packet();
-	void send_Game_Start_Packet();
+	void send_Game_Start_Packet(MAP_TYPE m);
 	void send_move_Packet();
 	void send_booster_packet();
 
