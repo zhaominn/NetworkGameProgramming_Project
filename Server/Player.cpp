@@ -93,24 +93,31 @@ void Player::process_packet(char* p)
 
 		SetIsReady(change_ready_packet->is_ready);
 
+		if (select_map == MAP_TYPE::STRAIGHT) {
+			m_posX = 0;
+			m_posY = 2.6;
+			m_posZ = 238.0;
+		}
+		else if (select_map == MAP_TYPE::RECTANGLE) {
+			m_posX = 165.0;
+			m_posY = 1.0;
+			m_posZ = 30.0;
+		}
 
 		switch (m_id)
 		{
 		case 0:
-			m_posX = -5;
+			m_posX += -5;
 			break;
 		case 1:
-			m_posX = 0;
+			m_posX += 0;
 			break;
 		case 2:
-			m_posX = 5;
+			m_posX += 5;
 			break;
 		default:
 			break;
 		}
-
-		m_posY = change_ready_packet->y;
-		m_posZ = change_ready_packet->z;
 
 		std::cout << "[Player : " << m_name << "]" << " ready status? : " << isReady << std::endl;
 
