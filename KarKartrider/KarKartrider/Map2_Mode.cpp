@@ -175,7 +175,7 @@ void Map2_Mode::init() {
 		befor_data_aabb[i].maxY = aabbMax.getY();
 		befor_data_aabb[i].maxZ = aabbMax.getZ();
 
-		if (road2_barricate[i]->name == "finish")
+		if (road2_barricate[i]->name == "finish" || road2_barricate[i]->name == "finish_ch")
 			befor_data_aabb[i].rigid_status = false;
 		else
 			befor_data_aabb[i].rigid_status = true;
@@ -751,13 +751,13 @@ void Map2_Mode::draw_model()  {
 
 void Map2_Mode::draw_bb()  {
 	/*if (!bb_status)
-		return;
+		return;*/
 	for (const auto& model : karts) {
 		model->draw_rigidBody(shaderProgramID);
 	}
 	for (const auto& barricate : road2_barricate) {
 		barricate->draw_rigidBody(shaderProgramID);
-	}*/
+	}
 }
 
 void Map2_Mode::finish()  {
