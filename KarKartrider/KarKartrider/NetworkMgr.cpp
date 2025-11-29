@@ -119,11 +119,6 @@ void NetworkMgr::SendChangeReadyPacket(bool status)
 	change_ready_packet->type = C2S_IS_READY;
 	change_ready_packet->is_ready = status;
 
-	glm::vec3 pos = glm::vec3(0.0, 2.6, 238.0);
-	change_ready_packet->x = pos.x;
-	change_ready_packet->y = pos.y;
-	change_ready_packet->z = pos.z;
-
 	SendPacket(reinterpret_cast<char*>(change_ready_packet), sizeof(C2S_Change_Ready_Packet));
 	delete change_ready_packet;
 }
