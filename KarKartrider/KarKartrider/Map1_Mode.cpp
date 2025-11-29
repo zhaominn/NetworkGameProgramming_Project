@@ -225,7 +225,7 @@ void Map1_Mode::init()
 			befor_data_aabb[i].rigid_status = true;
 	}
 	
-	networkmgr.SendWallCollisionPacket(befor_data_aabb);
+	networkmgr.SendWallCollisionPacket_1(befor_data_aabb);
 }
 
 void Map1_Mode::playCountdown(int count) {

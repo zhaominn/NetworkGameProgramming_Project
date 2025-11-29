@@ -50,6 +50,7 @@ constexpr char S2C_RANK = 14;
 constexpr char S2C_LOGOUT = 15;
 //wall collision
 constexpr char C2S_WALL_COLLISION_1 = 16;
+constexpr char C2S_WALL_COLLISION_2 = 17;
 
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
@@ -220,6 +221,13 @@ struct C2S_Wall_Collision_1_Packet {
 	char type;
 
 	AABB aabbs[5];
+};
+
+struct C2S_Wall_Collision_2_Packet {
+	unsigned char size;
+	char type;
+
+	AABB aabbs[18];
 };
 
 #pragma pack (pop)

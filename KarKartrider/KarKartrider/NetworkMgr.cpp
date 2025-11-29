@@ -147,7 +147,7 @@ void NetworkMgr::SendBoosterPacket(bool boosterOn, int booster_cnt)
 	delete packet;
 }
 
-void NetworkMgr::SendWallCollisionPacket(AABB aabb[5])
+void NetworkMgr::SendWallCollisionPacket_1(AABB aabb[5])
 {
 	C2S_Wall_Collision_1_Packet* packet = new C2S_Wall_Collision_1_Packet;
 	packet->size = sizeof(C2S_Wall_Collision_1_Packet);
@@ -157,6 +157,18 @@ void NetworkMgr::SendWallCollisionPacket(AABB aabb[5])
 	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Wall_Collision_1_Packet));
 	delete packet;
 }
+
+void NetworkMgr::SendWallCollisionPacket_2(AABB aabb[18])
+{
+	C2S_Wall_Collision_2_Packet* packet = new C2S_Wall_Collision_2_Packet;
+	packet->size = sizeof(C2S_Wall_Collision_2_Packet);
+	packet->type = C2S_WALL_COLLISION_2;
+	memcpy(packet->aabbs, aabb, sizeof(AABB) * 18);
+
+	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Wall_Collision_2_Packet));
+	delete packet;
+}
+
 
 void NetworkMgr::ProcessPacket(char* buf)
 {
