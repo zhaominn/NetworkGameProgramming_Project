@@ -7,7 +7,20 @@ public:
     RoomMode();
     ~RoomMode();
 
+    //
+    GLuint player_tex;
+    GLuint ready_tex;
+    GLuint ready_hovered_tex;
+    GLuint road1_tex;
+    GLuint road1_hovered_tex;
+    GLuint road2_tex;
+    GLuint road3_hovered_tex;
+    GLuint room_tex;
+    //
+
     void init() override;
+
+    GLuint loadTexture(const char* filename);
 
     void mouseClick(int button, int state, int x, int y) override;
 
