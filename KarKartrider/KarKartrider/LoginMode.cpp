@@ -346,7 +346,6 @@ void LoginMode::draw_model()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
-	glEnable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
 }
 
