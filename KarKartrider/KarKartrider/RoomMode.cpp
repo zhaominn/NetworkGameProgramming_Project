@@ -327,7 +327,9 @@ void RoomMode::RefreshSlotData()
 	}
 
 	int myRoomMapType = g_players[g_myid].select_map;
-	int normalUserIndex = 1;
+
+	int masterID = -1;
+	std::vector<int> normalPlayers;
 
 	for (int i = 0; i < MAX_USER; ++i)
 	{
@@ -336,20 +338,26 @@ void RoomMode::RefreshSlotData()
 		if (!p.isOnline) continue;
 		if (p.select_map != myRoomMapType) continue;
 
-		int slotIdx = -1;
-
 		if (p.isRoomMaster) {
-			slotIdx = 0;
+			masterID = p.m_id;
 		}
 		else {
-			if (normalUserIndex < 3) {
-				slotIdx = normalUserIndex;
-				normalUserIndex++;
-			}
+			normalPlayers.push_back(p.m_id);
 		}
+	}
 
-		if (slotIdx != -1) {
-			m_slots[slotIdx] = p.m_id;
+	if (masterID != -1)
+	{
+		m_slots[0] = masterID;
+
+		for (size_t i = 0; i < normalPlayers.size(); ++i) {
+			if (i + 1 < 3) m_slots[i + 1] = normalPlayers[i];
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < normalPlayers.size(); ++i) {
+			if (i < 3) m_slots[i] = normalPlayers[i];
 		}
 	}
 }
