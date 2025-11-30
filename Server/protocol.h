@@ -79,6 +79,9 @@ struct S2C_EnterRoom_Packet
 	unsigned char size;
 	char type;
 	char id;
+	MAP_TYPE map;
+	char name[NAME_SIZE];
+	bool isRoomMaster;
 };
 
 struct S2C_Ready_Packet
@@ -91,8 +94,8 @@ struct S2C_Ready_Packet
 
 struct RoomPlayer
 {
-	char id;        
-	MAP_TYPE mapType;  
+	char id;
+	MAP_TYPE mapType;
 };
 
 struct S2C_GameStart_Packet
@@ -174,7 +177,6 @@ struct C2S_Change_Ready_Packet
 {
 	unsigned char size;
 	char type;
-	bool is_ready;
 };
 
 struct C2S_Booster_Packet

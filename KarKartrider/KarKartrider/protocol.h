@@ -28,6 +28,7 @@ constexpr unsigned short WINDOW_WIDTH = 980;
 constexpr unsigned short WINDOW_HEIGHT = 780;
 
 constexpr int  MAX_USER = 3;
+constexpr int  MIN_PLAYERS_TO_START = 1;
 
 // packet
 // C2S
@@ -78,6 +79,9 @@ struct S2C_EnterRoom_Packet
 	unsigned char size;
 	char type;
 	char id;
+	MAP_TYPE map;
+	char name[NAME_SIZE];
+	bool isRoomMaster;
 };
 
 struct S2C_Ready_Packet
@@ -173,7 +177,6 @@ struct C2S_Change_Ready_Packet
 {
 	unsigned char size;
 	char type;
-	bool is_ready;
 };
 
 struct C2S_Booster_Packet

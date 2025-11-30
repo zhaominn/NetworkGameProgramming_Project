@@ -50,19 +50,21 @@ GLuint RoomMode::loadTexture(const char* filename) {
 
 void RoomMode::mouseClick(int button, int state, int x, int y)
 {
-	if (isRoad1Hovered)
+	if(state==GLUT_UP)
 	{
-		networkmgr.SendEnterRoomPacket(STRAIGHT);
-	}
-	else if (isRoad2Hovered)
-	{
-		networkmgr.SendEnterRoomPacket(RECTANGLE);
-	}
+		if (isRoad1Hovered)
+		{
+			networkmgr.SendEnterRoomPacket(STRAIGHT);
+		}
+		else if (isRoad2Hovered)
+		{
+			networkmgr.SendEnterRoomPacket(RECTANGLE);
+		}
 
-	if (isReadyHovered)
-	{
-		ready_status = !ready_status;
-		networkmgr.SendChangeReadyPacket(ready_status);
+		if (isReadyHovered)
+		{
+			networkmgr.SendChangeReadyPacket();
+		}
 	}
 }
 
@@ -259,7 +261,6 @@ void RoomMode::draw_model()
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
-	glEnable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }

@@ -112,12 +112,11 @@ void NetworkMgr::SendLoginPacket(std::string name)
 	delete login_packet;
 }
 
-void NetworkMgr::SendChangeReadyPacket(bool status)
+void NetworkMgr::SendChangeReadyPacket()
 {
 	C2S_Change_Ready_Packet* change_ready_packet = new C2S_Change_Ready_Packet;
 	change_ready_packet->size = sizeof(C2S_Change_Ready_Packet);
 	change_ready_packet->type = C2S_IS_READY;
-	change_ready_packet->is_ready = status;
 
 	SendPacket(reinterpret_cast<char*>(change_ready_packet), sizeof(C2S_Change_Ready_Packet));
 	delete change_ready_packet;
@@ -189,10 +188,19 @@ void NetworkMgr::ProcessPacket(char* buf)
 	}
 					   break;
 	case S2C_ENTER_ROOM:
-		break;
+	{
+		S2C_EnterRoom_Packet* pkt = reinterpret_cast<S2C_EnterRoom_Packet*>(buf);
+		g_players[pkt->id].select_map = pkt->map;
+	}
+	break;
 	case S2C_IS_READY:
-		break;
-	case S2C_GAME_START: {
+	{
+		S2C_Ready_Packet* pkt = reinterpret_cast<S2C_Ready_Packet*>(buf);
+		g_players[pkt->id].isReady = pkt->is_ready;
+	}
+	break;
+	case S2C_GAME_START:
+	{
 		S2C_GameStart_Packet* pkt = reinterpret_cast<S2C_GameStart_Packet*>(buf);
 
 		std::cout << "==== Game Start ====" << std::endl;

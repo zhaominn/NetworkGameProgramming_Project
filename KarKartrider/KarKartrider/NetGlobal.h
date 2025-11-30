@@ -14,6 +14,7 @@ struct PlayerKart {
 	bool isReady;
 	bool isOnline;
 	bool isBoosterOn;
+	bool idRoomMaster;
 	SOCKET m_socket;
 
 	int m_rank;

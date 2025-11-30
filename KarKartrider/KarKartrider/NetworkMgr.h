@@ -44,7 +44,7 @@ public:
 	void SendEnterRoomPacket(MAP_TYPE map);
 	void SendLoginPacket(std::string name);
 
-	void SendChangeReadyPacket(bool status);
+	void SendChangeReadyPacket();
 	void SendMovePacket(bool up, bool down, bool left, bool right);
 	void SendBoosterPacket(bool boosterOn, int booster_cnt);
 

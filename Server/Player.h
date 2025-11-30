@@ -57,6 +57,7 @@ public:
 
 	void send_Player_Info_Packet();
 	void send_Login_Fail_Packet();
+	void send_Enter_Room_Packet(MAP_TYPE map, bool isRoomMaster);
 	void send_Ready_Packet();
 	void send_Game_Start_Packet(Room rooms[2]);
 	void send_move_Packet();
