@@ -180,9 +180,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 		S2C_PlayerInfo_Packet* playerinfo_packet = reinterpret_cast<S2C_PlayerInfo_Packet*>(buf);
 		g_myid = playerinfo_packet->id;
 		g_players[g_myid].m_id = g_myid;
-		g_players[g_myid].isOnline = true;
-		g_players[g_myid].isRoomMaster = true;
-
 		SendEnterRoomPacket(STRAIGHT);
 	}
 	break;
@@ -211,10 +208,8 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_LEAVE_ROOM:
 	{
 		S2C_LeaveRoom_Packet* packet = reinterpret_cast<S2C_LeaveRoom_Packet*>(buf);
-
-		std::cout << "유저가 방을 나갔습니다. ID: " << packet->id << std::endl;
-
 		g_players[packet->id].isOnline = false;
+		g_players[packet->id].isRoomMaster = false;
 
 		if (packet->id >= 0 && packet->id < MAX_USER)
 			g_players[packet->id].isReady = false;
@@ -224,12 +219,12 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_CHANGE_ROOMMASTER:
 	{
 		S2C_Change_Master_Packet* packet = reinterpret_cast<S2C_Change_Master_Packet*>(buf);
-
-		g_players[packet->id].isRoomMaster = true;
-
+		int newMasterID = packet->id;
 		for (int i = 0; i < MAX_USER; ++i)
 		{
-			if (i != packet->id)
+			if (i == newMasterID)
+				g_players[i].isRoomMaster = true;
+			else
 				g_players[i].isRoomMaster = false;
 		}
 	}

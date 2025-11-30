@@ -14,6 +14,7 @@ RoomMode::RoomMode()
 	road2_tex = loadTexture("asset/room/road_2.png");
 	road2_hovered_tex = loadTexture("asset/room/road_2_hovered.png");
 	room_tex = loadTexture("asset/room/room.png");
+	player_ready_tex = loadTexture("asset/room/ready_player.png");
 }
 
 RoomMode::~RoomMode()
@@ -52,13 +53,18 @@ void RoomMode::mouseClick(int button, int state, int x, int y)
 {
 	if (state == GLUT_UP)
 	{
-		if (isRoad1Hovered)
+		if(!g_players[g_myid].isReady)
 		{
-			networkmgr.SendEnterRoomPacket(STRAIGHT);
-		}
-		else if (isRoad2Hovered)
-		{
-			networkmgr.SendEnterRoomPacket(RECTANGLE);
+			if (isRoad1Hovered)
+			{
+				if (g_players[g_myid].select_map != STRAIGHT)
+					networkmgr.SendEnterRoomPacket(STRAIGHT);
+			}
+			else if (isRoad2Hovered)
+			{
+				if (g_players[g_myid].select_map != RECTANGLE)
+					networkmgr.SendEnterRoomPacket(RECTANGLE);
+			}
 		}
 
 		if (isReadyHovered)
@@ -133,7 +139,8 @@ void RoomMode::specialKeyUp(int key, int x, int y)
 
 void RoomMode::draw_model()
 {
-	RefreshSlotData();
+	RefreshSlotData(); // 데이터 최신화
+
 	glUseProgram(0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
@@ -166,7 +173,6 @@ void RoomMode::draw_model()
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 0.0f);
 	glEnd();
 
-\
 	// -----------------------------------------------------------
 	// 플레이어 렌더링 Loop
 	// -----------------------------------------------------------
@@ -179,7 +185,9 @@ void RoomMode::draw_model()
 
 	for (int i = 0; i < 3; ++i)
 	{
-		if (!m_slots[i].isActive) continue;
+		int pid = m_slots[i];
+
+		if (pid < 0 || pid >= MAX_USER) continue;
 
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, player_tex);
@@ -197,21 +205,50 @@ void RoomMode::draw_model()
 		glDisable(GL_TEXTURE_2D);
 		glColor3f(0.0f, 0.0f, 0.0f);
 
-		int nameLen = strlen(m_slots[i].name);
-		if (nameLen == 0) continue;
-		float textX = cX - (nameLen * 0.015f);
-		float textY = pY + pHH-0.1f;
+		int nameLen = strlen(g_players[pid].m_name);
+		if (nameLen > 0)
+		{
+			float textX = cX - (nameLen * 0.015f);
+			float textY = pY + pHH - 0.1f;
 
-		
-		glRasterPos2f(textX, textY);
-		for (int k = 0; k < nameLen; k++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, m_slots[i].name[k]);
-		glRasterPos2f(textX + 0.002f, textY);
-		for (int k = 0; k < nameLen; k++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, m_slots[i].name[k]);
-		glRasterPos2f(textX, textY + 0.002f);
-		for (int k = 0; k < nameLen; k++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, m_slots[i].name[k]);
+			glRasterPos3f(textX, textY, 1.0f);
+
+			for (int k = 0; k < nameLen; k++)
+				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, g_players[pid].m_name[k]);
+
+			glRasterPos3f(textX + 0.002f, textY, 1.0f);
+			for (int k = 0; k < nameLen; k++)
+				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, g_players[pid].m_name[k]);
+
+			glRasterPos3f(textX, textY + 0.002f, 1.0f);
+			for (int k = 0; k < nameLen; k++)
+				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, g_players[pid].m_name[k]);
+		}
+
+		if (g_players[pid].isReady)
+		{
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, player_ready_tex);
+			glColor3f(1.0f, 1.0f, 1.0f);
+
+			float rW = 320.0f * px;
+			float rH = 143.0f * py;
+
+			float rHW = rW / 2.0f;
+			float rHH = rH / 2.0f;
+
+			float rX = cX;
+			float rY = (pY - pHH) + 0.2f;
+
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(rX - rHW, rY - rHH, 1.0f);
+			glTexCoord2f(0.0f, 1.0f); glVertex3f(rX - rHW, rY + rHH, 1.0f);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(rX + rHW, rY + rHH, 1.0f);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(rX + rHW, rY - rHH, 1.0f);
+			glEnd();
+
+			glDisable(GL_TEXTURE_2D);
+		}
 	}
 
 	// -----------------------------------------------------------
@@ -286,8 +323,7 @@ void RoomMode::finish()
 void RoomMode::RefreshSlotData()
 {
 	for (int i = 0; i < 3; ++i) {
-		m_slots[i].isActive = false;
-		memset(m_slots[i].name, 0, NAME_SIZE);
+		m_slots[i] = -1;
 	}
 
 	int myRoomMapType = g_players[g_myid].select_map;
@@ -313,10 +349,7 @@ void RoomMode::RefreshSlotData()
 		}
 
 		if (slotIdx != -1) {
-			strncpy(m_slots[slotIdx].name, p.m_name, NAME_SIZE - 1);
-			m_slots[slotIdx].name[NAME_SIZE - 1] = '\0';
-			m_slots[slotIdx].isActive = true;
-
+			m_slots[slotIdx] = p.m_id;
 		}
 	}
 }

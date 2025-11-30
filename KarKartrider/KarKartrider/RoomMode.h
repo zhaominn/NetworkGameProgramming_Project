@@ -1,13 +1,6 @@
 ﻿#pragma once
 #include "Mode.h" 
 
-struct DisplaySlot {
-    char name[NAME_SIZE];
-    bool isActive;
-};
-
-
-
 class RoomMode : public Mode {
 public:
 
@@ -23,17 +16,13 @@ public:
     GLuint road2_tex;
     GLuint road2_hovered_tex;
     GLuint room_tex;
+    GLuint player_ready_tex;
 
     bool isRoad1Hovered = false;
     bool isRoad2Hovered = false;
     bool isReadyHovered = false;
 
-    struct DisplaySlot {
-        char name[NAME_SIZE];
-        bool isActive;
-    };
-
-    DisplaySlot m_slots[3];
+    int m_slots[3];
     //
 
     void init() override;
