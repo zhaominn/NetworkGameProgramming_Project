@@ -246,45 +246,46 @@ void Player::process_packet(char* p)
 	{
 		C2S_Enter_Room_Packet* packet = reinterpret_cast<C2S_Enter_Room_Packet*>(p);
 
-		int newRoomIdx = packet->map; // 이동하려는 새 방 인덱스
-
+		int newRoomIdx = packet->map;
 		int oldRoomIdx = select_map;
 
+		// [기존 방 나가기 처리]
 		if (oldRoomIdx >= 0 && oldRoomIdx < 2 && g_room[oldRoomIdx].inRoomPlayers[m_id] == this)
 		{
 			Room& oldRoom = g_room[oldRoomIdx];
 
+			send_Leave_Room_Packet(oldRoomIdx, m_id);
+
+			// 플레이어 목록에서 제거
 			oldRoom.inRoomPlayers[m_id] = nullptr;
 
-			// 만약 내가 그 방의 방장(Manager)이었다면?
+			// 방장 위임 로직
 			if (oldRoom.roomManagerID == m_id)
 			{
-				oldRoom.roomManagerID = -1;
+				g_room[oldRoomIdx].roomManagerID = -1;
 
-				// 새로운 방장 선출
 				for (int i = 0; i < MAX_USER; ++i)
 				{
-					if (oldRoom.inRoomPlayers[i] != nullptr)
+					Player* nextPlayer = g_room[oldRoomIdx].inRoomPlayers[i];
+					if (nextPlayer != nullptr)
 					{
-						oldRoom.roomManagerID = oldRoom.inRoomPlayers[i]->GetID();
-						
-						break; // 한 명 찾았으면 종료
+						g_room[oldRoomIdx].roomManagerID = nextPlayer->GetID();
+
+						nextPlayer->send_Change_Master_Packet(oldRoomIdx, g_room[oldRoomIdx].roomManagerID);
+
+						break;
 					}
 				}
-
-				// 만약 아무도 없다면 roomManagerID는 -1로 유지
 			}
 		}
 
-		
+		// [새로운 방 입장 처리]
 		Room& newRoom = g_room[newRoomIdx];
 
 		std::cout << "[Player : " << m_name << " enter room " << newRoomIdx << "]" << std::endl;
 
-		
 		if (newRoom.inRoomPlayers[m_id] != nullptr)
 		{
-			// 이미 들어온 유저
 			std::cout << m_name << " already in target room" << std::endl;
 			break;
 		}
@@ -293,11 +294,14 @@ void Player::process_packet(char* p)
 		if (newRoom.roomManagerID == -1)
 			newRoom.roomManagerID = m_id;
 
+		// 내 정보 업데이트 및 방 등록
 		this->select_map = packet->map;
 		newRoom.inRoomPlayers[m_id] = this;
 		newRoom.mapType = packet->map;
 
+		// [패킷 전송 통합 함수 호출]
 		send_Enter_Room_Packet(packet->map, (newRoom.roomManagerID == m_id));
+
 	}
 	break;
 	case C2S_WALL_COLLISION_1:
@@ -383,12 +387,39 @@ void Player::disconnect()
 		g_users[old_id].m_id = -1;
 		g_users[old_id].isOnline = false;
 		for (int r = 0; r < 2; ++r) {
+
+			// 1. 내가 이 방에 있었는지 확인
+			bool wasInRoom = false;
 			for (int i = 0; i < MAX_USER; ++i) {
 				if (g_room[r].inRoomPlayers[i] == this) {
-					g_room[r].inRoomPlayers[i] = nullptr;
+					wasInRoom = true;
+					g_room[r].inRoomPlayers[i] = nullptr; // 명단에서 제거
+					break;
 				}
 			}
-			if (g_room[r].roomManagerID == old_id) g_room[r].roomManagerID = -1;
+
+			if (wasInRoom)
+			{
+				this->send_Leave_Room_Packet(r, old_id);
+
+				if (g_room[r].roomManagerID == old_id)
+				{
+					g_room[r].roomManagerID = -1;
+
+					for (int i = 0; i < MAX_USER; ++i)
+					{
+						Player* nextPlayer = g_room[r].inRoomPlayers[i];
+						if (nextPlayer != nullptr)
+						{
+							g_room[r].roomManagerID = nextPlayer->GetID();
+							
+							nextPlayer->send_Change_Master_Packet(r, g_room[r].roomManagerID);
+
+							break;
+						}
+					}
+				}
+			}
 		}
 		if (g_usersNum > 0) g_usersNum--;
 		g_AllPlayerLogin = false;
@@ -401,7 +432,7 @@ void Player::disconnect()
 	// TEMP
 	g_game_state = LOBBY;
 	g_GameStart = false;
-	g_room->reset();
+	// g_room->reset();
 }
 
 void Player::send_Player_Info_Packet()
@@ -427,21 +458,35 @@ void Player::send_Login_Fail_Packet()
 
 void Player::send_Enter_Room_Packet(MAP_TYPE map, bool isRoomMaster)
 {
-	S2C_EnterRoom_Packet enter_room_packet;
-	enter_room_packet.size = sizeof(S2C_EnterRoom_Packet);
-	enter_room_packet.type = S2C_ENTER_ROOM;
-	enter_room_packet.id = m_id;
-	enter_room_packet.map = map;
-	strncpy(enter_room_packet.name, m_name, NAME_SIZE - 1);
-	enter_room_packet.name[NAME_SIZE - 1] = '\0';
-	enter_room_packet.isRoomMaster = isRoomMaster;
-	send_packet(reinterpret_cast<char*>(&enter_room_packet), sizeof(enter_room_packet));
-	for (int i = 0; i < MAX_USER; i++) // 같은 방에만 브로드캐스팅
-	{
-		Player* p = g_room[map].inRoomPlayers[i];
-		if (!p) continue;
+	S2C_EnterRoom_Packet my_packet;
+	my_packet.size = sizeof(S2C_EnterRoom_Packet);
+	my_packet.type = S2C_ENTER_ROOM;
+	my_packet.id = m_id;
+	my_packet.map = map;
+	strncpy(my_packet.name, m_name, NAME_SIZE - 1);
+	my_packet.name[NAME_SIZE - 1] = '\0';
+	my_packet.isRoomMaster = isRoomMaster;
 
-		p->send_packet(reinterpret_cast<char*>(&enter_room_packet), sizeof(enter_room_packet));
+	// 나 자신에게 전송
+	send_packet(reinterpret_cast<char*>(&my_packet), sizeof(my_packet));
+	broadcast(reinterpret_cast<char*>(&my_packet), sizeof(my_packet));
+
+}
+
+void Player::send_Leave_Room_Packet(int roomIdx, int leaverID)
+{
+	S2C_LeaveRoom_Packet pkt;
+	pkt.size = sizeof(S2C_LeaveRoom_Packet);
+	pkt.type = S2C_LEAVE_ROOM;
+	pkt.id = leaverID;
+
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		Player* p = g_room[roomIdx].inRoomPlayers[i];
+		if (p != nullptr && p->GetID() != leaverID)
+		{
+			p->send_packet(reinterpret_cast<char*>(&pkt), sizeof(pkt));
+		}
 	}
 }
 
@@ -455,6 +500,28 @@ void Player::send_Ready_Packet()
 	send_packet(reinterpret_cast<char*>(ready_pkt), sizeof(S2C_Ready_Packet));
 	broadcast(reinterpret_cast<char*>(ready_pkt), sizeof(S2C_Ready_Packet));
 	delete ready_pkt;
+}
+
+void Player::send_Change_Master_Packet(int roomIdx, int newMasterID)
+{
+	S2C_Change_Master_Packet pkt;
+	pkt.size = sizeof(S2C_Change_Master_Packet);
+	pkt.type = S2C_CHANGE_ROOMMASTER;
+	pkt.id = newMasterID;
+
+	// 해당 방에 있는 모든 유저에게 전송
+	Room& targetRoom = g_room[roomIdx];
+
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		Player* p = targetRoom.inRoomPlayers[i];
+
+		// 유효한 유저에게만 전송
+		if (p != nullptr)
+		{
+			p->send_packet(reinterpret_cast<char*>(&pkt), sizeof(pkt));
+		}
+	}
 }
 
 void Player::send_Game_Start_Packet(Room rooms[2])

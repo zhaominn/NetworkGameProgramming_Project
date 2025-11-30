@@ -38,20 +38,22 @@ constexpr char C2S_ENTER_ROOM = 2;
 constexpr char C2S_MOVE = 3;
 constexpr char C2S_BOOSTER = 4;
 constexpr char C2S_LOGOUT = 5;
-// S2C
-constexpr char S2C_PLAYER_INFO = 6;
-constexpr char S2C_LOGIN_FAIL = 7;
-constexpr char S2C_ENTER_ROOM = 8;
-constexpr char S2C_IS_READY = 9;
-constexpr char S2C_GAME_START = 10;
-constexpr char S2C_MOVE = 11;
-constexpr char S2C_BOOSTER = 12;
-// constexpr char S2C_WORLD_UPDATE = 13;
-constexpr char S2C_RANK = 14;
-constexpr char S2C_LOGOUT = 15;
 //wall collision
-constexpr char C2S_WALL_COLLISION_1 = 16;
-constexpr char C2S_WALL_COLLISION_2 = 17;
+constexpr char C2S_WALL_COLLISION_1 = 6;
+constexpr char C2S_WALL_COLLISION_2 = 7;
+// S2C
+constexpr char S2C_PLAYER_INFO = 8;
+constexpr char S2C_LOGIN_FAIL = 9;
+constexpr char S2C_ENTER_ROOM = 10;
+constexpr char S2C_LEAVE_ROOM = 11;
+constexpr char S2C_CHANGE_ROOMMASTER = 12;
+constexpr char S2C_IS_READY = 13;
+constexpr char S2C_GAME_START = 14;
+constexpr char S2C_MOVE = 15;
+constexpr char S2C_BOOSTER = 16;
+// constexpr char S2C_WORLD_UPDATE = 17;
+constexpr char S2C_RANK = 18;
+constexpr char S2C_LOGOUT = 19;
 
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
@@ -82,6 +84,20 @@ struct S2C_EnterRoom_Packet
 	MAP_TYPE map;
 	char name[NAME_SIZE];
 	bool isRoomMaster;
+};
+
+struct S2C_LeaveRoom_Packet
+{
+	unsigned char size;
+	char type;
+	int id;
+};
+
+struct S2C_Change_Master_Packet
+{
+	unsigned char size;
+	char type;
+	int id;
 };
 
 struct S2C_Ready_Packet

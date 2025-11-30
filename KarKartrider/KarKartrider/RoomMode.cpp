@@ -50,7 +50,7 @@ GLuint RoomMode::loadTexture(const char* filename) {
 
 void RoomMode::mouseClick(int button, int state, int x, int y)
 {
-	if(state==GLUT_UP)
+	if (state == GLUT_UP)
 	{
 		if (isRoad1Hovered)
 		{
@@ -133,6 +133,7 @@ void RoomMode::specialKeyUp(int key, int x, int y)
 
 void RoomMode::draw_model()
 {
+	RefreshSlotData();
 	glUseProgram(0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
@@ -165,55 +166,68 @@ void RoomMode::draw_model()
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 0.0f);
 	glEnd();
 
+\
 	// -----------------------------------------------------------
-	// 플레이어 캐릭터 3명 (300 * 458) - 상단 배치
+	// 플레이어 렌더링 Loop
 	// -----------------------------------------------------------
-	glBindTexture(GL_TEXTURE_2D, player_tex);
-
 	float pW = 300.0f * px;
 	float pH = 458.0f * py;
 	float pHW = pW / 2.0f;
 	float pHH = pH / 2.0f;
-
 	float pY = 0.35f;
+	float slotXPos[3] = { -0.64f, 0.0f, 0.64f };
 
-	// 좌측
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.64f - pHW, pY - pHH, 0.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.64f - pHW, pY + pHH, 0.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-0.64f + pHW, pY + pHH, 0.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.64f + pHW, pY - pHH, 0.0f);
-	glEnd();
+	for (int i = 0; i < 3; ++i)
+	{
+		if (!m_slots[i].isActive) continue;
 
-	// 중앙
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0f - pHW, pY - pHH, 0.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0f - pHW, pY + pHH, 0.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0f + pHW, pY + pHH, 0.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0f + pHW, pY - pHH, 0.0f);
-	glEnd();
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, player_tex);
+		glColor3f(1.0f, 1.0f, 1.0f);
 
-	// 우측
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.64f - pHW, pY - pHH, 0.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.64f - pHW, pY + pHH, 0.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.64f + pHW, pY + pHH, 0.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.64f + pHW, pY - pHH, 0.0f);
-	glEnd();
+		float cX = slotXPos[i];
+
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(cX - pHW, pY - pHH, 0.0f);
+		glTexCoord2f(0.0f, 1.0f); glVertex3f(cX - pHW, pY + pHH, 0.0f);
+		glTexCoord2f(1.0f, 1.0f); glVertex3f(cX + pHW, pY + pHH, 0.0f);
+		glTexCoord2f(1.0f, 0.0f); glVertex3f(cX + pHW, pY - pHH, 0.0f);
+		glEnd();
+
+		glDisable(GL_TEXTURE_2D);
+		glColor3f(0.0f, 0.0f, 0.0f);
+
+		int nameLen = strlen(m_slots[i].name);
+		if (nameLen == 0) continue;
+		float textX = cX - (nameLen * 0.015f);
+		float textY = pY + pHH-0.1f;
+
+		
+		glRasterPos2f(textX, textY);
+		for (int k = 0; k < nameLen; k++)
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, m_slots[i].name[k]);
+		glRasterPos2f(textX + 0.002f, textY);
+		for (int k = 0; k < nameLen; k++)
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, m_slots[i].name[k]);
+		glRasterPos2f(textX, textY + 0.002f);
+		for (int k = 0; k < nameLen; k++)
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, m_slots[i].name[k]);
+	}
 
 	// -----------------------------------------------------------
-	// Road 버튼들 (299 * 250) - 좌측 하단 배치
+	// Road & Ready 버튼
 	// -----------------------------------------------------------
+	glEnable(GL_TEXTURE_2D);
 	float rW = 300.0f * px;
-	float rH = 250.0f * py * 0.9;
+	float rH = 250.0f * py * 0.9f;
 	float rHW = rW / 2.0f;
 	float rHH = rH / 2.0f;
-
 	float rY = -0.65f;
 
 	// [Road 1]
-	if (isRoad1Hovered) glBindTexture(GL_TEXTURE_2D, road1_hovered_tex);
-	else glBindTexture(GL_TEXTURE_2D, road1_tex);
+	GLuint r1_tex = (isRoad1Hovered || g_players[g_myid].select_map == STRAIGHT) ? road1_hovered_tex : road1_tex;
+	glBindTexture(GL_TEXTURE_2D, r1_tex);
+	glColor3f(1.0f, 1.0f, 1.0f);
 
 	float r1_X = -0.65f;
 	glBegin(GL_QUADS);
@@ -224,10 +238,10 @@ void RoomMode::draw_model()
 	glEnd();
 
 	// [Road 2]
-	if (isRoad2Hovered) glBindTexture(GL_TEXTURE_2D, road2_hovered_tex);
-	else glBindTexture(GL_TEXTURE_2D, road2_tex);
+	GLuint r2_tex = (isRoad2Hovered || g_players[g_myid].select_map == RECTANGLE) ? road2_hovered_tex : road2_tex;
+	glBindTexture(GL_TEXTURE_2D, r2_tex);
 
-	float r2_X = 0.f;
+	float r2_X = 0.0f;
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(r2_X - rHW, rY - rHH, 0.0f);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(r2_X - rHW, rY + rHH, 0.0f);
@@ -235,20 +249,16 @@ void RoomMode::draw_model()
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(r2_X + rHW, rY - rHH, 0.0f);
 	glEnd();
 
-	// -----------------------------------------------------------
-	// Ready 버튼 (299 * 100) - 우측 하단 배치
-	// -----------------------------------------------------------
-	if (ready_status || isReadyHovered) glBindTexture(GL_TEXTURE_2D, ready_hovered_tex);
-	else glBindTexture(GL_TEXTURE_2D, ready_tex);
+	// [Ready 버튼]
+	GLuint ready_current_tex = (g_players[g_myid].isReady || isReadyHovered) ? ready_hovered_tex : ready_tex;
+	glBindTexture(GL_TEXTURE_2D, ready_current_tex);
 
 	float readyW = 301.0f * px;
-	float readyH = 100.0f * py * 0.9;
+	float readyH = 100.0f * py * 0.9f;
 	float readyHW = readyW / 2.0f;
 	float readyHH = readyH / 2.0f;
-
-	// Y 위치: Road 버튼들보다 이미지가 얇으니 위치를 조금 조정 (-0.75)
 	float readyY = -0.48f;
-	float readyX = 0.65f; // 우측 하단
+	float readyX = 0.65f;
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(readyX - readyHW, readyY - readyHH, 0.0f);
@@ -271,4 +281,42 @@ void RoomMode::draw_bb()
 
 void RoomMode::finish()
 {
+}
+
+void RoomMode::RefreshSlotData()
+{
+	for (int i = 0; i < 3; ++i) {
+		m_slots[i].isActive = false;
+		memset(m_slots[i].name, 0, NAME_SIZE);
+	}
+
+	int myRoomMapType = g_players[g_myid].select_map;
+	int normalUserIndex = 1;
+
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		const auto& p = g_players[i];
+
+		if (!p.isOnline) continue;
+		if (p.select_map != myRoomMapType) continue;
+
+		int slotIdx = -1;
+
+		if (p.isRoomMaster) {
+			slotIdx = 0;
+		}
+		else {
+			if (normalUserIndex < 3) {
+				slotIdx = normalUserIndex;
+				normalUserIndex++;
+			}
+		}
+
+		if (slotIdx != -1) {
+			strncpy(m_slots[slotIdx].name, p.m_name, NAME_SIZE - 1);
+			m_slots[slotIdx].name[NAME_SIZE - 1] = '\0';
+			m_slots[slotIdx].isActive = true;
+
+		}
+	}
 }

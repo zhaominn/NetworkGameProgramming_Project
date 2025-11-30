@@ -173,24 +173,65 @@ void NetworkMgr::ProcessPacket(char* buf)
 {
 	unsigned char type = buf[1];
 	switch (type) {
-	case S2C_PLAYER_INFO: {
+	case S2C_PLAYER_INFO:
+	{
 		std::cout << "로그인 성공!" << std::endl;
 
 		S2C_PlayerInfo_Packet* playerinfo_packet = reinterpret_cast<S2C_PlayerInfo_Packet*>(buf);
 		g_myid = playerinfo_packet->id;
 		g_players[g_myid].m_id = g_myid;
+		g_players[g_myid].isOnline = true;
+		g_players[g_myid].isRoomMaster = true;
+
+		SendEnterRoomPacket(STRAIGHT);
 	}
-						break;
-	case S2C_LOGIN_FAIL: {
+	break;
+	case S2C_LOGIN_FAIL:
+	{
 
 		// 서버에서 보낸 로그인 패킷
 		std::cout << "로그인 실패!" << std::endl;
 	}
-					   break;
+	break;
 	case S2C_ENTER_ROOM:
 	{
-		S2C_EnterRoom_Packet* pkt = reinterpret_cast<S2C_EnterRoom_Packet*>(buf);
-		g_players[pkt->id].select_map = pkt->map;
+		S2C_EnterRoom_Packet* packet = reinterpret_cast<S2C_EnterRoom_Packet*>(buf);
+
+		g_players[packet->id].m_id = packet->id;
+		g_players[packet->id].select_map = packet->map;
+		strncpy(g_players[packet->id].m_name, packet->name, NAME_SIZE - 1);
+		g_players[packet->id].m_name[NAME_SIZE - 1] = '\0';
+		g_players[packet->id].isRoomMaster = packet->isRoomMaster;
+		g_players[packet->id].isReady = false;
+		g_players[packet->id].isOnline = true;
+
+
+	}
+	break;
+	case S2C_LEAVE_ROOM:
+	{
+		S2C_LeaveRoom_Packet* packet = reinterpret_cast<S2C_LeaveRoom_Packet*>(buf);
+
+		std::cout << "유저가 방을 나갔습니다. ID: " << packet->id << std::endl;
+
+		g_players[packet->id].isOnline = false;
+
+		if (packet->id >= 0 && packet->id < MAX_USER)
+			g_players[packet->id].isReady = false;
+
+	}
+	break;
+	case S2C_CHANGE_ROOMMASTER:
+	{
+		S2C_Change_Master_Packet* packet = reinterpret_cast<S2C_Change_Master_Packet*>(buf);
+
+		g_players[packet->id].isRoomMaster = true;
+
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			if (i != packet->id)
+				g_players[i].isRoomMaster = false;
+		}
 	}
 	break;
 	case S2C_IS_READY:
@@ -276,7 +317,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_LOGOUT:
 		break;
 	default:
-		std::cout << "찾을 수 없는 패킷 : " << (int)type << std::endl;
+		std::cout << "찾을 수 없는 패킷 : " << type << std::endl;
 		break;
 	}
 }

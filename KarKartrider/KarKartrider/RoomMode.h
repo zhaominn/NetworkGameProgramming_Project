@@ -1,6 +1,13 @@
 ﻿#pragma once
 #include "Mode.h" 
 
+struct DisplaySlot {
+    char name[NAME_SIZE];
+    bool isActive;
+};
+
+
+
 class RoomMode : public Mode {
 public:
 
@@ -20,6 +27,13 @@ public:
     bool isRoad1Hovered = false;
     bool isRoad2Hovered = false;
     bool isReadyHovered = false;
+
+    struct DisplaySlot {
+        char name[NAME_SIZE];
+        bool isActive;
+    };
+
+    DisplaySlot m_slots[3];
     //
 
     void init() override;
@@ -46,9 +60,11 @@ public:
         return ModeType::ROOM;
     }
 
+    void RefreshSlotData();
+
 private:
 
-    bool ready_status{ false };
+    // bool ready_status{ false };
 
 };
 
