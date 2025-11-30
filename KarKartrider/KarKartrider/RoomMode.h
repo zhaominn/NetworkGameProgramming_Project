@@ -14,8 +14,12 @@ public:
     GLuint road1_tex;
     GLuint road1_hovered_tex;
     GLuint road2_tex;
-    GLuint road3_hovered_tex;
+    GLuint road2_hovered_tex;
     GLuint room_tex;
+
+    bool isRoad1Hovered = false;
+    bool isRoad2Hovered = false;
+    bool isReadyHovered = false;
     //
 
     void init() override;
@@ -24,7 +28,7 @@ public:
 
     void mouseClick(int button, int state, int x, int y) override;
 
-    void passiveMotion(int x, int y) override {}
+    void passiveMotion(int x, int y) override;
 
     void keyboard(unsigned char key, int x, int y) override;
 

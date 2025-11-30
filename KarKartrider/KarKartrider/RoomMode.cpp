@@ -12,7 +12,7 @@ RoomMode::RoomMode()
 	road1_tex = loadTexture("asset/room/road_1.png");
 	road1_hovered_tex = loadTexture("asset/room/road_1_hovered.png");
 	road2_tex = loadTexture("asset/room/road_2.png");
-	road3_hovered_tex = loadTexture("asset/room/road_2_hovered.png");
+	road2_hovered_tex = loadTexture("asset/room/road_2_hovered.png");
 	room_tex = loadTexture("asset/room/room.png");
 }
 
@@ -50,6 +50,68 @@ GLuint RoomMode::loadTexture(const char* filename) {
 
 void RoomMode::mouseClick(int button, int state, int x, int y)
 {
+}
+
+void RoomMode::passiveMotion(int x, int y)
+{
+	// 1. 마우스 좌표를 OpenGL 좌표계(-1.0 ~ 1.0)로 변환
+	// (화면 해상도 980x770 기준)
+	float glX = ((float)x / 980.0f) * 2.0f - 1.0f;
+	float glY = -(((float)y / 770.0f) * 2.0f - 1.0f); // Y축 반전
+
+	// 2. 픽셀 비율 상수 (draw_model과 동일)
+	float px = 2.0f / 980.0f;
+	float py = 2.0f / 770.0f;
+
+	// -----------------------------------------------------------
+	// [Road 1 버튼] 체크
+	// -----------------------------------------------------------
+	float rW = 300.0f * px;
+	float rH = 250.0f * py * 0.9f;
+	float r1_X = -0.65f;
+	float rY = -0.65f;
+
+	// 범위 체크 (중심점 - 반너비 ~ 중심점 + 반너비)
+	if (glX >= r1_X - (rW / 2) && glX <= r1_X + (rW / 2) &&
+		glY >= rY - (rH / 2) && glY <= rY + (rH / 2)) {
+		isRoad1Hovered = true;
+	}
+	else {
+		isRoad1Hovered = false;
+	}
+
+	// -----------------------------------------------------------
+	// [Road 2 버튼] 체크
+	// -----------------------------------------------------------
+	// 크기와 Y위치는 Road 1과 동일, X위치만 다름
+	float r2_X = 0.0f;
+
+	if (glX >= r2_X - (rW / 2) && glX <= r2_X + (rW / 2) &&
+		glY >= rY - (rH / 2) && glY <= rY + (rH / 2)) {
+		isRoad2Hovered = true;
+	}
+	else {
+		isRoad2Hovered = false;
+	}
+
+	// -----------------------------------------------------------
+	// [Ready 버튼] 체크
+	// -----------------------------------------------------------
+	float readyW = 301.0f * px;
+	float readyH = 100.0f * py * 0.9f;
+	float readyX = 0.65f;
+	float readyY = -0.48f;
+
+	if (glX >= readyX - (readyW / 2) && glX <= readyX + (readyW / 2) &&
+		glY >= readyY - (readyH / 2) && glY <= readyY + (readyH / 2)) {
+		isReadyHovered = true;
+	}
+	else {
+		isReadyHovered = false;
+	}
+
+	// 상태가 변했을 때 화면 갱신
+	glutPostRedisplay();
 }
 
 void RoomMode::keyboard(unsigned char key, int x, int y)
@@ -150,7 +212,9 @@ void RoomMode::draw_model()
 	float rY = -0.65f;
 
 	// [Road 1]
-	glBindTexture(GL_TEXTURE_2D, road1_tex);
+	if (isRoad1Hovered) glBindTexture(GL_TEXTURE_2D, road1_hovered_tex);
+	else glBindTexture(GL_TEXTURE_2D, road1_tex);
+
 	float r1_X = -0.65f;
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(r1_X - rHW, rY - rHH, 0.0f);
@@ -160,7 +224,9 @@ void RoomMode::draw_model()
 	glEnd();
 
 	// [Road 2]
-	glBindTexture(GL_TEXTURE_2D, road2_tex);
+	if (isRoad2Hovered) glBindTexture(GL_TEXTURE_2D, road2_hovered_tex);
+	else glBindTexture(GL_TEXTURE_2D, road2_tex);
+
 	float r2_X = 0.f;
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(r2_X - rHW, rY - rHH, 0.0f);
@@ -172,7 +238,7 @@ void RoomMode::draw_model()
 	// -----------------------------------------------------------
 	// Ready 버튼 (299 * 100) - 우측 하단 배치
 	// -----------------------------------------------------------
-	if (ready_status) glBindTexture(GL_TEXTURE_2D, ready_hovered_tex);
+	if (ready_status || isReadyHovered) glBindTexture(GL_TEXTURE_2D, ready_hovered_tex);
 	else glBindTexture(GL_TEXTURE_2D, ready_tex);
 
 	float readyW = 301.0f * px;
@@ -181,7 +247,7 @@ void RoomMode::draw_model()
 	float readyHH = readyH / 2.0f;
 
 	// Y 위치: Road 버튼들보다 이미지가 얇으니 위치를 조금 조정 (-0.75)
-	float readyY = -0.75f;
+	float readyY = -0.48f;
 	float readyX = 0.65f; // 우측 하단
 
 	glBegin(GL_QUADS);
