@@ -50,28 +50,34 @@ GLuint RoomMode::loadTexture(const char* filename) {
 
 void RoomMode::mouseClick(int button, int state, int x, int y)
 {
+	if (isRoad1Hovered)
+	{
+		networkmgr.SendEnterRoomPacket(STRAIGHT);
+	}
+	else if (isRoad2Hovered)
+	{
+		networkmgr.SendEnterRoomPacket(RECTANGLE);
+	}
+
+	if (isReadyHovered)
+	{
+		ready_status = !ready_status;
+		networkmgr.SendChangeReadyPacket(ready_status);
+	}
 }
 
 void RoomMode::passiveMotion(int x, int y)
 {
-	// 1. 마우스 좌표를 OpenGL 좌표계(-1.0 ~ 1.0)로 변환
-	// (화면 해상도 980x770 기준)
 	float glX = ((float)x / 980.0f) * 2.0f - 1.0f;
-	float glY = -(((float)y / 770.0f) * 2.0f - 1.0f); // Y축 반전
-
-	// 2. 픽셀 비율 상수 (draw_model과 동일)
+	float glY = -(((float)y / 770.0f) * 2.0f - 1.0f);
 	float px = 2.0f / 980.0f;
 	float py = 2.0f / 770.0f;
 
-	// -----------------------------------------------------------
-	// [Road 1 버튼] 체크
-	// -----------------------------------------------------------
 	float rW = 300.0f * px;
 	float rH = 250.0f * py * 0.9f;
 	float r1_X = -0.65f;
 	float rY = -0.65f;
 
-	// 범위 체크 (중심점 - 반너비 ~ 중심점 + 반너비)
 	if (glX >= r1_X - (rW / 2) && glX <= r1_X + (rW / 2) &&
 		glY >= rY - (rH / 2) && glY <= rY + (rH / 2)) {
 		isRoad1Hovered = true;
@@ -80,10 +86,6 @@ void RoomMode::passiveMotion(int x, int y)
 		isRoad1Hovered = false;
 	}
 
-	// -----------------------------------------------------------
-	// [Road 2 버튼] 체크
-	// -----------------------------------------------------------
-	// 크기와 Y위치는 Road 1과 동일, X위치만 다름
 	float r2_X = 0.0f;
 
 	if (glX >= r2_X - (rW / 2) && glX <= r2_X + (rW / 2) &&
@@ -94,9 +96,6 @@ void RoomMode::passiveMotion(int x, int y)
 		isRoad2Hovered = false;
 	}
 
-	// -----------------------------------------------------------
-	// [Ready 버튼] 체크
-	// -----------------------------------------------------------
 	float readyW = 301.0f * px;
 	float readyH = 100.0f * py * 0.9f;
 	float readyX = 0.65f;
@@ -110,15 +109,14 @@ void RoomMode::passiveMotion(int x, int y)
 		isReadyHovered = false;
 	}
 
-	// 상태가 변했을 때 화면 갱신
 	glutPostRedisplay();
 }
 
 void RoomMode::keyboard(unsigned char key, int x, int y)
 {
 	if (key == 'r' || key == 'R') {
-		ready_status = !ready_status;
-		networkmgr.SendChangeReadyPacket(ready_status);
+		// ready_status = !ready_status;
+		// networkmgr.SendChangeReadyPacket(ready_status);
 	}
 }
 

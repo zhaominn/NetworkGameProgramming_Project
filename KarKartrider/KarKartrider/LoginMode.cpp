@@ -1,7 +1,7 @@
 ﻿#include "Pch.h"
 #include "LoginMode.h"
 #include "Light.h"
-#include "SelectMapMode.h"
+#include "RoomMode.h"
 #include "NetGlobal.h"
 //-----------------------------
 #include "LoadProgress.h"
@@ -232,9 +232,10 @@ void LoginMode::keyboard(unsigned char key, int x, int y)
 
 			networkmgr.SendLoginPacket(inputText);
 
-			SelectMapMode* selectMapMode = new SelectMapMode();
+			//SelectMapMode* selectMapMode = new SelectMapMode();
+			RoomMode* roomMapMode = new RoomMode();
 			//selectMapMode->goSelectMode = [this]() { goSelectMode(); };
-			MM.SetMode(selectMapMode);
+			MM.SetMode(roomMapMode);
 		}
 
 		return;
