@@ -265,6 +265,11 @@ void Player::process_packet(char* p)
 		send_Enter_Room_Packet(packet->map);
 	}
 	break;
+	case C2S_LEAVE_ROOM:
+	{
+		C2S_Leave_Room_Packet* packet = reinterpret_cast<C2S_Leave_Room_Packet*>(p);
+		std::cout << "Leave Room" << std::endl;
+	}
 	case C2S_WALL_COLLISION_1:
 	{
 		C2S_Wall_Collision_1_Packet* packet = reinterpret_cast<C2S_Wall_Collision_1_Packet*>(p);
@@ -392,7 +397,7 @@ void Player::send_Login_Fail_Packet()
 	S2C_Login_Fail_Packet fail_packet;
 	fail_packet.size = sizeof(S2C_Login_Fail_Packet);
 	fail_packet.type = S2C_LOGIN_FAIL;
-	send_packet(reinterpret_cast<char*>(&fail_packet), sizeof(fail_packet));
+	send_packet(reinterpret_cast<char*>(&fail_packet), sizeof(S2C_Login_Fail_Packet));
 }
 
 void Player::send_Enter_Room_Packet(MAP_TYPE map)
@@ -406,8 +411,8 @@ void Player::send_Enter_Room_Packet(MAP_TYPE map)
 	my_packet.name[NAME_SIZE - 1] = '\0';
 
 	// 나 자신에게 전송
-	send_packet(reinterpret_cast<char*>(&my_packet), sizeof(my_packet));
-	broadcast(reinterpret_cast<char*>(&my_packet), sizeof(my_packet));
+	send_packet(reinterpret_cast<char*>(&my_packet), sizeof(S2C_EnterRoom_Packet));
+	broadcast(reinterpret_cast<char*>(&my_packet), sizeof(S2C_EnterRoom_Packet));
 
 }
 
@@ -423,7 +428,7 @@ void Player::send_Leave_Room_Packet(int roomIdx, int leaverID)
 		Player* p = g_room[roomIdx].inRoomPlayers[i];
 		if (p != nullptr && p->GetID() != leaverID)
 		{
-			p->send_packet(reinterpret_cast<char*>(&pkt), sizeof(pkt));
+			p->send_packet(reinterpret_cast<char*>(&pkt), sizeof(S2C_LeaveRoom_Packet));
 		}
 	}
 }

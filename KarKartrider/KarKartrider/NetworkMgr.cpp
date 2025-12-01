@@ -101,6 +101,17 @@ void NetworkMgr::SendEnterRoomPacket(MAP_TYPE map)
 	delete enter_room_packet;
 }
 
+void NetworkMgr::SendLeaveRoomPacket(MAP_TYPE map)
+{
+	C2S_Leave_Room_Packet* leave_room_packet = new C2S_Leave_Room_Packet;
+	leave_room_packet->size = sizeof(C2S_Leave_Room_Packet);
+	leave_room_packet->type = C2S_LEAVE_ROOM;
+	leave_room_packet->map = map;
+
+	SendPacket(reinterpret_cast<char*>(leave_room_packet), sizeof(C2S_Leave_Room_Packet));
+	delete leave_room_packet;
+}
+
 void NetworkMgr::SendLoginPacket(std::string name)
 {
 	C2S_Login_Packet* login_packet = new C2S_Login_Packet;

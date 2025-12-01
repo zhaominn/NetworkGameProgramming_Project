@@ -542,20 +542,12 @@ void Map1_Mode::timer() {
 }
 
 void Map1_Mode::mouseClick(int button, int state, int x, int y) {
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && Pause) {
 		if (x <= 470 && x >= 400 && y <= 410 && y >= 360) { //
-			Pause = true;
-			isBackgroundSound = false;
-			isMotorSound = false;
-			if (motorSoundThread.joinable()) {
-				motorSoundThread.join();
-			}
-			Map1_Mode* map1Mode = new Map1_Mode();
-			map1Mode->goSelectMode = [this]() { goSelectMode(); }; //
-			MM.SetMode(map1Mode);
+			Pause = !Pause;
 		}
 		else if (x <= 580 && x >= 510 && y <= 410 && y >= 360) { //
-			goSelectMode_();
+			networkmgr.SendLeaveRoomPacket(STRAIGHT);
 		}
 	}
 }
@@ -596,7 +588,7 @@ void Map1_Mode::keyboard(unsigned char key, int x, int y) {
 		Pause = !Pause;
 	}
 	if (key == 'p') {
-		goSelectMode_();
+		//goSelectMode_();
 	}
 }
 

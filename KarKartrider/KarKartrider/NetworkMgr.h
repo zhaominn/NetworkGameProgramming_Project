@@ -42,6 +42,7 @@ public:
 	void SendPacket(char* packet, int size);
 
 	void SendEnterRoomPacket(MAP_TYPE map);
+	void SendLeaveRoomPacket(MAP_TYPE map);
 	void SendLoginPacket(std::string name);
 
 	void SendChangeReadyPacket();

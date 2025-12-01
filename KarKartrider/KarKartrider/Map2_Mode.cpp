@@ -475,7 +475,7 @@ void Map2_Mode::timer() {
 	const float posLerp = 0.3f;
 	g_kartRenderPos = glm::mix(g_kartRenderPos, targetPos, posLerp);
 
-	if(!Pause)
+	if (!Pause)
 	{
 		// ================
 		// 2) 네트워크 입력 송신
@@ -494,26 +494,18 @@ void Map2_Mode::timer() {
 	checkEngineSound();
 }
 
-void Map2_Mode::mouseClick(int button, int state, int x, int y)  {
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+void Map2_Mode::mouseClick(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && Pause) {
 		if (x <= 470 && x >= 400 && y <= 410 && y >= 360) {
-			Pause = true;
-			isBackgroundSound = false;
-			isMotorSound = false;
-			if (motorSoundThread.joinable()) {
-				motorSoundThread.join();
-			}
-			Map2_Mode* map2Mode = new Map2_Mode();
-			map2Mode->goSelectMode = [this]() { goSelectMode(); };
-			MM.SetMode(map2Mode);
+			Pause = !Pause;
 		}
 		else if (x <= 580 && x >= 510 && y <= 410 && y >= 360) {
-			goSelectMode_();
+			networkmgr.SendLeaveRoomPacket(RECTANGLE);
 		}
 	}
 }
 
-void Map2_Mode::keyboard(unsigned char key, int x, int y)  {
+void Map2_Mode::keyboard(unsigned char key, int x, int y) {
 	if (key == 27 && g_GameEnd) { //esc
 		if (Pause) {
 			glutTimerFunc(16, timerHelper, 0);
@@ -546,7 +538,7 @@ void Map2_Mode::keyboard(unsigned char key, int x, int y)  {
 		Pause = !Pause;
 	}
 	if (key == 'p') {
-		goSelectMode_();
+		//goSelectMode_();
 	}
 }
 
@@ -559,7 +551,7 @@ void Map2_Mode::activateBoosterSound() {
 	}
 }
 
-void Map2_Mode::specialKey(int key, int x, int y)  {
+void Map2_Mode::specialKey(int key, int x, int y) {
 
 
 	switch (key) {
@@ -601,7 +593,7 @@ void Map2_Mode::specialKey(int key, int x, int y)  {
 
 }
 
-void Map2_Mode::specialKeyUp(int key, int x, int y)  {
+void Map2_Mode::specialKeyUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
 	{
@@ -698,7 +690,7 @@ void Map2_Mode::RenderPlayer() {
 	}
 }
 
-void Map2_Mode::draw_model()  {
+void Map2_Mode::draw_model() {
 
 	glClearColor(1.0, 1.0, 1.0, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -764,18 +756,18 @@ void Map2_Mode::draw_model()  {
 	glDisable(GL_DEPTH_TEST);
 }
 
-void Map2_Mode::draw_bb()  {
+void Map2_Mode::draw_bb() {
 	/*if (!bb_status)
 		return;*/
-	//for (const auto& model : karts) {
-	//	model->draw_rigidBody(shaderProgramID);
-	//}
-	//for (const auto& barricate : road2_barricate) {
-	//	barricate->draw_rigidBody(shaderProgramID);
-	//}
+		//for (const auto& model : karts) {
+		//	model->draw_rigidBody(shaderProgramID);
+		//}
+		//for (const auto& barricate : road2_barricate) {
+		//	barricate->draw_rigidBody(shaderProgramID);
+		//}
 }
 
-void Map2_Mode::finish()  {
+void Map2_Mode::finish() {
 
 }
 
@@ -788,7 +780,7 @@ void Map2_Mode::updatePhysics(float deltaTime) {
 	checkCollisionKart();*/
 }
 
- void Map2_Mode::timerHelper(int value) {
+void Map2_Mode::timerHelper(int value) {
 	if (Map2_Mode* instance = dynamic_cast<Map2_Mode*>(Mode::currentInstance)) {
 		const float deltaTime = 1.0f / 60.0f;
 
