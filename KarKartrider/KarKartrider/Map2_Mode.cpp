@@ -581,7 +581,8 @@ void Map2_Mode::specialKey(int key, int x, int y) {
 			ctrl = true;
 		}
 
-		if (g_players[g_myid].m_booster_cnt > 0) {
+		if (!g_players[g_myid].isBoosterOn && 
+			g_players[g_myid].m_booster_cnt > 0) {
 			g_players[g_myid].isBoosterOn = true;
 			networkmgr.SendBoosterPacket(g_players[g_myid].isBoosterOn, g_players[g_myid].m_booster_cnt);
 			activateBoosterSound();

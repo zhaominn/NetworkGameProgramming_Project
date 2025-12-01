@@ -104,12 +104,12 @@ void NetworkMgr::SendEnterRoomPacket(MAP_TYPE map)
 
 void NetworkMgr::SendLeaveRoomPacket(MAP_TYPE map)
 {
-	C2S_Leave_Room_Packet* leave_room_packet = new C2S_Leave_Room_Packet;
-	leave_room_packet->size = sizeof(C2S_Leave_Room_Packet);
-	leave_room_packet->type = C2S_LEAVE_ROOM;
+	C2S_Leave_Game_Packet* leave_room_packet = new C2S_Leave_Game_Packet;
+	leave_room_packet->size = sizeof(C2S_Leave_Game_Packet);
+	leave_room_packet->type = C2S_LEAVE_GAME;
 	leave_room_packet->map = map;
 
-	SendPacket(reinterpret_cast<char*>(leave_room_packet), sizeof(C2S_Leave_Room_Packet));
+	SendPacket(reinterpret_cast<char*>(leave_room_packet), sizeof(C2S_Leave_Game_Packet));
 	delete leave_room_packet;
 }
 
@@ -213,7 +213,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_players[packet->id].isReady = false;
 		g_players[packet->id].isOnline = true;
 
-
 	}
 	break;
 	case S2C_LEAVE_ROOM:
@@ -223,8 +222,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 
 		if (packet->id >= 0 && packet->id < MAX_USER)
 			g_players[packet->id].isReady = false;
-
-		MM.SetMode(std::make_unique<RoomMode>());
 	}
 	break;
 	case S2C_IS_READY:

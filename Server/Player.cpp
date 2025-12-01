@@ -265,20 +265,16 @@ void Player::process_packet(char* p)
 		send_Enter_Room_Packet(packet->map);
 	}
 	break;
-	case C2S_LEAVE_ROOM:
+	case C2S_LEAVE_GAME:
 	{
-		C2S_Leave_Room_Packet* packet = reinterpret_cast<C2S_Leave_Room_Packet*>(p);
-		std::cout << "Leave Room" << std::endl;
+		C2S_Leave_Game_Packet* packet = reinterpret_cast<C2S_Leave_Game_Packet*>(p);
+		std::cout << "Leave Game" << std::endl;
 
 		int roomIdx = packet->map;
-
 		Room& room = g_room[roomIdx];
+		room.inRoomPlayers[m_id] = nullptr;
 
-		if (room.inRoomPlayers[m_id] == this)
-		{
-			send_Leave_Room_Packet(roomIdx, m_id);
-			room.inRoomPlayers[m_id] = nullptr;
-		}
+
 
 		g_game_state = LOBBY;
 	}
@@ -438,12 +434,14 @@ void Player::send_Leave_Room_Packet(int roomIdx, int leaverID)
 
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		Player* p = g_room[roomIdx].inRoomPlayers[i];
-		if (p != nullptr && p->GetID() != leaverID)
+		if(g_room[roomIdx].inRoomPlayers[i]!=nullptr)
 		{
+			Player* p = g_room[roomIdx].inRoomPlayers[i];
 			p->send_packet(reinterpret_cast<char*>(&pkt), sizeof(S2C_LeaveRoom_Packet));
 		}
 	}
+
+	send_packet(reinterpret_cast<char*>(&pkt), sizeof(S2C_LeaveRoom_Packet));
 }
 
 void Player::send_Ready_Packet()

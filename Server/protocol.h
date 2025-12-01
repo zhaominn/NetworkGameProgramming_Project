@@ -35,7 +35,7 @@ constexpr int  MIN_PLAYERS_TO_START = 1;
 constexpr char C2S_LOGIN = 0;
 constexpr char C2S_IS_READY = 1;
 constexpr char C2S_ENTER_ROOM = 2;
-constexpr char C2S_LEAVE_ROOM = 3;
+constexpr char C2S_LEAVE_GAME = 3;
 constexpr char C2S_MOVE = 4;
 constexpr char C2S_BOOSTER = 5;
 constexpr char C2S_LOGOUT = 6;
@@ -212,7 +212,7 @@ struct C2S_Enter_Room_Packet
 	MAP_TYPE map;
 };
 
-struct C2S_Leave_Room_Packet
+struct C2S_Leave_Game_Packet
 {
 	unsigned char size;
 	char type;

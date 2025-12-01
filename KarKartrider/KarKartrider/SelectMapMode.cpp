@@ -52,7 +52,7 @@ void SelectMapMode::keyboard(unsigned char key, int x, int y) {
 		}
 
 		//RoomMode* roomMode = new RoomMode();
-		MM.SetMode(std::make_unique<RoomMode>());
+		//MM.SetMode(std::make_unique<RoomMode>());
 
 		networkmgr.SendEnterRoomPacket(myMap);
 
