@@ -10,6 +10,8 @@ public:
 	bool gameStart;
 	float elapsedTime;
 
+	int rank;
+
 public:
 	Room() { reset(); } // 생성 시 기본 초기화
 	void reset();

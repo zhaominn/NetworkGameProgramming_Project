@@ -685,10 +685,19 @@ bool Player::PlayerCollisionCheck(int a, int b, float& pushX, float& pushZ)
 
 void Player::send_Rank_Packet()
 {
+	int roomIdx = this->select_map; 
+
+	if (roomIdx < 0 || roomIdx >= 2) {
+		std::cout << "Error: Invalid Room Index in send_Rank_Packet" << std::endl;
+		return;
+	}
+
+	int myRank = ++g_room[roomIdx].rank;
+
 	S2C_Rank_Packet* rank_pkt = new S2C_Rank_Packet;
 	rank_pkt->size = sizeof(S2C_Rank_Packet);
 	rank_pkt->type = S2C_RANK;
-	rank_pkt->rank = g_rankCnt++;
+	rank_pkt->rank = myRank;
 	rank_pkt->finish_time = g_ElapsedTime;
 
 	//std::cout << "finish deltaTime = " << rank_pkt->finish_time << std::endl;

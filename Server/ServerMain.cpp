@@ -16,7 +16,10 @@ bool IsRoomReady(Room& room)
 			playerCount++;
 
 			if (p->GetReady())
+			{
 				readyCount++;
+			}
+
 		}
 	}
 

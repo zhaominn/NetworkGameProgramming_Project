@@ -403,7 +403,7 @@ void Map1_Mode::draw_finish_time(float deltaTime) {
 	std::string dtText = "Time: " + std::to_string(deltaTime);
 	RenderText(0.0f, 0.0f, dtText);
 
-	std::string rankText = "Rank: " + std::to_string(g_players[g_myid].m_rank) + " / " + std::to_string(MAX_USER);
+	std::string rankText = "Rank: " + std::to_string(g_players[g_myid].m_rank) + " / " + std::to_string(g_players[g_myid].room_player_cnt;
 	RenderText(0.0f, 0.1f, rankText);
 
 

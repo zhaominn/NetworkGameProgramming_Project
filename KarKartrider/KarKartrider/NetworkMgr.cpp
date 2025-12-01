@@ -88,6 +88,7 @@ void NetworkMgr::reset()
 	g_gameStart = false;
 	g_GameEnd = false;
 	g_delta_time = 0;
+	g_players[g_myid].room_player_cnt = 0;
 }
 
 
@@ -260,6 +261,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 			MAP_TYPE mapType = (MAP_TYPE)pkt->players[i].mapType;
 
 			g_players[id].select_map = mapType; // 각 플레이어의 맵 정보 저장
+			g_players[id].room_player_cnt = pkt->playerCount;
 			g_roomPlayers.push_back(id);
 
 			std::cout << "방 플레이어: " << id

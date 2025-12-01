@@ -17,6 +17,7 @@ struct PlayerKart {
 	char m_name[NAME_SIZE];
 
 	int m_rank;
+	int room_player_cnt;
 	float m_finish_time;
 
 	float x;
