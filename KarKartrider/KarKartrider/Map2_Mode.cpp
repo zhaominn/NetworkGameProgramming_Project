@@ -89,7 +89,7 @@ void Map2_Mode::draw_ui() {
 	GLint isTextureLocation = glGetUniformLocation(shaderProgramID_UI, "isTexture");
 	glUniform1i(isTextureLocation, true);
 
-	for (int i = 0; i < booster_cnt; ++i) {
+	for (int i = 0; i < g_players[g_myid].m_booster_cnt; ++i) {
 		booster_uis[i]->draw(shaderProgramID_UI, isKeyPressed_s);
 	}
 	glUniform1i(isTextureLocation, false);
@@ -103,11 +103,11 @@ void Map2_Mode::draw_timer(float deltaTime) {
 	GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isTimer");
 	glUniform1i(isTimerLocation, true);
 
-	/*std::string timerText = "Time: " + std::to_string(deltaTime);
+	std::string timerText = "Time: " + std::to_string(deltaTime);
 	glRasterPos2f(-0.95f, 0.9f);
 	for (char c : timerText) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-	}*/
+	}
 
 	glUniform1i(isTimerLocation, false);
 
