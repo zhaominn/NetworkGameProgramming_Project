@@ -59,6 +59,7 @@ constexpr char S2C_LOGOUT = 19;
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
 enum DATA_TYPE { ACCEPT, SEND, RECV };
 enum GAME_STATE { LOBBY, ROOM, INGAME };
+enum COLLISION { WALL, FINISH, FINISH_CH };
 
 #pragma pack (push, 1)
 
@@ -225,6 +226,7 @@ struct AABB {
 	float minX, minY, minZ;
 	float maxX, maxY, maxZ;
 	bool rigid_status;
+	COLLISION collision;
 };
 
 struct C2S_Wall_Collision_1_Packet {

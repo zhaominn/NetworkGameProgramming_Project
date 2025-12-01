@@ -278,6 +278,7 @@ void Player::process_packet(char* p)
 			g_Map1Colliders[i].maxY = packet->aabbs[i].maxY;
 			g_Map1Colliders[i].maxZ = packet->aabbs[i].maxZ;
 			g_Map1Colliders[i].rigid_status = packet->aabbs[i].rigid_status;
+			g_Map1Colliders[i].collision = packet->aabbs[i].collision;
 		}
 
 		/*for (int i = 0; i < 5; ++i) {
@@ -308,6 +309,7 @@ void Player::process_packet(char* p)
 			g_Map2Colliders[i].maxY = packet->aabbs[i].maxY;
 			g_Map2Colliders[i].maxZ = packet->aabbs[i].maxZ;
 			g_Map2Colliders[i].rigid_status = packet->aabbs[i].rigid_status;
+			g_Map2Colliders[i].collision = packet->aabbs[i].collision;
 		}
 
 		/*for (int i = 0; i < 5; ++i) {

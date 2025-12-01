@@ -175,10 +175,20 @@ void Map2_Mode::init() {
 		befor_data_aabb[i].maxY = aabbMax.getY();
 		befor_data_aabb[i].maxZ = aabbMax.getZ();
 
-		if (road2_barricate[i]->name == "finish" || road2_barricate[i]->name == "finish_ch")
+		if (road2_barricate[i]->name == "finish")
+		{
 			befor_data_aabb[i].rigid_status = false;
+			befor_data_aabb[i].collision = FINISH;
+		}
+		else if (road2_barricate[i]->name == "finish_ch") {
+			befor_data_aabb[i].rigid_status = false;
+			befor_data_aabb[i].collision = FINISH_CH;
+		}
 		else
+		{
 			befor_data_aabb[i].rigid_status = true;
+			befor_data_aabb[i].collision = WALL;
+		}
 	}
 
 	networkmgr.SendWallCollisionPacket_2(befor_data_aabb);
