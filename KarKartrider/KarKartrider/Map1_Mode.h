@@ -88,7 +88,6 @@ public:
 
 	Map1_Mode();
 	~Map1_Mode() {
-		delete this;
 	}
 
 	void startBoosterRegen();

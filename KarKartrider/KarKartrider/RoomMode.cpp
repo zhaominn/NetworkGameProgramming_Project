@@ -23,6 +23,7 @@ RoomMode::~RoomMode()
 
 void RoomMode::init()
 {
+	std::cout << "Room Mode" << std::endl;
 }
 
 GLuint RoomMode::loadTexture(const char* filename) {

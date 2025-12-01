@@ -269,7 +269,20 @@ void Player::process_packet(char* p)
 	{
 		C2S_Leave_Room_Packet* packet = reinterpret_cast<C2S_Leave_Room_Packet*>(p);
 		std::cout << "Leave Room" << std::endl;
+
+		int roomIdx = packet->map;
+
+		Room& room = g_room[roomIdx];
+
+		if (room.inRoomPlayers[m_id] == this)
+		{
+			send_Leave_Room_Packet(roomIdx, m_id);
+			room.inRoomPlayers[m_id] = nullptr;
+		}
+
+		g_game_state = LOBBY;
 	}
+	break;
 	case C2S_WALL_COLLISION_1:
 	{
 		C2S_Wall_Collision_1_Packet* packet = reinterpret_cast<C2S_Wall_Collision_1_Packet*>(p);

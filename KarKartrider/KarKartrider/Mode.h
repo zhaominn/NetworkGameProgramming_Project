@@ -25,5 +25,9 @@ public:
 
 	virtual ModeType GetModeType() const = 0;
 
-	virtual ~Mode() {}
+	virtual ~Mode() {
+		if (currentInstance == this) {
+			currentInstance = nullptr;
+		}
+	}
 };

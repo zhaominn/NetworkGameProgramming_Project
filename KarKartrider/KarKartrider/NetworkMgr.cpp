@@ -3,6 +3,7 @@
 #include "root.h"
 #include "Map1_Mode.h"
 #include "Map2_Mode.h"
+#include "RoomMode.h"
 
 std::thread m_recvThread;
 std::atomic<bool> m_running{ false };
@@ -223,6 +224,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 		if (packet->id >= 0 && packet->id < MAX_USER)
 			g_players[packet->id].isReady = false;
 
+		MM.SetMode(std::make_unique<RoomMode>());
 	}
 	break;
 	case S2C_IS_READY:
@@ -262,11 +264,11 @@ void NetworkMgr::ProcessPacket(char* buf)
 
 		if (myMap == MAP_TYPE::STRAIGHT)
 		{
-			MM.SetMode(new Map1_Mode());
+			MM.SetMode(std::make_unique<Map1_Mode>());
 		}
 		else if (myMap == MAP_TYPE::RECTANGLE)
 		{
-			MM.SetMode(new Map2_Mode());
+			MM.SetMode(std::make_unique<Map2_Mode>());
 		}
 	}
 	break;

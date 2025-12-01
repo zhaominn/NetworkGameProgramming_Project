@@ -10,7 +10,7 @@
 
 Map1_Mode::Map1_Mode()
 {
-	Mode::currentInstance = this;
+	//Mode::currentInstance = this;
 	isCountNSound = true;
 	isCountGoSound = true;
 
