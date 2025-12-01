@@ -117,7 +117,16 @@ void ProcessWallCollision(Player& p, float& outPushX, float& outPushZ)
 		for (auto& box : p.g_Map1Colliders)
 		{
 			float px, pz;
-			if (WallCollisionCheck(box, p.GetID(), px, pz))
+			if (WallCollisionCheck(box, p.GetID(), px, pz)
+				&& box.collision == FINISH && !p.isFinished) {
+				p.isFinished = true;
+				p.send_Rank_Packet();
+			}
+			else if (WallCollisionCheck(box, p.GetID(), px, pz)
+				&& box.collision == FINISH && p.isFinished) {
+				return;
+			}
+			else if (WallCollisionCheck(box, p.GetID(), px, pz))
 			{
 				outPushX += px;
 				outPushZ += pz;

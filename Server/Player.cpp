@@ -658,11 +658,11 @@ void Player::send_Rank_Packet()
 
 void Player::checkIsFinished()
 {
-	if (!isFinished && (g_room[0].mapType == STRAIGHT) && (m_posZ <= -212))
+	/*if (!isFinished && (g_room[0].mapType == STRAIGHT) && (m_posZ <= -212))
 	{
 		isFinished = true;
 		send_Rank_Packet();
-	}
+	}*/
 }
 
 void Player::reset()

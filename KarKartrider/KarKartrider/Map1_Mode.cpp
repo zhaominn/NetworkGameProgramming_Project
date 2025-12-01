@@ -220,9 +220,15 @@ void Map1_Mode::init()
 		befor_data_aabb[i].maxZ = aabbMax.getZ();
 
 		if (road1_barricate[i]->name == "finish")
+		{
 			befor_data_aabb[i].rigid_status = false;
+			befor_data_aabb[i].collision = FINISH;
+		}
 		else
+		{
 			befor_data_aabb[i].rigid_status = true;
+			befor_data_aabb[i].collision = WALL;
+		}
 	}
 	
 	networkmgr.SendWallCollisionPacket_1(befor_data_aabb);

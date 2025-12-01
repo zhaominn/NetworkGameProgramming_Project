@@ -110,7 +110,7 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 					}
 
 					p->CheckBoosterState();
-					p->checkIsFinished();
+					//p->checkIsFinished();
 				}
 
 				for (int i = 0; i < MAX_USER; i++)
