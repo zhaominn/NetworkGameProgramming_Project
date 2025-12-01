@@ -522,15 +522,18 @@ void Map1_Mode::timer() {
 	const float posLerp = 0.3f;
 	g_kartRenderPos = glm::mix(g_kartRenderPos, targetPos, posLerp);
 
-	// ================
-	// 2) 네트워크 입력 송신
-	// ================
-	networkmgr.SendMovePacket(up, down, left, right);
+	if (!Pause)
+	{
+		// ================
+		// 2) 네트워크 입력 송신
+		// ================
+		networkmgr.SendMovePacket(up, down, left, right);
 
-	// ================
-	// 3) 카메라 추적 계산
-	// ================
-	setCamera();
+		// ================
+		// 3) 카메라 추적 계산
+		// ================
+		setCamera();
+	}
 
 	// ================
 	// 4) 사운드 처리
