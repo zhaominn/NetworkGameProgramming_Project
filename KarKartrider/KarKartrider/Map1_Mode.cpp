@@ -558,7 +558,7 @@ void Map1_Mode::mouseClick(int button, int state, int x, int y) {
 }
 
 void Map1_Mode::keyboard(unsigned char key, int x, int y) {
-	if (key == 27) { //esc
+	if (key == 27 && g_GameEnd) { //esc
 		if (Pause) {
 			//glutTimerFunc(16, timerHelper, 0); //
 			//isMotorSound = true;

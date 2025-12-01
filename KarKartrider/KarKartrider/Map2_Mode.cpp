@@ -511,10 +511,10 @@ void Map2_Mode::mouseClick(int button, int state, int x, int y)  {
 }
 
 void Map2_Mode::keyboard(unsigned char key, int x, int y)  {
-	if (key == 27) { //esc
+	if (key == 27 && g_GameEnd) { //esc
 		if (Pause) {
-			//glutTimerFunc(16, timerHelper, 0);
-			//isMotorSound = true;
+			glutTimerFunc(16, timerHelper, 0);
+			isMotorSound = true;
 		}
 		else {
 			glm::vec3 zAxis = glm::normalize(cameraPos - glm::vec3(karts[0]->translateMatrix[3]));
