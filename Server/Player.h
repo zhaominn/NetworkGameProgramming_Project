@@ -15,7 +15,6 @@ private:
 
 	bool isReady;
 	bool isOnline;
-	bool isFinished;
 	bool isBoosterActive;
 
 	SOCKET m_socket;
@@ -40,6 +39,7 @@ public:
 	float m_colliderHalfZ = 1.526595f;
 
 	float collisionCH = false;
+	bool isFinished;
 
 	AABB g_Map1Colliders[5]{};
 	AABB g_Map2Colliders[18]{};

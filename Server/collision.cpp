@@ -130,8 +130,13 @@ void ProcessWallCollision(Player& p, float& outPushX, float& outPushZ)
 		{
 			float px, pz;
 			if (WallCollisionCheck(box, p.GetID(), px, pz) 
-				&& box.collision == FINISH && p.collisionCH) {
+				&& box.collision == FINISH && p.collisionCH &&!p.isFinished) {
 				p.send_Rank_Packet();
+				p.isFinished = true;
+			}
+			else if (WallCollisionCheck(box, p.GetID(), px, pz) 
+				&& box.collision == FINISH && p.collisionCH && p.isFinished) {
+				return;
 			}
 			else if (WallCollisionCheck(box, p.GetID(), px, pz) 
 				&& box.collision == FINISH && !p.collisionCH) {
