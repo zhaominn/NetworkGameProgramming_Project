@@ -72,7 +72,7 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 			current_time - last_send_time
 		).count();
 
-		g_ElapsedTime = elapsed_time;
+		g_ElapsedTime = std::chrono::duration<float>(current_time - startTime).count();
 
 		if (elapsed_time >= (1000 / 60))
 		{

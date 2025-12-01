@@ -39,8 +39,10 @@ public:
 	float m_colliderHalfY = 0.533785f;
 	float m_colliderHalfZ = 1.526595f;
 
-	AABB g_Map1Colliders[5];
-	AABB g_Map2Colliders[18];
+	float collisionCH = false;
+
+	AABB g_Map1Colliders[5]{};
+	AABB g_Map2Colliders[18]{};
 
 	MAP_TYPE select_map = STRAIGHT; // default
 public:

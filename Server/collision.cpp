@@ -30,8 +30,8 @@ void ApplyBounceReflection(Player& p, float pushX, float pushZ, float bounce)
 
 bool WallCollisionCheck(const AABB& box, int id, float& pushX, float& pushZ)
 {
-	if (!box.rigid_status)
-		return false;
+	//if (!box.rigid_status)
+	//	return false;
 	pushX = pushZ = 0;
 
 	float px = g_users[id].m_posX;
@@ -129,7 +129,20 @@ void ProcessWallCollision(Player& p, float& outPushX, float& outPushZ)
 		for (auto& box : p.g_Map2Colliders)
 		{
 			float px, pz;
-			if (WallCollisionCheck(box, p.GetID(), px, pz))
+			if (WallCollisionCheck(box, p.GetID(), px, pz) 
+				&& box.collision == FINISH && p.collisionCH) {
+				p.send_Rank_Packet();
+			}
+			else if (WallCollisionCheck(box, p.GetID(), px, pz) 
+				&& box.collision == FINISH && !p.collisionCH) {
+				return;
+			}
+			else if (WallCollisionCheck(box, p.GetID(), px, pz)
+				&& box.collision == FINISH_CH)
+			{
+				p.collisionCH = true;
+			}
+			else if (WallCollisionCheck(box, p.GetID(), px, pz))
 			{
 				outPushX += px;
 				outPushZ += pz;
