@@ -80,6 +80,17 @@ void NetworkMgr::StopRunning()
 	}
 }
 
+void NetworkMgr::reset()
+{
+	m_currentMode = nullptr;
+	g_players[g_myid].isReady = false;
+	g_players[g_myid].isBoosterOn = false;
+	g_gameStart = false;
+	g_GameEnd = false;
+	g_delta_time = 0;
+}
+
+
 bool NetworkMgr::IsRunning() const
 {
 	return m_running;
@@ -179,7 +190,6 @@ void NetworkMgr::SendWallCollisionPacket_2(AABB aabb[18])
 	SendPacket(reinterpret_cast<char*>(packet), sizeof(C2S_Wall_Collision_2_Packet));
 	delete packet;
 }
-
 
 void NetworkMgr::ProcessPacket(char* buf)
 {
@@ -307,11 +317,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_LEAVE_GAME:
 	{
 		std::cout << "Leave" << std::endl;
-		m_currentMode = nullptr;
-		g_players[g_myid].isReady = false;
-		g_players[g_myid].isBoosterOn = false;
-		g_gameStart = false;
-
+		reset();
 		MM.SetMode(std::make_unique<RoomMode>());
 		return;
 	}
