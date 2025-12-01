@@ -798,7 +798,7 @@ void Map1_Mode::draw_model() {
 	draw_ui();
 	draw_dashBoard();
 	draw_speed();
-	if (isGameOver)
+	if (g_GameEnd)
 		draw_finish_time(g_delta_time);
 	glEnable(GL_DEPTH_TEST);
 

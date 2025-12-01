@@ -72,6 +72,8 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 			current_time - last_send_time
 		).count();
 
+		g_ElapsedTime = elapsed_time;
+
 		if (elapsed_time >= (1000 / 60))
 		{
 			std::lock_guard<std::mutex> lock1(g_UserMutex);

@@ -103,11 +103,11 @@ void Map2_Mode::draw_timer(float deltaTime) {
 	GLint isTimerLocation = glGetUniformLocation(shaderProgramID_UI, "isTimer");
 	glUniform1i(isTimerLocation, true);
 
-	std::string timerText = "Time: " + std::to_string(deltaTime);
+	/*std::string timerText = "Time: " + std::to_string(deltaTime);
 	glRasterPos2f(-0.95f, 0.9f);
 	for (char c : timerText) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-	}
+	}*/
 
 	glUniform1i(isTimerLocation, false);
 
@@ -310,6 +310,8 @@ void Map2_Mode::draw_finish_time(float deltaTime) {
 
 	std::string Text = "Time: " + std::to_string(deltaTime);
 
+	//std::cout << "finish deltaTime = " << deltaTime << std::endl;
+
 	/*glRasterPos2f(0.0f, 0.0f);
 	for (char c : Text) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
@@ -357,7 +359,7 @@ void Map2_Mode::lose_game() {
 }
 
 void Map2_Mode::checkCollisionKart() {
-	for (auto& kart : karts) {
+	/*for (auto& kart : karts) {
 		if (kart->name != "car") continue;
 
 		kart->rigidBody->setGravity(btVector3(0.0f, 0.0f, 0.0f));
@@ -424,11 +426,11 @@ void Map2_Mode::checkCollisionKart() {
 				}
 			}
 		}
-	}
+	}*/
 }
 
 void Map2_Mode::checkEngineSound() {
-	if (kart_speed != 0.0f) {
+	if (g_players[g_myid].m_speed != 0.0f) {
 		if (!isMotorSound) {
 			isMotorSound = true;
 			motorSoundThread = std::thread(&Map2_Mode::engine_sound, this);
@@ -742,7 +744,7 @@ void Map2_Mode::draw_model()  {
 	draw_ui();
 	draw_dashBoard();
 	draw_speed();
-	if (isGameOver)
+	if (g_GameEnd)
 		draw_finish_time(g_delta_time);
 	glEnable(GL_DEPTH_TEST);
 

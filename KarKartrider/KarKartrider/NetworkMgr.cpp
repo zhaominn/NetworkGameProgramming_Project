@@ -292,6 +292,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_players[g_myid].m_rank = p->rank;
 		g_delta_time = p->finish_time;
 		g_players[g_myid].m_finish_time = g_delta_time;
+		g_GameEnd = true;
 	}
 	break;
 	case S2C_LOGOUT:

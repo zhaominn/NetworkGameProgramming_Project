@@ -647,6 +647,8 @@ void Player::send_Rank_Packet()
 	rank_pkt->rank = g_rankCnt++;
 	rank_pkt->finish_time = g_ElapsedTime;
 
+	std::cout << "finish deltaTime = " << rank_pkt->finish_time << std::endl;
+
 	send_packet(reinterpret_cast<char*>(rank_pkt), sizeof(S2C_Rank_Packet));
 
 	delete rank_pkt;
