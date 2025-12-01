@@ -18,6 +18,7 @@ RoomMode::RoomMode()
 	, isRoad2Hovered(false)
 	, isReadyHovered(false)
 {
+	
 }
 
 RoomMode::~RoomMode()

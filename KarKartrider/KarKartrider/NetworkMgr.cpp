@@ -233,9 +233,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 
 		if (packet->id >= 0 && packet->id < MAX_USER)
 			g_players[packet->id].isReady = false;
-
-		if (g_players[g_myid].room_player_cnt > 0)
-			--g_players[g_myid].room_player_cnt;
 	}
 	break;
 	case S2C_LEAVE_GAME:
@@ -243,7 +240,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 
 		reset();
 		MM.SetMode(std::make_unique<RoomMode>());
-
+		SendEnterRoomPacket(STRAIGHT);
 		return;
 	}
 	break;
