@@ -338,12 +338,8 @@ void RoomMode::RefreshSlotData()
 		if (!p.isOnline) continue;
 		if (p.select_map != myRoomMapType) continue;
 
-		if (p.isRoomMaster) {
-			masterID = p.m_id;
-		}
-		else {
+		
 			normalPlayers.push_back(p.m_id);
-		}
 	}
 
 	if (masterID != -1)

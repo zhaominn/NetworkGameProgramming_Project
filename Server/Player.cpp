@@ -253,35 +253,16 @@ void Player::process_packet(char* p)
 			Room& oldRoom = g_room[oldRoomIdx];
 			send_Leave_Room_Packet(oldRoomIdx, m_id);
 			oldRoom.inRoomPlayers[m_id] = nullptr;
-			if (oldRoom.roomManagerID == m_id)
-			{
-				oldRoom.roomManagerID = -1;
-				for (int i = 0; i < MAX_USER; ++i)
-				{
-					Player* nextPlayer = oldRoom.inRoomPlayers[i];
-					if (nextPlayer != nullptr)
-					{
-						oldRoom.roomManagerID = nextPlayer->GetID();
-						nextPlayer->send_Change_Master_Packet(oldRoomIdx, oldRoom.roomManagerID);
-
-						break;
-					}
-				}
-			}
 		}
 
 		Room& newRoom = g_room[newRoomIdx];
 
 		if (newRoom.inRoomPlayers[m_id] != nullptr) break;
-
-		if (newRoom.roomManagerID == -1)
-			newRoom.roomManagerID = m_id;
-
 		select_map = packet->map;
 		newRoom.inRoomPlayers[m_id] = this;
 		newRoom.mapType = packet->map;
 
-		send_Enter_Room_Packet(packet->map, (newRoom.roomManagerID == m_id));
+		send_Enter_Room_Packet(packet->map);
 	}
 	break;
 	case C2S_WALL_COLLISION_1:
@@ -377,29 +358,6 @@ void Player::disconnect()
 
 				g_room[r].inRoomPlayers[old_id] = nullptr;
 			}
-
-			if (wasInRoom)
-			{
-				if (g_room[r].roomManagerID == old_id)
-				{
-					g_room[r].roomManagerID = -1;
-
-					for (int i = 0; i < MAX_USER; ++i)
-					{
-						Player* nextPlayer = g_room[r].inRoomPlayers[i];
-
-						if (nextPlayer != nullptr)
-						{
-							g_room[r].roomManagerID = nextPlayer->GetID();
-							std::cout << "[Disconnect] Room " << r << " Master changed to Player " << nextPlayer->GetID() << std::endl;
-
-							nextPlayer->send_Change_Master_Packet(r, g_room[r].roomManagerID);
-
-							break;
-						}
-					}
-				}
-			}
 		}
 
 		if (g_usersNum > 0) g_usersNum--;
@@ -435,7 +393,7 @@ void Player::send_Login_Fail_Packet()
 	send_packet(reinterpret_cast<char*>(&fail_packet), sizeof(fail_packet));
 }
 
-void Player::send_Enter_Room_Packet(MAP_TYPE map, bool isRoomMaster)
+void Player::send_Enter_Room_Packet(MAP_TYPE map)
 {
 	S2C_EnterRoom_Packet my_packet;
 	my_packet.size = sizeof(S2C_EnterRoom_Packet);
@@ -444,7 +402,6 @@ void Player::send_Enter_Room_Packet(MAP_TYPE map, bool isRoomMaster)
 	my_packet.map = map;
 	strncpy(my_packet.name, m_name, NAME_SIZE - 1);
 	my_packet.name[NAME_SIZE - 1] = '\0';
-	my_packet.isRoomMaster = isRoomMaster;
 
 	// 나 자신에게 전송
 	send_packet(reinterpret_cast<char*>(&my_packet), sizeof(my_packet));
@@ -479,28 +436,6 @@ void Player::send_Ready_Packet()
 	send_packet(reinterpret_cast<char*>(ready_pkt), sizeof(S2C_Ready_Packet));
 	broadcast(reinterpret_cast<char*>(ready_pkt), sizeof(S2C_Ready_Packet));
 	delete ready_pkt;
-}
-
-void Player::send_Change_Master_Packet(int roomIdx, int newMasterID)
-{
-	S2C_Change_Master_Packet pkt;
-	pkt.size = sizeof(S2C_Change_Master_Packet);
-	pkt.type = S2C_CHANGE_ROOMMASTER;
-	pkt.id = newMasterID;
-
-	// 해당 방에 있는 모든 유저에게 전송
-	Room& targetRoom = g_room[roomIdx];
-
-	for (int i = 0; i < MAX_USER; ++i)
-	{
-		Player* p = targetRoom.inRoomPlayers[i];
-
-		// 유효한 유저에게만 전송
-		if (p != nullptr)
-		{
-			p->send_packet(reinterpret_cast<char*>(&pkt), sizeof(pkt));
-		}
-	}
 }
 
 void Player::send_Game_Start_Packet(Room rooms[2])

@@ -6,7 +6,7 @@ class Room
 public:
 	MAP_TYPE mapType;
 	Player* inRoomPlayers[MAX_USER];
-	int roomManagerID;
+	// int roomManagerID;
 	bool gameStart;
 	float elapsedTime;
 

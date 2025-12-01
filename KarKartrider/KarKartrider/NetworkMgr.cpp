@@ -198,7 +198,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_players[packet->id].select_map = packet->map;
 		strncpy(g_players[packet->id].m_name, packet->name, NAME_SIZE - 1);
 		g_players[packet->id].m_name[NAME_SIZE - 1] = '\0';
-		g_players[packet->id].isRoomMaster = packet->isRoomMaster;
 		g_players[packet->id].isReady = false;
 		g_players[packet->id].isOnline = true;
 
@@ -209,24 +208,10 @@ void NetworkMgr::ProcessPacket(char* buf)
 	{
 		S2C_LeaveRoom_Packet* packet = reinterpret_cast<S2C_LeaveRoom_Packet*>(buf);
 		g_players[packet->id].isOnline = false;
-		g_players[packet->id].isRoomMaster = false;
 
 		if (packet->id >= 0 && packet->id < MAX_USER)
 			g_players[packet->id].isReady = false;
 
-	}
-	break;
-	case S2C_CHANGE_ROOMMASTER:
-	{
-		S2C_Change_Master_Packet* packet = reinterpret_cast<S2C_Change_Master_Packet*>(buf);
-		int newMasterID = packet->id;
-		for (int i = 0; i < MAX_USER; ++i)
-		{
-			if (i == newMasterID)
-				g_players[i].isRoomMaster = true;
-			else
-				g_players[i].isRoomMaster = false;
-		}
 	}
 	break;
 	case S2C_IS_READY:

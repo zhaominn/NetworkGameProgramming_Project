@@ -2,7 +2,7 @@
 
 void Room::reset()
 {
-    roomManagerID = -1;
+    // roomManagerID = -1;
     gameStart = false;
     elapsedTime = 0.0f;
     mapType = STRAIGHT;

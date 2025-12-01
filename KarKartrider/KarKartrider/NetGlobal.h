@@ -13,7 +13,6 @@ struct PlayerKart {
 	bool isReady;
 	bool isOnline;
 	bool isBoosterOn;
-	bool isRoomMaster;
 	SOCKET m_socket;
 	char m_name[NAME_SIZE];
 

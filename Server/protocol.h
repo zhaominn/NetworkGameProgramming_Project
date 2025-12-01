@@ -46,7 +46,7 @@ constexpr char S2C_PLAYER_INFO = 8;
 constexpr char S2C_LOGIN_FAIL = 9;
 constexpr char S2C_ENTER_ROOM = 10;
 constexpr char S2C_LEAVE_ROOM = 11;
-constexpr char S2C_CHANGE_ROOMMASTER = 12;
+// constexpr char S2C_CHANGE_ROOMMASTER = 12;
 constexpr char S2C_IS_READY = 13;
 constexpr char S2C_GAME_START = 14;
 constexpr char S2C_MOVE = 15;
@@ -83,17 +83,9 @@ struct S2C_EnterRoom_Packet
 	char id;
 	MAP_TYPE map;
 	char name[NAME_SIZE];
-	bool isRoomMaster;
 };
 
 struct S2C_LeaveRoom_Packet
-{
-	unsigned char size;
-	char type;
-	int id;
-};
-
-struct S2C_Change_Master_Packet
 {
 	unsigned char size;
 	char type;
