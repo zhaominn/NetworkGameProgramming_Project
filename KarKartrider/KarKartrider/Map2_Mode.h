@@ -101,7 +101,7 @@ public:
 	glm::mat4 myKartMatrix = glm::mat4(1.0f);
 
 	Map2_Mode();
-	~Map2_Mode() {}
+	~Map2_Mode();
 
 	void startBoosterRegen();
 

@@ -17,6 +17,32 @@ Map1_Mode::Map1_Mode()
 	boosterRegenThread = std::thread(&Map1_Mode::startBoosterRegen, this);
 }
 
+Map1_Mode::~Map1_Mode()
+{
+	// 스레드 종료
+	isBackgroundSound = false;
+	isCountNSound = false;
+	isCountGoSound = false;
+	isMotorSound = false;
+	isCrashSound = false;
+	isBoosterSound = false;
+	isWinSound = false;
+	isLoseSound = false;
+
+	isBoosterRegenActive = false;
+
+	if (backgroundSoundThread.joinable()) backgroundSoundThread.join();
+	if (countNSoundThread.joinable()) countNSoundThread.join();
+	if (countGoSoundThread.joinable()) countGoSoundThread.join();
+	if (motorSoundThread.joinable()) motorSoundThread.join();
+	if (crashSoundThread.joinable()) crashSoundThread.join();
+	if (boosterSoundThread.joinable()) boosterSoundThread.join();
+	if (winSoundThread.joinable()) winSoundThread.join();
+	if (loseSoundThread.joinable()) loseSoundThread.join();
+
+	if (boosterRegenThread.joinable()) boosterRegenThread.join();
+}
+
 void Map1_Mode::startBoosterRegen()
 {
 	// 서버에서 처리

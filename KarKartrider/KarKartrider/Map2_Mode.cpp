@@ -14,10 +14,36 @@
 
 Map2_Mode::Map2_Mode()
 {
-	Mode::currentInstance = this;
+	//Mode::currentInstance = this;
 	isCountNSound = true;
 	isCountGoSound = true;
 	boosterRegenThread = std::thread(&Map2_Mode::startBoosterRegen, this);
+}
+
+Map2_Mode::~Map2_Mode()
+{
+	// 스레드 종료
+	isBackgroundSound = false;
+	isCountNSound = false;
+	isCountGoSound = false;
+	isMotorSound = false;
+	isCrashSound = false;
+	isBoosterSound = false;
+	isWinSound = false;
+	isLoseSound = false;
+
+	isBoosterRegenActive = false;
+
+	if (backgroundSoundThread.joinable()) backgroundSoundThread.join();
+	if (countNSoundThread.joinable()) countNSoundThread.join();
+	if (countGoSoundThread.joinable()) countGoSoundThread.join();
+	if (motorSoundThread.joinable()) motorSoundThread.join();
+	if (crashSoundThread.joinable()) crashSoundThread.join();
+	if (boosterSoundThread.joinable()) boosterSoundThread.join();
+	if (winSoundThread.joinable()) winSoundThread.join();
+	if (loseSoundThread.joinable()) loseSoundThread.join();
+
+	if (boosterRegenThread.joinable()) boosterRegenThread.join();
 }
 
 void Map2_Mode::startBoosterRegen() {

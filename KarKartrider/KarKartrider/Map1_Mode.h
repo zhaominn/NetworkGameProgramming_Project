@@ -87,8 +87,7 @@ public:
 
 
 	Map1_Mode();
-	~Map1_Mode() {
-	}
+	~Map1_Mode();
 
 	void startBoosterRegen();
 	void draw_dashBoard();

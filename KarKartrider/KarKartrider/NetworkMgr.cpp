@@ -307,7 +307,9 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_LEAVE_GAME:
 	{
 		std::cout << "Leave" << std::endl;
+		m_currentMode = nullptr;
 		MM.SetMode(std::make_unique<RoomMode>());
+		return;
 	}
 	break;
 	case S2C_LOGOUT:
