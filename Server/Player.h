@@ -62,7 +62,7 @@ public:
 	void send_Login_Fail_Packet();
 	void send_Enter_Room_Packet(MAP_TYPE map);
 	void send_Leave_Room_Packet(int roomIdx, int leaverID);
-	void Send_Leave_Game_Packet();
+	void Send_Leave_Game_Packet(int roomIdx, int leaverID);
 	void send_Ready_Packet();
 	void send_Game_Start_Packet(Room rooms[2]);
 	void send_move_Packet();

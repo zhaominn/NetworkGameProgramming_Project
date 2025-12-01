@@ -279,16 +279,32 @@ void Player::process_packet(char* p)
 	{
 		EnterCriticalSection(&g_CS);
 		C2S_Leave_Game_Packet* packet = reinterpret_cast<C2S_Leave_Game_Packet*>(p);
-		std::cout << "Leave Game" << std::endl;
+		//std::cout << "Leave Game" << std::endl;
 
 		int roomIdx = packet->map;
-		Room& room = g_room[roomIdx];
-		room.inRoomPlayers[m_id] = nullptr;
-		room.reset();
+		int leaverID = m_id;
 
-		Send_Leave_Game_Packet();
+		Room& room = g_room[roomIdx];
+		Send_Leave_Game_Packet(roomIdx, leaverID);
+
+		room.inRoomPlayers[m_id] = nullptr;
+		if (room.room_player_cnt > 0) --room.room_player_cnt;
+
+		bool isEmpty = true;
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (room.inRoomPlayers[i] != nullptr) {
+				isEmpty = false;
+				break;
+			}
+		}
+
+		if (isEmpty) {
+			room.reset();
+		}
+
 		g_game_state = LOBBY;
 		reset();
+
 		LeaveCriticalSection(&g_CS);
 	}
 	break;
@@ -449,7 +465,7 @@ void Player::send_Leave_Room_Packet(int roomIdx, int leaverID)
 
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		if(g_room[roomIdx].inRoomPlayers[i]!=nullptr)
+		if (g_room[roomIdx].inRoomPlayers[i] != nullptr)
 		{
 			Player* p = g_room[roomIdx].inRoomPlayers[i];
 			p->send_packet(reinterpret_cast<char*>(&pkt), sizeof(S2C_LeaveRoom_Packet));
@@ -459,15 +475,42 @@ void Player::send_Leave_Room_Packet(int roomIdx, int leaverID)
 	send_packet(reinterpret_cast<char*>(&pkt), sizeof(S2C_LeaveRoom_Packet));
 }
 
-void Player::Send_Leave_Game_Packet()
+void Player::Send_Leave_Game_Packet(int roomIdx, int leaverID)
 {
-	std::cout << "Send leave packet" << std::endl;
+	// 1. 나가는 사람용 패킷 (로비로 이동)
 	S2C_Leave_Game_Packet* leave_pkt = new S2C_Leave_Game_Packet;
 	leave_pkt->size = sizeof(S2C_Leave_Game_Packet);
 	leave_pkt->type = S2C_LEAVE_GAME;
-	leave_pkt->id = GetID();
-	send_packet(reinterpret_cast<char*>(leave_pkt), sizeof(S2C_Leave_Game_Packet));
+	leave_pkt->leaverID = leaverID;
+	leave_pkt->id = leaverID;
+
+	// 2. 남는 사람용 패킷 (나간 캐릭터 삭제 알림 -> LEAVE_ROOM 패킷 재활용)
+	S2C_LeaveRoom_Packet* notify_pkt = new S2C_LeaveRoom_Packet;
+	notify_pkt->size = sizeof(S2C_LeaveRoom_Packet);
+	notify_pkt->type = S2C_LEAVE_ROOM;
+	notify_pkt->id = leaverID; // 나간 사람의 ID
+
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		Player* pTarget = g_room[roomIdx].inRoomPlayers[i];
+
+		if (pTarget != nullptr && pTarget->GetID() != -1)
+		{
+			// A. 나가는 당사자라면 -> LEAVE_GAME 패킷 전송
+			if (pTarget->GetID() == leaverID)
+			{
+				pTarget->send_packet(reinterpret_cast<char*>(leave_pkt), sizeof(S2C_Leave_Game_Packet));
+			}
+			// B. 남은 사람들이라면 -> LEAVE_ROOM 패킷 전송
+			else
+			{
+				pTarget->send_packet(reinterpret_cast<char*>(notify_pkt), sizeof(S2C_LeaveRoom_Packet));
+			}
+		}
+	}
+
 	delete leave_pkt;
+	delete notify_pkt;
 }
 
 void Player::send_Ready_Packet()
@@ -504,6 +547,7 @@ void Player::send_Game_Start_Packet(Room rooms[2])
 	}
 
 	pkt.playerCount = count;
+	rooms[roomId].room_player_cnt = count;
 
 	pkt.size = sizeof(S2C_GameStart_Packet) - (sizeof(RoomPlayer) * (MAX_USER - count));
 
@@ -685,7 +729,7 @@ bool Player::PlayerCollisionCheck(int a, int b, float& pushX, float& pushZ)
 
 void Player::send_Rank_Packet()
 {
-	int roomIdx = this->select_map; 
+	int roomIdx = this->select_map;
 
 	if (roomIdx < 0 || roomIdx >= 2) {
 		std::cout << "Error: Invalid Room Index in send_Rank_Packet" << std::endl;

@@ -182,6 +182,7 @@ struct S2C_Leave_Game_Packet
 	unsigned char size;
 	char type;
 	int id;
+	int leaverID;
 };
 
 // C2S

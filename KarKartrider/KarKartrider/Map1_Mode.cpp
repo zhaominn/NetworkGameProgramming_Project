@@ -403,7 +403,7 @@ void Map1_Mode::draw_finish_time(float deltaTime) {
 	std::string dtText = "Time: " + std::to_string(deltaTime);
 	RenderText(0.0f, 0.0f, dtText);
 
-	std::string rankText = "Rank: " + std::to_string(g_players[g_myid].m_rank) + " / " + std::to_string(g_players[g_myid].room_player_cnt;
+	std::string rankText = "Rank: " + std::to_string(g_players[g_myid].m_rank) + " / " + std::to_string(g_players[g_myid].room_player_cnt);
 	RenderText(0.0f, 0.1f, rankText);
 
 
@@ -585,26 +585,30 @@ void Map1_Mode::keyboard(unsigned char key, int x, int y) {
 			//isMotorSound = true;
 		}
 		else {
-			glm::vec3 zAxis = glm::normalize(cameraPos - glm::vec3(karts[0]->translateMatrix[3]));
-			// 
+			glm::vec3 forward = glm::normalize(cameraDirection - cameraPos);
+
+			float distFromCamera = 2.0f; 
+			glm::vec3 uiPosition = cameraPos + (forward * distFromCamera);
+
+			glm::vec3 zAxis = -forward;
 			glm::vec3 xAxis = glm::normalize(glm::cross(cameraUp, zAxis));
-			//
 			glm::vec3 yAxis = glm::cross(zAxis, xAxis);
-			// 3x3
-			glm::mat3 rotationMatrix = glm::mat3(
-				xAxis, // X
-				yAxis, // Y
-				zAxis  // 
-			);
+
+			glm::mat4 rotationMatrix = glm::mat4(1.0f);
+			rotationMatrix[0] = glm::vec4(xAxis, 0.0f);
+			rotationMatrix[1] = glm::vec4(yAxis, 0.0f);
+			rotationMatrix[2] = glm::vec4(zAxis, 0.0f);
+			rotationMatrix[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
 
 			glm::mat4 modelMatrix = glm::mat4(1.0f);
-			modelMatrix[0] = glm::vec4(rotationMatrix[0], 0.0f);
-			modelMatrix[1] = glm::vec4(rotationMatrix[1], 0.0f);
-			modelMatrix[2] = glm::vec4(rotationMatrix[2], 0.0f);
-			modelMatrix[3] = glm::vec4(cameraPos, 1.0f);
-			pause[0]->translateMatrix = modelMatrix;
-			pause[0]->translateMatrix = glm::translate(pause[0]->translateMatrix, glm::vec3(0.0, 0.0, -2.0));
+			modelMatrix[3] = glm::vec4(uiPosition, 1.0f); 
 
+			pause[0]->translateMatrix = glm::mat4(1.0f);
+			pause[0]->translateMatrix[0] = glm::vec4(xAxis, 0.0f);
+			pause[0]->translateMatrix[1] = glm::vec4(yAxis, 0.0f);
+			pause[0]->translateMatrix[2] = glm::vec4(zAxis, 0.0f);
+			pause[0]->translateMatrix[3] = glm::vec4(uiPosition, 1.0f);
 
 			isMotorSound = false;
 			if (motorSoundThread.joinable()) {

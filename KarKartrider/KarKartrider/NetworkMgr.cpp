@@ -233,6 +233,18 @@ void NetworkMgr::ProcessPacket(char* buf)
 
 		if (packet->id >= 0 && packet->id < MAX_USER)
 			g_players[packet->id].isReady = false;
+
+		if (g_players[g_myid].room_player_cnt > 0)
+			--g_players[g_myid].room_player_cnt;
+	}
+	break;
+	case S2C_LEAVE_GAME:
+	{
+
+		reset();
+		MM.SetMode(std::make_unique<RoomMode>());
+
+		return;
 	}
 	break;
 	case S2C_IS_READY:
@@ -314,14 +326,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_delta_time = p->finish_time;
 		g_players[g_myid].m_finish_time = g_delta_time;
 		g_GameEnd = true;
-	}
-	break;
-	case S2C_LEAVE_GAME:
-	{
-		std::cout << "Leave" << std::endl;
-		reset();
-		MM.SetMode(std::make_unique<RoomMode>());
-		return;
 	}
 	break;
 	case S2C_LOGOUT:
