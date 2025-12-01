@@ -308,6 +308,10 @@ void NetworkMgr::ProcessPacket(char* buf)
 	{
 		std::cout << "Leave" << std::endl;
 		m_currentMode = nullptr;
+		g_players[g_myid].isReady = false;
+		g_players[g_myid].isBoosterOn = false;
+		g_gameStart = false;
+
 		MM.SetMode(std::make_unique<RoomMode>());
 		return;
 	}

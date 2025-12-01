@@ -71,6 +71,7 @@ void Player::process_packet(char* p)
 	switch (packet_type) {
 	case C2S_LOGIN:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Login_Packet* login_packet = reinterpret_cast<C2S_Login_Packet*>(p);
 
 		// if login fail
@@ -87,10 +88,12 @@ void Player::process_packet(char* p)
 		std::cout << "[id : " << m_id << "]" << std::endl;
 
 		send_Player_Info_Packet();
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
 	case C2S_IS_READY:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Change_Ready_Packet* change_ready_packet = reinterpret_cast<C2S_Change_Ready_Packet*>(p);
 
 		SetIsReady(!GetReady());
@@ -122,10 +125,12 @@ void Player::process_packet(char* p)
 		}
 
 		send_Ready_Packet();
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
 	case C2S_MOVE:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Move_Packet* move_packet = reinterpret_cast<C2S_Move_Packet*>(p);
 		m_up = move_packet->up;
 		m_down = move_packet->down;
@@ -226,13 +231,16 @@ void Player::process_packet(char* p)
 
 		m_posX += GetSpeed() * dirX;
 		m_posZ += GetSpeed() * dirZ;
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
 	case C2S_BOOSTER:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Booster_Packet* booster_packet = reinterpret_cast<C2S_Booster_Packet*>(p);
 		SetBoosterCnt(booster_packet->booster_cnt);
 		ActiveBooster();
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
 	case C2S_LOGOUT:
@@ -243,6 +251,7 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_ENTER_ROOM:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Enter_Room_Packet* packet = reinterpret_cast<C2S_Enter_Room_Packet*>(p);
 
 		int newRoomIdx = packet->map;
@@ -263,23 +272,29 @@ void Player::process_packet(char* p)
 		newRoom.mapType = packet->map;
 
 		send_Enter_Room_Packet(packet->map);
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
 	case C2S_LEAVE_GAME:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Leave_Game_Packet* packet = reinterpret_cast<C2S_Leave_Game_Packet*>(p);
 		std::cout << "Leave Game" << std::endl;
 
 		int roomIdx = packet->map;
 		Room& room = g_room[roomIdx];
 		room.inRoomPlayers[m_id] = nullptr;
+		room.reset();
 
 		Send_Leave_Game_Packet();
 		g_game_state = LOBBY;
+		reset();
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
 	case C2S_WALL_COLLISION_1:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Wall_Collision_1_Packet* packet = reinterpret_cast<C2S_Wall_Collision_1_Packet*>(p);
 
 		for (int i = 0; i < 5; ++i) {
@@ -306,11 +321,12 @@ void Player::process_packet(char* p)
 		for (int i = 0; i < 5; ++i) {
 			std::cout << "충돌 상태 : " << g_Map1Colliders[i].rigid_status << std::endl;
 		}*/
-
+		LeaveCriticalSection(&g_CS);
 		break;
 	}
 	case C2S_WALL_COLLISION_2:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Wall_Collision_2_Packet* packet = reinterpret_cast<C2S_Wall_Collision_2_Packet*>(p);
 
 		for (int i = 0; i < 18; ++i) {
@@ -337,7 +353,7 @@ void Player::process_packet(char* p)
 		for (int i = 0; i < 5; ++i) {
 			std::cout << "충돌 상태 : " << g_Map1Colliders[i].rigid_status << std::endl;
 		}*/
-
+		LeaveCriticalSection(&g_CS);
 		break;
 	}
 	default:
@@ -693,24 +709,28 @@ void Player::checkIsFinished()
 
 void Player::reset()
 {
-	if (m_name) {
-		delete[] m_name;
-		m_name = nullptr;
-	}
+	m_up = false;
+	m_down = false;
+	m_left = false;
+	m_right = false;
+	m_release = false;
 
-	m_name = new char[1];
-	m_name[0] = '\0';
+	m_posX = 0;
+	m_posY = 0;
+	m_posZ = 0;
 
-	m_id = -1;
 	m_yaw = 0;
 	m_speed = 0;
 	m_face_rotation = 0;
 	m_body_rotation = 0;
+	m_booster_head_tilt = 0;
 	m_booster_cnt = 2;
 	isReady = false;
 	isOnline = false;
 	isBoosterActive = false;
-	m_socket = INVALID_SOCKET;
+	isFinished = false;
+	collisionCH = false;
+	select_map = STRAIGHT;
 }
 
 void Player::SetSocket(SOCKET socket)

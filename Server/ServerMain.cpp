@@ -78,7 +78,7 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 
 		if (elapsed_time >= (1000 / 60))
 		{
-			std::lock_guard<std::mutex> lock1(g_UserMutex);
+			EnterCriticalSection(&g_CS);
 
 			for (int roomIdx = 0; roomIdx < 2; roomIdx++)
 			{
@@ -123,6 +123,7 @@ DWORD WINAPI UpdatePosition(LPVOID lpParam)
 					p->send_move_Packet();
 				}
 			}
+			LeaveCriticalSection(&g_CS);
 
 			last_send_time = current_time;
 		}
@@ -181,6 +182,8 @@ int main()
 			u_long off = 0;
 			ioctlsocket(clientSock, FIONBIO, &off);
 
+			EnterCriticalSection(&g_CS);
+
 			int new_player_id = -1;
 
 			for (int i = 0; i < MAX_USER; ++i) {
@@ -202,6 +205,8 @@ int main()
 			{
 				closesocket(clientSock); // 자리 없으면 거절
 			}
+
+			LeaveCriticalSection(&g_CS);
 		}
 		else
 		{
@@ -214,6 +219,7 @@ int main()
 		}
 
 		// 2) Room 별로 READY 검사 → 시작 여부 판단
+		EnterCriticalSection(&g_CS);
 		for (int roomIdx = 0; roomIdx < 2; roomIdx++)
 		{
 			Room& room = g_room[roomIdx];
@@ -235,7 +241,7 @@ int main()
 				room.elapsedTime = 0.0f;
 			}
 		}
-
+		LeaveCriticalSection(&g_CS);
 		Sleep(1); // CPU 너무 안 태우게 살짝 쉼
 	}
 
