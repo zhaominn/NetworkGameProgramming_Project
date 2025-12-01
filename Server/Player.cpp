@@ -274,8 +274,7 @@ void Player::process_packet(char* p)
 		Room& room = g_room[roomIdx];
 		room.inRoomPlayers[m_id] = nullptr;
 
-
-
+		Send_Leave_Game_Packet();
 		g_game_state = LOBBY;
 	}
 	break;
@@ -442,6 +441,17 @@ void Player::send_Leave_Room_Packet(int roomIdx, int leaverID)
 	}
 
 	send_packet(reinterpret_cast<char*>(&pkt), sizeof(S2C_LeaveRoom_Packet));
+}
+
+void Player::Send_Leave_Game_Packet()
+{
+	std::cout << "Send leave packet" << std::endl;
+	S2C_Leave_Game_Packet* leave_pkt = new S2C_Leave_Game_Packet;
+	leave_pkt->size = sizeof(S2C_Leave_Game_Packet);
+	leave_pkt->type = S2C_LEAVE_GAME;
+	leave_pkt->id = GetID();
+	send_packet(reinterpret_cast<char*>(leave_pkt), sizeof(S2C_Leave_Game_Packet));
+	delete leave_pkt;
 }
 
 void Player::send_Ready_Packet()

@@ -291,7 +291,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_BOOSTER:
 	{
 		S2C_Booster_Packet* p = reinterpret_cast<S2C_Booster_Packet*>(buf);
-		//std::cout << "get boooster packet" << std::endl;
 		g_players[g_myid].isBoosterOn = p->boosterOn;
 		g_players[g_myid].m_booster_cnt = p->booster_cnt;
 	}
@@ -303,6 +302,12 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_delta_time = p->finish_time;
 		g_players[g_myid].m_finish_time = g_delta_time;
 		g_GameEnd = true;
+	}
+	break;
+	case S2C_LEAVE_GAME:
+	{
+		std::cout << "Leave" << std::endl;
+		MM.SetMode(std::make_unique<RoomMode>());
 	}
 	break;
 	case S2C_LOGOUT:

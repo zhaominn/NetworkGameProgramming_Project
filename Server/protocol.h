@@ -47,14 +47,15 @@ constexpr char S2C_PLAYER_INFO = 9;
 constexpr char S2C_LOGIN_FAIL = 10;
 constexpr char S2C_ENTER_ROOM = 11;
 constexpr char S2C_LEAVE_ROOM = 12;
-// constexpr char S2C_CHANGE_ROOMMASTER = 13;
-constexpr char S2C_IS_READY = 14;
-constexpr char S2C_GAME_START = 15;
-constexpr char S2C_MOVE = 16;
-constexpr char S2C_BOOSTER = 17;
-// constexpr char S2C_WORLD_UPDATE = 18;
-constexpr char S2C_RANK = 19;
-constexpr char S2C_LOGOUT = 20;
+constexpr char S2C_LEAVE_GAME = 13;
+// constexpr char S2C_CHANGE_ROOMMASTER = 14;
+constexpr char S2C_IS_READY = 15;
+constexpr char S2C_GAME_START = 16;
+constexpr char S2C_MOVE = 17;
+constexpr char S2C_BOOSTER = 18;
+// constexpr char S2C_WORLD_UPDATE = 19;
+constexpr char S2C_RANK = 20;
+constexpr char S2C_LOGOUT = 21;
 
 // enum
 enum MAP_TYPE { STRAIGHT, RECTANGLE };
@@ -174,6 +175,13 @@ struct S2C_Finish_Packet
 	unsigned char size;
 	char type;
 	char rank[3];
+};
+
+struct S2C_Leave_Game_Packet
+{
+	unsigned char size;
+	char type;
+	int id;
 };
 
 // C2S
