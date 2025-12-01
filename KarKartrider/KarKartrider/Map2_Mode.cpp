@@ -752,12 +752,12 @@ void Map2_Mode::draw_model()  {
 void Map2_Mode::draw_bb()  {
 	/*if (!bb_status)
 		return;*/
-	for (const auto& model : karts) {
-		model->draw_rigidBody(shaderProgramID);
-	}
-	for (const auto& barricate : road2_barricate) {
-		barricate->draw_rigidBody(shaderProgramID);
-	}
+	//for (const auto& model : karts) {
+	//	model->draw_rigidBody(shaderProgramID);
+	//}
+	//for (const auto& barricate : road2_barricate) {
+	//	barricate->draw_rigidBody(shaderProgramID);
+	//}
 }
 
 void Map2_Mode::finish()  {
