@@ -83,8 +83,7 @@ void Player::process_packet(char* p)
 		// success
 		SetName(login_packet->name);
 		SetOnline(true);
-		std::cout << "[Player : " << m_name << "]" << std::endl;
-		std::cout << "[id : " << m_id << "]" << std::endl;
+		std::cout << "Player[" << m_id << "] name :" << m_name << std::endl;
 
 		send_Player_Info_Packet();
 	}
@@ -94,6 +93,11 @@ void Player::process_packet(char* p)
 		C2S_Change_Ready_Packet* change_ready_packet = reinterpret_cast<C2S_Change_Ready_Packet*>(p);
 
 		SetIsReady(!GetReady());
+
+		if (GetReady())
+			std::cout << "Player[" << m_id << "] Ready!" << std::endl;
+		else
+			std::cout << "Player[" << m_id << "] Ready!" << std::endl;
 
 		if (select_map == MAP_TYPE::STRAIGHT) {
 			m_posX = 0;

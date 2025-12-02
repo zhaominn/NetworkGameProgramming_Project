@@ -34,7 +34,7 @@ DWORD WINAPI ClientThread(LPVOID socket)
 	SOCKET client_socket = player->GetSocket();
 	int my_id = player->GetID();
 
-	printf("[Player %d] ClientThread Start.\n", my_id);
+	printf("Player[%d] ClientThread Start.\n", my_id);
 
 	while (true) {
 		player->recv_packet();
