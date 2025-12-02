@@ -25,7 +25,7 @@ RoomMode::RoomMode()
 
 RoomMode::~RoomMode()
 {
-	
+
 }
 
 void RoomMode::init()
@@ -70,7 +70,7 @@ void RoomMode::mouseClick(int button, int state, int x, int y)
 {
 	if (state == GLUT_UP)
 	{
-		if(!g_players[g_myid].isReady)
+		if (!g_players[g_myid].isReady)
 		{
 			if (isRoad1Hovered)
 			{
@@ -363,13 +363,9 @@ void RoomMode::finish()
 
 void RoomMode::RefreshSlotData()
 {
-	for (int i = 0; i < 3; ++i) {
-		m_slots[i] = -1;
-	}
+	for (int i = 0; i < 3; ++i)	m_slots[i] = -1;
 
 	int myRoomMapType = g_players[g_myid].select_map;
-
-	int masterID = -1;
 	std::vector<int> normalPlayers;
 
 	for (int i = 0; i < MAX_USER; ++i)
@@ -378,23 +374,12 @@ void RoomMode::RefreshSlotData()
 
 		if (!p.isOnline) continue;
 		if (p.select_map != myRoomMapType) continue;
+		if (p.isGaming) continue;
 
-		
-			normalPlayers.push_back(p.m_id);
+		normalPlayers.push_back(p.m_id);
 	}
 
-	if (masterID != -1)
-	{
-		m_slots[0] = masterID;
-
-		for (size_t i = 0; i < normalPlayers.size(); ++i) {
-			if (i + 1 < 3) m_slots[i + 1] = normalPlayers[i];
-		}
-	}
-	else
-	{
-		for (size_t i = 0; i < normalPlayers.size(); ++i) {
-			if (i < 3) m_slots[i] = normalPlayers[i];
-		}
+	for (size_t i = 0; i < normalPlayers.size(); ++i) {
+		if (i < 3) m_slots[i] = normalPlayers[i];
 	}
 }

@@ -324,6 +324,7 @@ void Player::process_packet(char* p)
 		collisionCH = false;
 
 		isReady = false;
+		isGaming = false;
 
 		send_Enter_Room_Packet(select_map);
 
@@ -471,6 +472,7 @@ void Player::send_Enter_Room_Packet(MAP_TYPE map)
 	my_packet.map = map;
 	strncpy(my_packet.name, m_name, NAME_SIZE - 1);
 	my_packet.name[NAME_SIZE - 1] = '\0';
+	my_packet.isGaming = isGaming;
 
 	// 나 자신에게 전송
 	send_packet(reinterpret_cast<char*>(&my_packet), sizeof(S2C_EnterRoom_Packet));

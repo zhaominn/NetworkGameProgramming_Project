@@ -40,6 +40,7 @@ public:
 
 	float collisionCH = false;
 	bool isFinished;
+	bool isGaming;
 
 	AABB g_Map1Colliders[5]{};
 	AABB g_Map2Colliders[18]{};
@@ -48,7 +49,7 @@ public:
 public:
 	Player() : m_id(-1), m_name(), m_booster_cnt(2), m_yaw(0), m_speed(0),
 		m_face_rotation(0), m_booster_head_tilt(0), m_body_rotation(0),
-		isBoosterActive(false), isReady(false), isOnline(false), isFinished(false), m_socket(INVALID_SOCKET) {
+		isBoosterActive(false), isReady(false), isOnline(false), isFinished(false), isGaming(false), m_socket(INVALID_SOCKET) {
 	};
 	~Player();
 

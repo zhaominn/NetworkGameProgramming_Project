@@ -86,6 +86,7 @@ struct S2C_EnterRoom_Packet
 	char id;
 	MAP_TYPE map;
 	char name[NAME_SIZE];
+	bool isGaming;
 };
 
 struct S2C_LeaveRoom_Packet

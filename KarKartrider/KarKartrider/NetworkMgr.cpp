@@ -244,6 +244,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_players[packet->id].m_name[NAME_SIZE - 1] = '\0';
 		g_players[packet->id].isReady = false;
 		g_players[packet->id].isOnline = true;
+		g_players[packet->id].isGaming = packet->isGaming;
 
 	}
 	break;

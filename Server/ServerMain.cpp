@@ -221,6 +221,8 @@ int main()
 					Player* p = room.inRoomPlayers[i];
 					if (p != nullptr)
 					{
+						p->isGaming = true;
+						p->send_Enter_Room_Packet(p->select_map);
 						p->send_Game_Start_Packet(g_room);
 					}
 				}
