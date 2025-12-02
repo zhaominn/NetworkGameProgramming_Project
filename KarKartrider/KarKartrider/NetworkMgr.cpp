@@ -3,6 +3,7 @@
 #include "root.h"
 #include "Map1_Mode.h"
 #include "Map2_Mode.h"
+#include "RoomMode.h"
 
 std::thread m_recvThread;
 std::atomic<bool> m_running{ false };
@@ -79,6 +80,18 @@ void NetworkMgr::StopRunning()
 	}
 }
 
+void NetworkMgr::reset()
+{
+	m_currentMode = nullptr;
+	g_players[g_myid].isReady = false;
+	g_players[g_myid].isBoosterOn = false;
+	g_gameStart = false;
+	g_GameEnd = false;
+	g_delta_time = 0;
+	g_players[g_myid].room_player_cnt = 0;
+}
+
+
 bool NetworkMgr::IsRunning() const
 {
 	return m_running;
@@ -103,12 +116,12 @@ void NetworkMgr::SendEnterRoomPacket(MAP_TYPE map)
 
 void NetworkMgr::SendLeaveRoomPacket(MAP_TYPE map)
 {
-	C2S_Leave_Room_Packet* leave_room_packet = new C2S_Leave_Room_Packet;
-	leave_room_packet->size = sizeof(C2S_Leave_Room_Packet);
-	leave_room_packet->type = C2S_LEAVE_ROOM;
+	C2S_Leave_Game_Packet* leave_room_packet = new C2S_Leave_Game_Packet;
+	leave_room_packet->size = sizeof(C2S_Leave_Game_Packet);
+	leave_room_packet->type = C2S_LEAVE_GAME;
 	leave_room_packet->map = map;
 
-	SendPacket(reinterpret_cast<char*>(leave_room_packet), sizeof(C2S_Leave_Room_Packet));
+	SendPacket(reinterpret_cast<char*>(leave_room_packet), sizeof(C2S_Leave_Game_Packet));
 	delete leave_room_packet;
 }
 
@@ -179,7 +192,6 @@ void NetworkMgr::SendWallCollisionPacket_2(AABB aabb[18])
 	delete packet;
 }
 
-
 void NetworkMgr::ProcessPacket(char* buf)
 {
 	unsigned char type = buf[1];
@@ -212,7 +224,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 		g_players[packet->id].isReady = false;
 		g_players[packet->id].isOnline = true;
 
-
 	}
 	break;
 	case S2C_LEAVE_ROOM:
@@ -222,7 +233,15 @@ void NetworkMgr::ProcessPacket(char* buf)
 
 		if (packet->id >= 0 && packet->id < MAX_USER)
 			g_players[packet->id].isReady = false;
+	}
+	break;
+	case S2C_LEAVE_GAME:
+	{
 
+		reset();
+		MM.SetMode(std::make_unique<RoomMode>());
+		SendEnterRoomPacket(STRAIGHT);
+		return;
 	}
 	break;
 	case S2C_IS_READY:
@@ -251,6 +270,7 @@ void NetworkMgr::ProcessPacket(char* buf)
 			MAP_TYPE mapType = (MAP_TYPE)pkt->players[i].mapType;
 
 			g_players[id].select_map = mapType; // 각 플레이어의 맵 정보 저장
+			g_players[id].room_player_cnt = pkt->playerCount;
 			g_roomPlayers.push_back(id);
 
 			std::cout << "방 플레이어: " << id
@@ -262,11 +282,11 @@ void NetworkMgr::ProcessPacket(char* buf)
 
 		if (myMap == MAP_TYPE::STRAIGHT)
 		{
-			MM.SetMode(new Map1_Mode());
+			MM.SetMode(std::make_unique<Map1_Mode>());
 		}
 		else if (myMap == MAP_TYPE::RECTANGLE)
 		{
-			MM.SetMode(new Map2_Mode());
+			MM.SetMode(std::make_unique<Map2_Mode>());
 		}
 	}
 	break;
@@ -292,7 +312,6 @@ void NetworkMgr::ProcessPacket(char* buf)
 	case S2C_BOOSTER:
 	{
 		S2C_Booster_Packet* p = reinterpret_cast<S2C_Booster_Packet*>(buf);
-		//std::cout << "get boooster packet" << std::endl;
 		g_players[g_myid].isBoosterOn = p->boosterOn;
 		g_players[g_myid].m_booster_cnt = p->booster_cnt;
 	}

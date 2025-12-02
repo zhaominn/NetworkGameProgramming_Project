@@ -5,16 +5,20 @@
 #include "include/stb_image.h"
 
 RoomMode::RoomMode()
+	: player_tex(0)
+	, ready_tex(0)
+	, ready_hovered_tex(0)
+	, road1_tex(0)
+	, road1_hovered_tex(0)
+	, road2_tex(0)
+	, road2_hovered_tex(0)
+	, room_tex(0)
+	, player_ready_tex(0)
+	, isRoad1Hovered(false)
+	, isRoad2Hovered(false)
+	, isReadyHovered(false)
 {
-	player_tex = loadTexture("asset/room/player_image.png");
-	ready_tex = loadTexture("asset/room/ready.png");
-	ready_hovered_tex = loadTexture("asset/room/ready_hovered.png");
-	road1_tex = loadTexture("asset/room/road_1.png");
-	road1_hovered_tex = loadTexture("asset/room/road_1_hovered.png");
-	road2_tex = loadTexture("asset/room/road_2.png");
-	road2_hovered_tex = loadTexture("asset/room/road_2_hovered.png");
-	room_tex = loadTexture("asset/room/room.png");
-	player_ready_tex = loadTexture("asset/room/ready_player.png");
+	
 }
 
 RoomMode::~RoomMode()
@@ -23,6 +27,16 @@ RoomMode::~RoomMode()
 
 void RoomMode::init()
 {
+	std::cout << "Room Mode" << std::endl;
+	ready_tex = loadTexture("asset/room/ready.png");
+	ready_hovered_tex = loadTexture("asset/room/ready_hovered.png");
+	road1_tex = loadTexture("asset/room/road_1.png");
+	road1_hovered_tex = loadTexture("asset/room/road_1_hovered.png");
+	road2_tex = loadTexture("asset/room/road_2.png");
+	road2_hovered_tex = loadTexture("asset/room/road_2_hovered.png");
+	room_tex = loadTexture("asset/room/room.png");
+	player_tex = loadTexture("asset/room/player_image.png");
+	player_ready_tex = loadTexture("asset/room/ready_player.png");
 }
 
 GLuint RoomMode::loadTexture(const char* filename) {
@@ -141,7 +155,21 @@ void RoomMode::draw_model()
 {
 	RefreshSlotData(); // 데이터 최신화
 
+	// 쉐이더 끄기
 	glUseProgram(0);
+
+	glBindVertexArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	for (int i = 0; i < 5; i++) {
+		glDisableVertexAttribArray(i);
+	}
+
+	glActiveTexture(GL_TEXTURE0);
+
+	// 기존 코드
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);

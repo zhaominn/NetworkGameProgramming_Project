@@ -71,6 +71,7 @@ void Player::process_packet(char* p)
 	switch (packet_type) {
 	case C2S_LOGIN:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Login_Packet* login_packet = reinterpret_cast<C2S_Login_Packet*>(p);
 
 		// if login fail
@@ -86,10 +87,12 @@ void Player::process_packet(char* p)
 		std::cout << "Player[" << m_id << "] name :" << m_name << std::endl;
 
 		send_Player_Info_Packet();
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
 	case C2S_IS_READY:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Change_Ready_Packet* change_ready_packet = reinterpret_cast<C2S_Change_Ready_Packet*>(p);
 
 		SetIsReady(!GetReady());
@@ -126,10 +129,12 @@ void Player::process_packet(char* p)
 		}
 
 		send_Ready_Packet();
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
 	case C2S_MOVE:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Move_Packet* move_packet = reinterpret_cast<C2S_Move_Packet*>(p);
 		m_up = move_packet->up;
 		m_down = move_packet->down;
@@ -230,13 +235,16 @@ void Player::process_packet(char* p)
 
 		m_posX += GetSpeed() * dirX;
 		m_posZ += GetSpeed() * dirZ;
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
 	case C2S_BOOSTER:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Booster_Packet* booster_packet = reinterpret_cast<C2S_Booster_Packet*>(p);
 		SetBoosterCnt(booster_packet->booster_cnt);
 		ActiveBooster();
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
 	case C2S_LOGOUT:
@@ -247,6 +255,7 @@ void Player::process_packet(char* p)
 	break;
 	case C2S_ENTER_ROOM:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Enter_Room_Packet* packet = reinterpret_cast<C2S_Enter_Room_Packet*>(p);
 
 		int newRoomIdx = packet->map;
@@ -267,15 +276,45 @@ void Player::process_packet(char* p)
 		newRoom.mapType = packet->map;
 
 		send_Enter_Room_Packet(packet->map);
+		LeaveCriticalSection(&g_CS);
 	}
 	break;
-	case C2S_LEAVE_ROOM:
+	case C2S_LEAVE_GAME:
 	{
-		C2S_Leave_Room_Packet* packet = reinterpret_cast<C2S_Leave_Room_Packet*>(p);
-		std::cout << "Leave Room" << std::endl;
+		EnterCriticalSection(&g_CS);
+		C2S_Leave_Game_Packet* packet = reinterpret_cast<C2S_Leave_Game_Packet*>(p);
+		//std::cout << "Leave Game" << std::endl;
+
+		int roomIdx = packet->map;
+		int leaverID = m_id;
+
+		Room& room = g_room[roomIdx];
+		Send_Leave_Game_Packet(roomIdx, leaverID);
+
+		room.inRoomPlayers[m_id] = nullptr;
+		if (room.room_player_cnt > 0) --room.room_player_cnt;
+
+		bool isEmpty = true;
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (room.inRoomPlayers[i] != nullptr) {
+				isEmpty = false;
+				break;
+			}
+		}
+
+		if (isEmpty) {
+			room.reset();
+		}
+
+		g_game_state = LOBBY;
+		reset();
+
+		LeaveCriticalSection(&g_CS);
 	}
+	break;
 	case C2S_WALL_COLLISION_1:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Wall_Collision_1_Packet* packet = reinterpret_cast<C2S_Wall_Collision_1_Packet*>(p);
 
 		for (int i = 0; i < 5; ++i) {
@@ -302,11 +341,12 @@ void Player::process_packet(char* p)
 		for (int i = 0; i < 5; ++i) {
 			std::cout << "충돌 상태 : " << g_Map1Colliders[i].rigid_status << std::endl;
 		}*/
-
+		LeaveCriticalSection(&g_CS);
 		break;
 	}
 	case C2S_WALL_COLLISION_2:
 	{
+		EnterCriticalSection(&g_CS);
 		C2S_Wall_Collision_2_Packet* packet = reinterpret_cast<C2S_Wall_Collision_2_Packet*>(p);
 
 		for (int i = 0; i < 18; ++i) {
@@ -333,7 +373,7 @@ void Player::process_packet(char* p)
 		for (int i = 0; i < 5; ++i) {
 			std::cout << "충돌 상태 : " << g_Map1Colliders[i].rigid_status << std::endl;
 		}*/
-
+		LeaveCriticalSection(&g_CS);
 		break;
 	}
 	default:
@@ -429,12 +469,52 @@ void Player::send_Leave_Room_Packet(int roomIdx, int leaverID)
 
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		Player* p = g_room[roomIdx].inRoomPlayers[i];
-		if (p != nullptr && p->GetID() != leaverID)
+		if (g_room[roomIdx].inRoomPlayers[i] != nullptr)
 		{
+			Player* p = g_room[roomIdx].inRoomPlayers[i];
 			p->send_packet(reinterpret_cast<char*>(&pkt), sizeof(S2C_LeaveRoom_Packet));
 		}
 	}
+
+	send_packet(reinterpret_cast<char*>(&pkt), sizeof(S2C_LeaveRoom_Packet));
+}
+
+void Player::Send_Leave_Game_Packet(int roomIdx, int leaverID)
+{
+	// 1. 나가는 사람용 패킷 (로비로 이동)
+	S2C_Leave_Game_Packet* leave_pkt = new S2C_Leave_Game_Packet;
+	leave_pkt->size = sizeof(S2C_Leave_Game_Packet);
+	leave_pkt->type = S2C_LEAVE_GAME;
+	leave_pkt->leaverID = leaverID;
+	leave_pkt->id = leaverID;
+
+	// 2. 남는 사람용 패킷 (나간 캐릭터 삭제 알림 -> LEAVE_ROOM 패킷 재활용)
+	S2C_LeaveRoom_Packet* notify_pkt = new S2C_LeaveRoom_Packet;
+	notify_pkt->size = sizeof(S2C_LeaveRoom_Packet);
+	notify_pkt->type = S2C_LEAVE_ROOM;
+	notify_pkt->id = leaverID; // 나간 사람의 ID
+
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		Player* pTarget = g_room[roomIdx].inRoomPlayers[i];
+
+		if (pTarget != nullptr && pTarget->GetID() != -1)
+		{
+			// A. 나가는 당사자라면 -> LEAVE_GAME 패킷 전송
+			if (pTarget->GetID() == leaverID)
+			{
+				pTarget->send_packet(reinterpret_cast<char*>(leave_pkt), sizeof(S2C_Leave_Game_Packet));
+			}
+			// B. 남은 사람들이라면 -> LEAVE_ROOM 패킷 전송
+			else
+			{
+				pTarget->send_packet(reinterpret_cast<char*>(notify_pkt), sizeof(S2C_LeaveRoom_Packet));
+			}
+		}
+	}
+
+	delete leave_pkt;
+	delete notify_pkt;
 }
 
 void Player::send_Ready_Packet()
@@ -471,6 +551,7 @@ void Player::send_Game_Start_Packet(Room rooms[2])
 	}
 
 	pkt.playerCount = count;
+	rooms[roomId].room_player_cnt = count;
 
 	pkt.size = sizeof(S2C_GameStart_Packet) - (sizeof(RoomPlayer) * (MAX_USER - count));
 
@@ -652,10 +733,19 @@ bool Player::PlayerCollisionCheck(int a, int b, float& pushX, float& pushZ)
 
 void Player::send_Rank_Packet()
 {
+	int roomIdx = this->select_map;
+
+	if (roomIdx < 0 || roomIdx >= 2) {
+		std::cout << "Error: Invalid Room Index in send_Rank_Packet" << std::endl;
+		return;
+	}
+
+	int myRank = ++g_room[roomIdx].rank;
+
 	S2C_Rank_Packet* rank_pkt = new S2C_Rank_Packet;
 	rank_pkt->size = sizeof(S2C_Rank_Packet);
 	rank_pkt->type = S2C_RANK;
-	rank_pkt->rank = g_rankCnt++;
+	rank_pkt->rank = myRank;
 	rank_pkt->finish_time = g_ElapsedTime;
 
 	//std::cout << "finish deltaTime = " << rank_pkt->finish_time << std::endl;
@@ -676,24 +766,28 @@ void Player::checkIsFinished()
 
 void Player::reset()
 {
-	if (m_name) {
-		delete[] m_name;
-		m_name = nullptr;
-	}
+	m_up = false;
+	m_down = false;
+	m_left = false;
+	m_right = false;
+	m_release = false;
 
-	m_name = new char[1];
-	m_name[0] = '\0';
+	m_posX = 0;
+	m_posY = 0;
+	m_posZ = 0;
 
-	m_id = -1;
 	m_yaw = 0;
 	m_speed = 0;
 	m_face_rotation = 0;
 	m_body_rotation = 0;
+	m_booster_head_tilt = 0;
 	m_booster_cnt = 2;
 	isReady = false;
 	isOnline = false;
 	isBoosterActive = false;
-	m_socket = INVALID_SOCKET;
+	isFinished = false;
+	collisionCH = false;
+	select_map = STRAIGHT;
 }
 
 void Player::SetSocket(SOCKET socket)

@@ -4,17 +4,23 @@
 #include "Mode.h"
 
 class ModeManager {
-private:
-	Mode* mode;
+public:
+	//Mode* mode;
+
+	std::unique_ptr<Mode> currentMode;
+	std::unique_ptr<Mode> nextMode;
+	bool needSwitch = false;
 
 public:
-	ModeManager() : mode(nullptr) {}
-	~ModeManager(){}
-	void SetMode(Mode* m);
+	ModeManager() : currentMode(nullptr), nextMode(nullptr), needSwitch(false) {}
+
+	void SetMode(std::unique_ptr<Mode> m);
 
 	Mode* GetMode() {
-		return mode;
+		return currentMode.get();
 	}
+
+	~ModeManager(){}
 
 	void draw_model();
 
@@ -31,4 +37,7 @@ public:
 	void mouseClick(int button, int state, int x, int y);
 
 	void passiveMotion(int x, int y);
+
+private:
+	void ApplyModeChangeIfNeeded();
 };

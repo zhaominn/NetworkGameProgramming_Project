@@ -38,6 +38,8 @@ public:
 	void StopRunning();
 	bool IsRunning() const;
 
+	void reset();
+
 public:
 	void SendPacket(char* packet, int size);
 

@@ -100,8 +100,7 @@ int main(int argc, char** argv) {
 	/*LogoMode* logoMode = new LogoMode();
 	MM.SetMode(logoMode);*/
 
-	LoginMode* loginMode = new LoginMode();
-	MM.SetMode(loginMode);
+	MM.SetMode(std::make_unique<LoginMode>());
 
 	/*debug_model(models.back());
 	debug_materials(models.back()->materials);*/

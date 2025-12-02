@@ -24,8 +24,8 @@ void SelectMap_timer(int value) {
 }
 
 void SelectMapMode::goSelectMode() {
-	SelectMapMode* selectMode = new SelectMapMode();
-	MM.SetMode(selectMode);
+	//SelectMapMode* selectMode = new SelectMapMode();
+	MM.SetMode(std::make_unique<SelectMapMode>());
 }
 
 void SelectMapMode::init() {
@@ -51,8 +51,8 @@ void SelectMapMode::keyboard(unsigned char key, int x, int y) {
 			myMap = RECTANGLE;
 		}
 
-		RoomMode* roomMode = new RoomMode();
-		MM.SetMode(roomMode);
+		//RoomMode* roomMode = new RoomMode();
+		//MM.SetMode(std::make_unique<RoomMode>());
 
 		networkmgr.SendEnterRoomPacket(myMap);
 

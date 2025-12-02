@@ -21,7 +21,7 @@ LoginMode::LoginMode()
 
 LoginMode::~LoginMode()
 {
-	delete this;
+
 }
 
 void LoginMode::init()
@@ -233,9 +233,10 @@ void LoginMode::keyboard(unsigned char key, int x, int y)
 			networkmgr.SendLoginPacket(inputText);
 
 			//SelectMapMode* selectMapMode = new SelectMapMode();
-			RoomMode* roomMapMode = new RoomMode();
+			//RoomMode* roomMapMode = new RoomMode();
 			//selectMapMode->goSelectMode = [this]() { goSelectMode(); };
-			MM.SetMode(roomMapMode);
+			MM.SetMode(std::make_unique<RoomMode>());
+			return;
 		}
 
 		return;
