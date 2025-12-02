@@ -18,11 +18,14 @@ RoomMode::RoomMode()
 	, isRoad2Hovered(false)
 	, isReadyHovered(false)
 {
-	
+	for (int i = 0; i < 3; ++i) {
+		m_slots[i] = -1;
+	}
 }
 
 RoomMode::~RoomMode()
 {
+	
 }
 
 void RoomMode::init()
@@ -72,12 +75,22 @@ void RoomMode::mouseClick(int button, int state, int x, int y)
 			if (isRoad1Hovered)
 			{
 				if (g_players[g_myid].select_map != STRAIGHT)
+				{
 					networkmgr.SendEnterRoomPacket(STRAIGHT);
+					for (int i = 0; i < 3; ++i) {
+						m_slots[i] = -1;
+					}
+				}
 			}
 			else if (isRoad2Hovered)
 			{
 				if (g_players[g_myid].select_map != RECTANGLE)
+				{
 					networkmgr.SendEnterRoomPacket(RECTANGLE);
+					for (int i = 0; i < 3; ++i) {
+						m_slots[i] = -1;
+					}
+				}
 			}
 		}
 

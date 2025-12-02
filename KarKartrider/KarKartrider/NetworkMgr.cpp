@@ -83,12 +83,33 @@ void NetworkMgr::StopRunning()
 void NetworkMgr::reset()
 {
 	m_currentMode = nullptr;
-	g_players[g_myid].isReady = false;
-	g_players[g_myid].isBoosterOn = false;
+
 	g_gameStart = false;
 	g_GameEnd = false;
 	g_delta_time = 0;
-	g_players[g_myid].room_player_cnt = 0;
+
+	g_roomPlayers.clear();
+
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		g_players[i].isReady = false;
+		g_players[i].isBoosterOn = false;
+		g_players[i].m_booster_cnt = 2;
+
+		g_players[i].x = 0.0f;
+		g_players[i].y = 0.0f;
+		g_players[i].z = 0.0f;
+		g_players[i].m_speed = 0.0f;
+		g_players[i].m_yaw = 0.0f;
+		g_players[i].m_face_rotation = 0.0f;
+		g_players[i].m_body_rotation = 0.0f;
+		g_players[i].m_booster_head_tilt = 0.0f;
+
+		g_players[i].room_player_cnt = 0;
+		g_players[i].m_rank = 0;
+		g_players[i].m_finish_time = 0.0f;
+
+		}
 }
 
 

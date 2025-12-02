@@ -52,87 +52,72 @@ DWORD WINAPI ClientThread(LPVOID socket)
 
 DWORD WINAPI UpdatePosition(LPVOID lpParam)
 {
-	std::chrono::steady_clock::time_point last_send_time = std::chrono::steady_clock::now();
-	auto startTime = std::chrono::steady_clock::now();
+	auto last_tick_time = std::chrono::steady_clock::now();
 
 	while (true)
 	{
-		bool anyRoomStarted = false;
-		for (int r = 0; r < 2; r++)
-		{
-			if (g_room[r].gameStart)
-				anyRoomStarted = true;
-		}
+		auto current_time = std::chrono::steady_clock::now();
+		std::chrono::duration<float> delta_duration = current_time - last_tick_time;
+		float dt = delta_duration.count();
 
-		if (!anyRoomStarted)
+		if (dt < (1.0f / 60.0f))
 		{
 			Sleep(1);
 			continue;
 		}
 
-		auto current_time = std::chrono::steady_clock::now();
-		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(
-			current_time - last_send_time
-		).count();
+		last_tick_time = current_time;
 
 		EnterCriticalSection(&g_CS);
-		g_ElapsedTime = std::chrono::duration<float>(current_time - startTime).count();
-		LeaveCriticalSection(&g_CS);
 
-		if (elapsed_time >= (1000 / 60))
+
+		for (int roomIdx = 0; roomIdx < 2; roomIdx++)
 		{
-			EnterCriticalSection(&g_CS);
+			Room& room = g_room[roomIdx];
+			if (!room.gameStart) continue;
 
-			for (int roomIdx = 0; roomIdx < 2; roomIdx++)
+			room.elapsedTime += dt;
+			g_ElapsedTime = room.elapsedTime;
+
+			for (int i = 0; i < MAX_USER; i++)
 			{
-				Room& room = g_room[roomIdx];
-				if (!room.gameStart) continue;
+				Player* p = room.inRoomPlayers[i];
+				if (!p) continue;
+				if (!p->GetOnline()) continue;
 
-				for (int i = 0; i < MAX_USER; i++)
+				float wpx = 0, wpz = 0;
+				ProcessWallCollision(*p, wpx, wpz);
+
+				if (wpx != 0 || wpz != 0)
 				{
-					Player* p = room.inRoomPlayers[i];
-					if (!p) continue;
-
-					// ---- wall collision ----
-					float wpx, wpz;
-					ProcessWallCollision(*p, wpx, wpz);
-
-					if (wpx != 0 || wpz != 0)
-					{
-						p->m_posX += wpx;
-						p->m_posZ += wpz;
-						p->SetSpeed(max(0.0f, p->GetSpeed() - 0.005f));
-					}
-
-					// ---- player collision ----
-					float ppx, ppz;
-					ProcessPlayerCollisionRoom(room, p->GetID(), ppx, ppz);
-
-					if (ppx != 0 || ppz != 0)
-					{
-						p->m_posX += ppx * 0.5f;
-						p->m_posZ += ppz * 0.5f;
-					}
-
-					p->CheckBoosterState();
-					//p->checkIsFinished();
+					p->m_posX += wpx;
+					p->m_posZ += wpz;
+					p->SetSpeed(max(0.0f, p->GetSpeed() - 0.005f));
 				}
 
-				for (int i = 0; i < MAX_USER; i++)
-				{
-					Player* p = room.inRoomPlayers[i];
-					if (!p) continue;
+				float ppx = 0, ppz = 0;
+				ProcessPlayerCollisionRoom(room, p->GetID(), ppx, ppz);
 
-					p->send_move_Packet();
+				if (ppx != 0 || ppz != 0)
+				{
+					p->m_posX += ppx * 0.5f;
+					p->m_posZ += ppz * 0.5f;
 				}
+
+				p->CheckBoosterState();
+				// p->checkIsFinished(); // 필요 시 주석 해제
 			}
-			LeaveCriticalSection(&g_CS);
 
-			last_send_time = current_time;
+			for (int i = 0; i < MAX_USER; i++)
+			{
+				Player* p = room.inRoomPlayers[i];
+				if (!p) continue;
+				p->send_move_Packet();
+			}
 		}
+		LeaveCriticalSection(&g_CS);
 	}
 }
-
 
 int main()
 {
@@ -229,7 +214,7 @@ int main()
 
 			if (!room.gameStart && IsRoomReady(room))
 			{
-				std::cout << "Room " << roomIdx << " start!" << std::endl;
+				std::cout << "Room " << roomIdx << "Game start!" << std::endl;
 
 				for (int i = 0; i < MAX_USER; i++)
 				{
@@ -242,6 +227,31 @@ int main()
 
 				room.gameStart = true;
 				room.elapsedTime = 0.0f;
+			}
+			else if (room.gameStart)
+			{
+				int readyCount = 0;
+				int playerCount = 0;
+				for (int i = 0; i < MAX_USER; ++i) {
+					Player* p = room.inRoomPlayers[i];
+					if (p != nullptr && p->GetID() != -1) {
+						playerCount++;
+						if (p->GetReady()) readyCount++;
+					}
+				}
+
+				if (playerCount > 0 && readyCount == 0)
+				{
+					std::cout << "Room " << roomIdx << " Reset (Waiting for players)" << std::endl;
+					room.gameStart = false;
+					room.rank = 0;
+				}
+				else if (playerCount == 0)
+				{
+					room.gameStart = false;
+					room.elapsedTime = 0.0f;
+					room.rank = 0;
+				}
 			}
 		}
 		LeaveCriticalSection(&g_CS);

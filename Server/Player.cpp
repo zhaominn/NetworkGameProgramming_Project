@@ -307,7 +307,25 @@ void Player::process_packet(char* p)
 		}
 
 		g_game_state = LOBBY;
-		reset();
+		
+
+		m_up = false; m_down = false; m_left = false; m_right = false;
+		m_speed = 0.0f;
+		m_yaw = 0.0f;
+		m_face_rotation = 0.0f;
+		m_body_rotation = 0.0f;
+		m_booster_head_tilt = 0.0f;
+
+		m_posX = 0.0f; m_posY = 0.0f; m_posZ = 0.0f;
+
+		m_booster_cnt = 2;
+		isBoosterActive = false;
+		isFinished = false;
+		collisionCH = false;
+
+		isReady = false;
+
+		send_Enter_Room_Packet(select_map);
 
 		LeaveCriticalSection(&g_CS);
 	}
@@ -581,7 +599,7 @@ void Player::send_move_Packet()
 	}
 
 	move_pkt->id = GetID();
-	move_pkt->booster_cnt = GetBodyRotation();
+	move_pkt->booster_cnt = m_booster_cnt;
 	move_pkt->speed = GetSpeed();
 	move_pkt->yaw = GetYaw();
 	move_pkt->x = m_posX;
