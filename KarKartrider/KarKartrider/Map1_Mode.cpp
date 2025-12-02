@@ -545,7 +545,7 @@ void Map1_Mode::timer() {
 		g_firstRenderFrame = false;
 	}
 
-	const float posLerp = 0.3f;
+	const float posLerp = 0.1f;
 	g_kartRenderPos = glm::mix(g_kartRenderPos, targetPos, posLerp);
 
 	if (!Pause)
@@ -720,15 +720,28 @@ void Map1_Mode::RenderPlayer() {
 
 		if (!isInMyRoom)
 			continue;
-
-		float px = g_players[pid].x;
-		float py = g_players[pid].y;
-		float pz = g_players[pid].z;
 		float pyaw = g_players[pid].m_yaw;
 		float pbody = g_players[pid].m_body_rotation;
 
+		glm::vec3 pos;
+
+		if (pid == g_myid)
+		{
+			// 내 카트 → 보간된 렌더링용 위치
+			pos = g_kartRenderPos;
+		}
+		else
+		{
+			// 다른 플레이어 → 서버가 보낸 위치 그대로
+			pos = glm::vec3(
+				g_players[pid].x,
+				g_players[pid].y,
+				g_players[pid].z
+			);
+		}
+
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(px, py, pz));
+		model = glm::translate(model, pos);
 		model = glm::rotate(model, glm::radians(pyaw), glm::vec3(0, 1, 0));
 		model = glm::rotate(model, glm::radians(pbody), glm::vec3(0, 0, 1));
 
