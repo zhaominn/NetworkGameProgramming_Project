@@ -720,25 +720,11 @@ void Map1_Mode::RenderPlayer() {
 
 		if (!isInMyRoom)
 			continue;
+
+		glm::vec3 pos = g_playerRenderPos[pid];
+
 		float pyaw = g_players[pid].m_yaw;
 		float pbody = g_players[pid].m_body_rotation;
-
-		glm::vec3 pos;
-
-		if (pid == g_myid)
-		{
-			// 내 카트 → 보간된 렌더링용 위치
-			pos = g_kartRenderPos;
-		}
-		else
-		{
-			// 다른 플레이어 → 서버가 보낸 위치 그대로
-			pos = glm::vec3(
-				g_players[pid].x,
-				g_players[pid].y,
-				g_players[pid].z
-			);
-		}
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, pos);

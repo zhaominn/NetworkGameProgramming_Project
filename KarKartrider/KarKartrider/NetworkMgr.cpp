@@ -327,6 +327,21 @@ void NetworkMgr::ProcessPacket(char* buf)
 			g_players[i].y = p->arr[i].y;
 			g_players[i].z = p->arr[i].z;
 			g_players[i].isBoosterOn = p->arr[i].boosterOn;
+
+			glm::vec3 targetPos = glm::vec3(
+				g_players[i].x,
+				g_players[i].y,
+				g_players[i].z
+			);
+
+			if (g_firstRenderFrameForPlayer[i])
+			{
+				g_playerRenderPos[i] = targetPos;
+				g_firstRenderFrameForPlayer[i] = false;
+			}
+
+			g_playerRenderPos[i] =
+				glm::mix(g_playerRenderPos[i], targetPos, 0.1f);
 		}
 
 	}
