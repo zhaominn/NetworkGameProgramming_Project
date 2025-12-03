@@ -501,6 +501,31 @@ void Map2_Mode::timer() {
 	const float posLerp = 0.1f;
 	g_kartRenderPos = glm::mix(g_kartRenderPos, targetPos, posLerp);
 
+
+	// ==========================
+	// 2) 다른 플레이어 보간 추가
+	// ==========================
+	for (int pid = 0; pid < MAX_USER; pid++)
+	{
+		if (pid == g_myid) continue; // 내 카트는 제외
+
+		glm::vec3 target(
+			g_players[pid].x,
+			g_players[pid].y,
+			g_players[pid].z
+		);
+
+		if (g_otherFirstFrame[pid])
+		{
+			g_otherRenderPos[pid] = target;
+			g_otherFirstFrame[pid] = false;
+		}
+
+		// 부드러운 보간
+		g_otherRenderPos[pid] =
+			glm::mix(g_otherRenderPos[pid], target, 0.1f);
+	}
+
 	if (!Pause)
 	{
 		// ================
@@ -684,12 +709,7 @@ void Map2_Mode::RenderPlayer() {
 		}
 		else
 		{
-			// 다른 플레이어 → 서버가 보낸 위치 그대로
-			pos = glm::vec3(
-				g_players[pid].x,
-				g_players[pid].y,
-				g_players[pid].z
-			);
+			pos = g_otherRenderPos[pid]; // 다른 플레이어 보간된 위치
 		}
 
 		glm::mat4 model = glm::mat4(1.0f);
