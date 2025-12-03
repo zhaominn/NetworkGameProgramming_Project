@@ -68,6 +68,7 @@ DWORD WINAPI RecvThread(LPVOID lpParam)
 	return 0;
 }
 
+
 int main(int argc, char** argv) {
 	InitializeCriticalSection(&CS);
 	if (!networkmgr.Init()) {
