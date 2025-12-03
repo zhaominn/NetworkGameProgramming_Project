@@ -54,6 +54,7 @@ public:
     }
 
     void RefreshSlotData();
+    static void timerHelper(int value);
 
 private:
 

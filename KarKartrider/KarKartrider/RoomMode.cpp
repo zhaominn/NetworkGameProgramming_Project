@@ -44,7 +44,20 @@ void RoomMode::init()
 	room_tex = loadTexture("asset/room/room.png");
 	player_tex = loadTexture("asset/room/player_image.png");
 	player_ready_tex = loadTexture("asset/room/ready_player.png");
+
+	glutTimerFunc(16, RoomMode::timerHelper, 0);
 }
+
+void RoomMode::timerHelper(int value)
+{
+	if (Mode::currentInstance != nullptr)
+	{
+		glutPostRedisplay();  // 매 프레임 렌더링
+	}
+
+	glutTimerFunc(16, timerHelper, 0); // 60FPS 반복
+}
+
 
 GLuint RoomMode::loadTexture(const char* filename) {
 	int width, height, channel;
