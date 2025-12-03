@@ -41,7 +41,8 @@ extern bool g_loginOk;
 extern std::vector<int> g_roomPlayers;
 extern char g_myRoomId;
 
-
+extern glm::vec3 g_otherRenderPos[MAX_USER];
+extern bool g_otherFirstFrame[MAX_USER];
 
 
 
