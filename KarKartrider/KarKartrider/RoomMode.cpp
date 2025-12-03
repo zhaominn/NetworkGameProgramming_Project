@@ -14,6 +14,8 @@ RoomMode::RoomMode()
 	, road2_hovered_tex(0)
 	, room_tex(0)
 	, player_ready_tex(0)
+	, road1_playing_tex(0)
+	, road2_playing_tex(0)
 	, isRoad1Hovered(false)
 	, isRoad2Hovered(false)
 	, isReadyHovered(false)
@@ -35,8 +37,10 @@ void RoomMode::init()
 	ready_hovered_tex = loadTexture("asset/room/ready_hovered.png");
 	road1_tex = loadTexture("asset/room/road_1.png");
 	road1_hovered_tex = loadTexture("asset/room/road_1_hovered.png");
+	road1_playing_tex = loadTexture("asset/room/road_1_playing.png");
 	road2_tex = loadTexture("asset/room/road_2.png");
 	road2_hovered_tex = loadTexture("asset/room/road_2_hovered.png");
+	road2_playing_tex = loadTexture("asset/room/road_2_playing.png");
 	room_tex = loadTexture("asset/room/room.png");
 	player_tex = loadTexture("asset/room/player_image.png");
 	player_ready_tex = loadTexture("asset/room/ready_player.png");
@@ -72,7 +76,7 @@ void RoomMode::mouseClick(int button, int state, int x, int y)
 	{
 		if (!g_players[g_myid].isReady)
 		{
-			if (isRoad1Hovered)
+			if (isRoad1Hovered && !CheckPlayGame(STRAIGHT))
 			{
 				if (g_players[g_myid].select_map != STRAIGHT)
 				{
@@ -82,7 +86,7 @@ void RoomMode::mouseClick(int button, int state, int x, int y)
 					}
 				}
 			}
-			else if (isRoad2Hovered)
+			else if (isRoad2Hovered && !CheckPlayGame(RECTANGLE))
 			{
 				if (g_players[g_myid].select_map != RECTANGLE)
 				{
@@ -94,7 +98,7 @@ void RoomMode::mouseClick(int button, int state, int x, int y)
 			}
 		}
 
-		if (isReadyHovered)
+		if (isReadyHovered && !CheckPlayGame(g_players[g_myid].select_map))
 		{
 			networkmgr.SendChangeReadyPacket();
 		}
@@ -304,6 +308,7 @@ void RoomMode::draw_model()
 
 	// [Road 1]
 	GLuint r1_tex = (isRoad1Hovered || g_players[g_myid].select_map == STRAIGHT) ? road1_hovered_tex : road1_tex;
+	if (CheckPlayGame(STRAIGHT)) r1_tex = road1_playing_tex;
 	glBindTexture(GL_TEXTURE_2D, r1_tex);
 	glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -317,6 +322,7 @@ void RoomMode::draw_model()
 
 	// [Road 2]
 	GLuint r2_tex = (isRoad2Hovered || g_players[g_myid].select_map == RECTANGLE) ? road2_hovered_tex : road2_tex;
+	if (CheckPlayGame(RECTANGLE)) r2_tex = road2_playing_tex;
 	glBindTexture(GL_TEXTURE_2D, r2_tex);
 
 	float r2_X = 0.0f;
@@ -359,6 +365,19 @@ void RoomMode::draw_bb()
 
 void RoomMode::finish()
 {
+}
+
+bool RoomMode::CheckPlayGame(MAP_TYPE map)
+{
+	bool isGaming = false;
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		if (g_players[i].select_map == map
+			&& g_players[i].isGaming) {
+			isGaming = true;
+		}
+	}
+	return isGaming;
 }
 
 void RoomMode::RefreshSlotData()

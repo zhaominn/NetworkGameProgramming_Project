@@ -13,8 +13,10 @@ public:
     GLuint ready_hovered_tex;
     GLuint road1_tex;
     GLuint road1_hovered_tex;
+    GLuint road1_playing_tex;
     GLuint road2_tex;
     GLuint road2_hovered_tex;
+    GLuint road2_playing_tex;
     GLuint room_tex;
     GLuint player_ready_tex;
 
@@ -44,6 +46,8 @@ public:
     void draw_bb() override;
 
     void finish() override;
+
+    bool CheckPlayGame(MAP_TYPE map);
 
     virtual ModeType GetModeType() const override {
         return ModeType::ROOM;
