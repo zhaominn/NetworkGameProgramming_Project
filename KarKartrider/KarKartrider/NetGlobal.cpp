@@ -13,3 +13,6 @@ bool g_loginOk = false;
 
 std::vector<int> g_roomPlayers;
 char g_myRoomId;
+
+glm::vec3 g_otherRenderPos[MAX_USER];
+bool g_otherFirstFrame[MAX_USER] = { true };
